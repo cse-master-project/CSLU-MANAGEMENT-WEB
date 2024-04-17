@@ -1,5 +1,5 @@
 <template>
-  <div>페이지 소개</div>
+  <div>문제 관리</div>
 </template>
 
 <script setup></script>
