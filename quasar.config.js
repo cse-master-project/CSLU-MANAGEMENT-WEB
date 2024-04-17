@@ -67,6 +67,7 @@ module.exports = configure(function (/* ctx */) {
         [
           'unplugin-vue-router/vite',
           {
+            // 라우터 설정 !
             routesFolder: [
               {
                 src: 'src/pages',
@@ -76,6 +77,7 @@ module.exports = configure(function (/* ctx */) {
                 path: 'admin/',
               },
             ],
+            // 제외할 컴포넌트
             exclude: ['**/components/**'],
           },
         ],
