@@ -1,7 +1,9 @@
 <template>
-  <div>어드민.</div>
+  <Home />
 </template>
 
-<script setup></script>
+<script setup>
+import Home from './adminHome.vue';
+</script>
 
 <style lang="scss" scoped></style>
