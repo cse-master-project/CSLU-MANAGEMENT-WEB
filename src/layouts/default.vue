@@ -15,7 +15,7 @@
         <q-btn stretch flat label="홈" to="/" />
         <q-btn stretch flat label="서비스 소개" to="/about" />
         <q-btn stretch flat label="문제 만들기" to="/create" />
-        <q-btn stretch flat label="문제 관리" to="/mangement" />
+        <q-btn stretch flat label="문제 관리" to="/management" />
 
         <q-btn rounded label="로그인" color="light-blue-13" />
       </q-toolbar>
