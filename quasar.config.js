@@ -68,11 +68,14 @@ module.exports = configure(function (/* ctx */) {
           'unplugin-vue-router/vite',
           {
             routesFolder: [
-              // 라우터 경로 설정 !!
-              { src: 'src/pages' },
-              { src: 'src/adminpages', path: 'admin/' },
+              {
+                src: 'src/pages',
+              },
+              {
+                src: 'src/adminpages',
+                path: 'admin/',
+              },
             ],
-            // 제외할 경로 !!
             exclude: ['**/components/**'],
           },
         ],
