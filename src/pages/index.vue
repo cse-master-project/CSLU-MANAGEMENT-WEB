@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <div>index</div>
-  </div>
+  <Home />
 </template>
 
-<script setup></script>
+<script setup>
+import Home from './home.vue';
+</script>
 
 <style lang="scss" scoped></style>
