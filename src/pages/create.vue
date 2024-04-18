@@ -1,5 +1,6 @@
 <template>
   <q-page>
+    <!-- 퀴즈유형선택 받는 이벤트 -->
     <SelectQuizTypeForm
       @quiz-type-selected="changeQuizType"
       v-if="quizType === ''"
