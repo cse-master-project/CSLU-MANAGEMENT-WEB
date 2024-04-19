@@ -1,5 +1,6 @@
 <template>
   <Home />
+  <p>테스트</p>
 </template>
 
 <script setup>
