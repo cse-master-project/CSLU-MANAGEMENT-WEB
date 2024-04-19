@@ -1,7 +1,15 @@
 <template>
-  <div>어드민홈</div>
+  <q-page class="q-pa-md flex flex-center flex-column">
+    <ApprovalRequestList />
+    <ReportHistoryList />
+  </q-page>
 </template>
 
-<script setup></script>
+<script setup>
+import ApprovalRequestList from 'src/components/admin/ApprovalRequestList.vue';
+import ReportHistoryList from 'src/components/admin/ReportHistoryList.vue';
+</script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// 필요한 스타일을 여기에 정의
+</style>

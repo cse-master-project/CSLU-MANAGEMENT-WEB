@@ -1,7 +1,13 @@
 <template>
-  <p>미승인 문제 관리 페이지</p>
+  <q-page class="q-pa-md flex flex-center flex-column">
+    <ApprovalRequestList />
+  </q-page>
 </template>
 
-<script setup></script>
+<script setup>
+import ApprovalRequestList from 'src/components/admin/ApprovalRequestList.vue';
+</script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// 필요한 스타일을 여기에 정의
+</style>
