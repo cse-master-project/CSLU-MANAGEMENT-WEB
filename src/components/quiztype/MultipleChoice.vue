@@ -42,6 +42,12 @@
           label="정답 선택"
           class="q-mb-md"
         />
+        <q-input
+          v-model="explanation"
+          label="문제 해설"
+          type="textarea"
+          class="q-mb-md"
+        />
       </q-card-section>
 
       <q-card-actions align="right">
@@ -74,6 +80,7 @@ const choices = ref([
 ]);
 const correctAnswer = ref('');
 const choiceOptions = ref([]);
+const explanation = ref('');
 
 // 대분류와 소분류를 위한 콤보박스 옵션 예시입니다.
 // 실제 사용 시에는 이 부분을 데이터베이스나 외부 API로부터 가져온 데이터로 대체할 수 있습니다.
@@ -116,6 +123,7 @@ const submitQuiz = () => {
     question: question.value,
     choices: choices.value,
     correctAnswer: correctAnswer.value,
+    explanation: explanation.value,
   });
 };
 </script>
