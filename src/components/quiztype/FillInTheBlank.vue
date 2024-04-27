@@ -64,23 +64,27 @@
         <q-btn
           class="backbtn"
           @click="goBack()"
-          style="width: 10%; margin: 3% 01%"
+          style="width: 10%; margin: 3% 1%"
           >뒤로가기</q-btn
         >
         <q-btn
           class="registerbtn"
-          @click="submitQuiz"
+          @click="showSubmitDialog = true"
           style="width: 10%; margin: 3% 0"
           >문제 등록</q-btn
         >
       </q-card-actions>
     </q-card>
   </q-form>
+  <q-dialog v-model="showSubmitDialog">
+    <SubmitQuizDialog @close="showSubmitDialog = false" />
+  </q-dialog>
 </template>
 
 <script setup>
 import { ref, defineEmits } from 'vue';
 import { QInput } from 'quasar';
+import SubmitQuizDialog from 'src/components/quiz/SubmitQuizDialog.vue';
 
 const mainCategoryOptions = [
   { label: '과일', value: 'Fruit' },
@@ -124,11 +128,12 @@ const submitQuiz = () => {
     fileName: fileName.value, //첨부파일
   });
 };
+
+const showSubmitDialog = ref(false);
 </script>
 
 <style scoped lang="scss">
 @import '/src/css/QuizBtn.css';
-
 
 /* 추가적인 스타일링은 필요에 따라 적용하세요 */
 </style>
