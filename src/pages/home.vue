@@ -117,4 +117,9 @@ img {
     margin-bottom: 20px;
   }
 }
+
+.down {
+  display: flex;
+  margin-top: -40px; /* 마진 상단 값을 조절하여 더 위로 올립니다. 필요에 따라 값을 조정하세요. */
+}
 </style>
