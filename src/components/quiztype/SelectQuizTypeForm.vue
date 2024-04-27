@@ -70,8 +70,9 @@ const emitQuizType = () => {
   cursor: pointer;
   transition: background-color 0.3s ease;
   width: 30%;
-  margin-top: 20px;
+  margin-top: 40px; /* 이 값을 조정하여 버튼 사이의 간격을 늘림 */
 }
+
 .quiz-type-btn {
   padding: 12px 24px;
   background-color: hsl(192, 29%, 84%);
