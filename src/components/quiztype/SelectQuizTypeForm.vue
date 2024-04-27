@@ -2,39 +2,27 @@
   <q-page>
     <q-card class="text-center" flat>
       <div class="quiztype-container">
-        <div
+        <q-btn
           v-for="quizType in quizTypes"
           :key="quizType.id"
-          class="quiztype-radio-box"
+          :class="{ 'selected-btn': selectedQuizType === quizType.value }"
+          class="quiz-type-btn"
+          @click="selectQuizType(quizType.value)"
         >
-          <input
-            type="radio"
-            :id="'quiztype-' + quizType.id"
-            :value="quizType.value"
-            v-model="selectedQuizType"
-            class="info-radio-box-input"
-          />
-          <label :for="'quiztype-' + quizType.id" class="info-checkbox-label">
-            <span
-              :class="{ checked: selectedQuizType === quizType.value }"
-              class="info-checkbox-span"
-              >{{ quizType.name }}</span
-            >
-          </label>
-        </div>
+          {{ quizType.name }}
+        </q-btn>
       </div>
-      <q-btn @click="emitQuizType" style="width: 30%; margin-top: 20px"
-        >문제생성</q-btn
-      >
+      <q-btn @click="emitQuizType" class="createbtn">문제생성</q-btn>
     </q-card>
   </q-page>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+
 const selectedQuizType = ref('');
 const emits = defineEmits(['quiz-type-selected']);
-// 퀴즈 타입 리스트
+
 const quizTypes = ref([
   { id: 1, value: 'MultipleChoice', name: '4지선다형' },
   { id: 2, value: 'ShortAnswer', name: '단답형' },
@@ -42,6 +30,11 @@ const quizTypes = ref([
   { id: 4, value: 'TrueOrFalse', name: 'o/x형' },
   { id: 5, value: 'FillInTheBlank', name: '빈칸 채우기형' },
 ]);
+
+const selectQuizType = value => {
+  selectedQuizType.value = value;
+};
+
 const emitQuizType = () => {
   emits('quiz-type-selected', selectedQuizType.value);
 };
@@ -50,50 +43,60 @@ const emitQuizType = () => {
 <style>
 .quiztype-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* 이 부분을 추가하여 세로 나열 */
+  align-items: center; /* 가운데 정렬 */
+  padding: 0 16px;
+  max-width: 800px;
+  margin: auto;
 }
+
 .q-card.text-center {
   margin: 20px auto;
-  padding: 10px;
+  padding: 20px;
   border-radius: 20px;
-  border: 2px solid #000;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
 }
 
 .createbtn {
-  width: fit-content;
-  padding: 16px;
-  background-color: #191b27;
+  padding: 12px 24px;
+  background-color: hsl(188, 51%, 54%);
+  border: none;
   border-radius: 12px;
   color: white;
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 30%;
+  margin-top: 20px;
 }
-.info-radio-box-input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.info-checkbox-span.checked {
-  background-color: #0091da;
+.quiz-type-btn {
+  padding: 12px 24px;
+  background-color: hsl(192, 29%, 84%);
+  border: none;
+  border-radius: 12px;
   color: white;
-}
-
-.info-checkbox-label {
+  font-weight: 500;
+  font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 30%;
+  margin-top: 20px;
 }
 
-.info-checkbox-span {
-  display: inline-block;
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
+.createbtn:hover,
+.quiz-type-btn:hover {
+  background-color: hsl(188, 51%, 54%);
+}
+
+.selected-btn {
+  background-color: hsl(188, 51%, 54%); /* 선택된 버튼의 배경 색상 */
+}
+
+/* 추가된 스타일 */
+.quiz-type-btn {
+  margin: 10px; /* 버튼 간격 조절 */
 }
 </style>

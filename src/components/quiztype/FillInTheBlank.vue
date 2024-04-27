@@ -127,7 +127,8 @@ const submitQuiz = () => {
 </script>
 
 <style scoped lang="scss">
-@import '/src\css\QuizBtn.css';
+@import '/src/css/QuizBtn.css';
+
 
 /* 추가적인 스타일링은 필요에 따라 적용하세요 */
 </style>
