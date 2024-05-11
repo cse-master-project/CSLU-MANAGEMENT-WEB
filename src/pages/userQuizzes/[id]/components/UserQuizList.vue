@@ -53,7 +53,8 @@ const quizzes = ref([
     quizId: 1,
     subject: '자료구조',
     detailSubject: '스택',
-    jsonContent: '{}',
+    jsonContent:
+      '{"type" : "1","quiz" : "맞는 답을 고르시오.","option" : ["101호", "102호", "103호", "104호"],"answer" : "4", "commentary" : "해설"}',
     createAt: '2024-04-27T11:38:12.753Z',
     permissionStatus: 0,
   },

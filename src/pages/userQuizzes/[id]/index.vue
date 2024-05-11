@@ -9,28 +9,20 @@
           </div>
         </q-card-section>
 
-        <q-card-section>
-          <q-badge
-            v-if="currentQuiz.permissionStatus === 0"
-            color="orange"
-            text-color="white"
-          >
-            승인 대기 중
-          </q-badge>
-          <q-badge
-            v-else-if="currentQuiz.permissionStatus === 1"
-            color="green"
-            text-color="white"
-          >
-            승인됨
-          </q-badge>
-          <q-badge
-            v-else-if="currentQuiz.permissionStatus === 2"
-            color="red"
-            text-color="white"
-          >
-            반려됨: {{ currentQuiz.reason }}
-          </q-badge>
+        <!-- 퀴즈 승인 상태 -->
+        <QuizPermssionStatus :quiz="currentQuiz" />
+
+        <!-- 여기서부터 퀴즈 내용을 표시하는 부분입니다. -->
+        <q-card-section v-if="quizContent">
+          <div>{{ quizContent.quiz }}</div>
+          <q-option-group
+            :options="quizOptions"
+            v-model="selectedOption"
+            inline
+          ></q-option-group>
+          <div v-if="selectedOption === quizContent.answer">
+            정답입니다! {{ quizContent.commentary }}
+          </div>
         </q-card-section>
       </q-card>
     </div>
@@ -38,6 +30,7 @@
 </template>
 
 <script setup>
+import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -46,9 +39,10 @@ const quizzes = ref([
     quizId: 1,
     subject: '자료구조',
     detailSubject: '스택',
-    jsonContent: '{}',
+    jsonContent:
+      '{"type" : "1","quiz" : "맞는 답을 고르시오.","option" : ["101호", "102호", "103호", "104호"],"answer" : "4", "commentary" : "해설 ~~~"}',
     createAt: '2024-04-27T11:38:12.753Z',
-    permissionStatus: 0,
+    permission: 0,
   },
   {
     quizId: 2,
@@ -56,7 +50,7 @@ const quizzes = ref([
     detailSubject: '포인터',
     jsonContent: '{}',
     createAt: '2024-04-27T11:40:00.000Z',
-    permissionStatus: 1,
+    permission: 1,
   },
   {
     quizId: 3,
@@ -64,16 +58,37 @@ const quizzes = ref([
     detailSubject: 'list',
     jsonContent: '{}',
     createAt: '2024-04-27T11:42:00.000Z',
-    permissionStatus: 2,
+    permission: 2,
   },
-]); // 퀴즈 데이터 목록
+]);
 
-const route = useRoute(); //현재 라우트의 파라미터를 가져오기.
-const quizId = route.params.id; //URL파라미터에서 id추출.
-
+// 현재 라우터 파라미터 가져오기
+const route = useRoute();
+const quizId = route.params.id;
 const currentQuiz = computed(() => {
   return quizzes.value.find(q => q.quizId === parseInt(quizId));
-}); //quizID에 해당하는 퀴즈 정보를 quizzes 배열에서 찾아 반환.
+});
+
+const selectedOption = ref('');
+
+// jsonContent를 파싱하여 quizContent에 저장
+const quizContent = computed(() => {
+  if (currentQuiz.value) {
+    return JSON.parse(currentQuiz.value.jsonContent);
+  }
+  return null;
+});
+
+// 퀴즈 옵션을 quizContent에서 추출
+const quizOptions = computed(() => {
+  if (quizContent.value && quizContent.value.option) {
+    return quizContent.value.option.map((option, index) => ({
+      label: option,
+      value: String(index + 1), // 옵션의 인덱스를 값으로 사용합니다.
+    }));
+  }
+  return [];
+});
 </script>
 
 <style>
