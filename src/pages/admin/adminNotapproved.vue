@@ -1,11 +1,16 @@
 <template>
   <q-page>
-    <QuizList />
+    <NotApprovedQuizList />
   </q-page>
 </template>
 
 <script setup>
-import QuizList from 'src/pages/notApprovedQuizzes/[id]/components/QuizList.vue';
+import NotApprovedQuizList from 'src/pages/notApprovedQuizzes/[id]/components/NotApprovedQuizList.vue';
 </script>
 
 <style lang="scss" scoped></style>
+
+<route lang="yaml">
+meta:
+  layout: admin
+</route>

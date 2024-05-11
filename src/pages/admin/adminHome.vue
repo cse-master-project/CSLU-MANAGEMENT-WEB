@@ -15,7 +15,9 @@
   </q-page>
 </template>
 
-<script setup></script>
+<script setup>
+import NotApprovedQuizList from 'src/pages/notApprovedQuizzes/[id]/components/NotApprovedQuizList.vue';
+</script>
 
 <style lang="scss" scoped>
 .row {
