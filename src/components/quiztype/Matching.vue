@@ -146,7 +146,7 @@ const commentary = ref('');
 const submitQuiz = () => {
   const quizData = {
     subjectId: subject.value,
-    detailSubject: detailSubjet.value,
+    detailSubject: detailSubject.value,
     jsonContent: JSON.stringify({
       type: '3',
       quiz: quiz.value,
