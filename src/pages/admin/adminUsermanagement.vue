@@ -1,11 +1,11 @@
 <template>
   <q-page>
-    <QuizList />
+    <AllUserQuizList />
   </q-page>
 </template>
 
 <script setup>
-import QuizList from 'src/pages/userQuizzes/[id]/components/QuizList.vue';
+import AllUserQuizList from 'src/pages/allUserQuizzes/[id]/components/AllUserQuizList.vue';
 </script>
 
 <style lang="scss" scoped></style>

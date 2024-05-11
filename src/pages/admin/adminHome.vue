@@ -4,12 +4,12 @@
       <!-- Not Approved Quizzes -->
       <q-card class="col" flat bordered>
         <h5>미승인 문제</h5>
-        <notApprovedQuizList />
+        <NotApprovedQuizList />
       </q-card>
       <!-- Reported Quizzes -->
       <q-card class="col" flat bordered>
         <h5>신고 문제</h5>
-        <reportedQuizList />
+        <ReportedQuizList />
       </q-card>
     </div>
   </q-page>
@@ -17,6 +17,7 @@
 
 <script setup>
 import NotApprovedQuizList from 'src/pages/notApprovedQuizzes/[id]/components/NotApprovedQuizList.vue';
+import ReportedQuizList from 'src/pages/reportedQuizzes/[id]/components/ReportedQuizList.vue';
 </script>
 
 <style lang="scss" scoped>
