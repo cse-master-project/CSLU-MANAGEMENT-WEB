@@ -3,29 +3,27 @@
     <q-card>
       <q-card-section>
         <q-select
-          v-model="mainCategory"
-          :options="mainCategoryOptions"
+          v-model="subject"
+          :options="subjectOptions"
           label="대분류"
           outlined
           class="q-mb-md"
         />
-
         <q-select
-          v-model="subCategory"
-          :options="subCategoryOptions"
+          v-model="detailSubjet"
+          :options="detailSubjectOptions"
           label="소분류"
           outlined
           class="q-mb-md"
         />
-
         <q-input
+          v-model="quiz"
           type="textarea"
-          v-model="question"
           outlined
+          rows="4"
           placeholder="문제를 입력해주세요"
-          autogrow
-          class="q-mb-md"
           maxlength="300"
+          class="q-mb-md"
         />
 
         <div class="option-container">
@@ -55,7 +53,7 @@
             />
             <!--툴팁입니다. -->
             <q-tooltip style="font-size: 1rem">
-              ata`,btc`처럼 입력해주세요
+              ata`,btc`처럼 입력해주세요. a: 노란꽃 a':벚꽃 b':개나리 -> atb'
             </q-tooltip>
           </div>
         </div>
@@ -66,7 +64,6 @@
           placeholder="해설을 입력해주세요"
           outlined
           autogrow
-          class="q-mb-md"
           style="margin: 3% 0"
         />
 
@@ -104,23 +101,34 @@
 import { ref, defineEmits } from 'vue';
 import { QInput } from 'quasar';
 
-const mainCategoryOptions = [
-  { label: '과일', value: 'Fruit' },
+const emits = defineEmits(['change-quiz-type']);
+const goBack = () => {
+  emits('change-quiz-type', '');
+};
+
+const fileName = ref('');
+const fileInputHandler = event => {
+  const files = event.target && event.target.files;
+  if (files && files[0]) {
+    fileName.value = event.target.files[0].name;
+  }
+};
+
+const subjectOptions = [
   { label: 'c언어', value: 'C' },
   { label: '파이썬', value: 'Python' },
   { label: '자료구조', value: 'Data structure' },
 ];
 
-const subCategoryOptions = [
-  { label: '색', value: 'Color' },
+const detailSubjectOptions = [
   { label: '스택', value: 'Stack' },
   { label: '큐', value: 'Queue' },
   { label: '그래프', value: 'Graph' },
 ];
 
-const mainCategory = ref('');
-const subCategory = ref('');
-const question = ref('');
+const subject = ref('');
+const detailSubjet = ref('');
+const quiz = ref('');
 const answers = ref(['']);
 const leftOptions = ref({
   a: '',
@@ -135,32 +143,28 @@ const rightOptions = ref({
 });
 const commentary = ref('');
 
-const usertooltip = 'ata`, btc`처럼 입력해주세요';
-//첨부파일명 표시
-const fileName = ref('');
-const fileInputHandler = event => {
-  const files = event.target && event.target.files;
-  if (files && files[0]) {
-    fileName.value = event.target.files[0].name;
-  }
-};
-
-const emits = defineEmits(['change-quiz-type']);
-const goBack = () => {
-  emits('change-quiz-type', '');
-};
 const submitQuiz = () => {
-  // 여기에 문제 제출 로직을 구현합니다.
-  console.log('제출된 문제:', {
-    mainCategory: mainCategory.value, //대
-    subCategory: subCategory.value, //소
-    question: question.value, //문제
-    answers: answers.value, //답
-    leftOptions: leftOptions.value, //왼쪽그룹
-    rightOptions: rightOptions.value, //오른쪽그룹
-    commentary: commentary.value, //해설
-    fileName: fileName.value, //첨부파일
-  });
+  const quizData = {
+    subjectId: subject.value,
+    detailSubject: detailSubjet.value,
+    jsonContent: JSON.stringify({
+      type: '3',
+      quiz: quiz.value,
+      left_option: [
+        leftOptions.value.a,
+        leftOptions.value.b,
+        leftOptions.value.c,
+      ],
+      right_option: [
+        rightOptions.value.a,
+        rightOptions.value.b,
+        rightOptions.value.c,
+      ],
+      answer: answers.value,
+      commentary: commentary.value,
+    }),
+  };
+  console.log('서버에 제출될 데이터:', quizData);
 };
 </script>
 
