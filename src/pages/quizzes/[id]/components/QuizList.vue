@@ -81,3 +81,13 @@ function goToQuizDetail(quizId) {
   router.push(`/quizzes/${quizId}`);
 }
 </script>
+
+<route lang="yaml">
+meta:
+  layout: admin
+</route>
+
+<route lang="yaml">
+meta:
+  layout: admin
+</route>

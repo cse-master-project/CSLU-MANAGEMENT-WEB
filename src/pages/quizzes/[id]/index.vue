@@ -55,3 +55,8 @@ const quiz = ref({
   margin: auto;
 }
 </style>
+
+<route lang="yaml">
+meta:
+  layout: admin
+</route>

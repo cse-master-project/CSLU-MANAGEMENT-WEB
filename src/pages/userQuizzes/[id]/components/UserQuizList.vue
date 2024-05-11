@@ -6,7 +6,7 @@
         :key="quiz.quizId"
         clickable
         v-ripple
-        @click="goToQuizDetail(quiz.quizId)"
+        @click="goToQuizDetail(quiz.userQuizId)"
       >
         <q-item-section>
           <q-item-label>{{ quiz.subject }}</q-item-label>
@@ -77,7 +77,12 @@ const quizzes = ref([
 
 const router = useRouter();
 
-function goToQuizDetail(quizId) {
-  router.push(`/quizzes/${quizId}`);
+function goToQuizDetail(userQuizId) {
+  router.push(`/userQuizzes/${userQuizId}`);
 }
 </script>
+
+<route lang="yaml">
+meta:
+  layout: admin
+</route>
