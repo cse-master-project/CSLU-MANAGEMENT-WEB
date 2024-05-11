@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import QuizList from 'src/pages/quizzes/[id]/components/QuizList.vue';
+import QuizList from 'src/pages/userQuizzes/[id]/components/QuizList.vue';
 </script>
 
 <style lang="scss" scoped></style>
