@@ -2,23 +2,22 @@
   <q-form class="q-pa-md">
     <q-card>
       <q-card-section>
-        <!-- 대분류, 소분류는 만든거 이용-->
         <q-select
-          v-model="mainCategory"
-          :options="mainCategoryOptions"
+          v-model="subject"
+          :options="subjectOptions"
           label="대분류"
           outlined
           class="q-mb-md"
         />
         <q-select
-          v-model="subCategory"
-          :options="subCategoryOptions"
+          v-model="detailSubjet"
+          :options="detailSubjectOptions"
           label="소분류"
           outlined
           class="q-mb-md"
         />
         <q-input
-          v-model="question"
+          v-model="quiz"
           type="textarea"
           outlined
           rows="4"
@@ -27,10 +26,13 @@
           class="q-mb-md"
         />
 
-        <!-- 보기 입력 4개-->
-        <div v-for="index in 4" :key="index" class="choice-container">
+        <div
+          v-for="index in 4"
+          :key="`choice-${index}`"
+          class="choice-container"
+        >
           <q-input
-            v-model="choices[index - 1].description"
+            v-model="option[index - 1].label"
             type="textarea"
             :label="'보기 ' + index"
             outlined
@@ -39,14 +41,17 @@
             class="q-mb-md"
           />
         </div>
-        <q-select
+
+        <q-input
           v-model="answer"
-          :options="choiceOptions"
+          type="textarea"
           label="정답"
           outlined
+          autogrow
           style="width: 10%"
           class="q-mb-md"
         />
+
         <q-input
           v-model="commentary"
           type="textarea"
@@ -57,7 +62,6 @@
         />
       </q-card-section>
 
-      <!-- 첨부파일 입니다.-->
       <q-card-section class="container">
         <label for="file">
           <div class="styled-file-input">
@@ -67,6 +71,7 @@
         </label>
         <input type="file" id="file" @change="fileInputHandler" />
       </q-card-section>
+
       <q-card-actions align="right">
         <q-btn
           class="backbtn"
@@ -88,47 +93,11 @@
 <script setup>
 import { ref, defineEmits, watch } from 'vue';
 
-const mainCategoryOptions = [
-  { label: '과일', value: 'Fruit' },
-  { label: 'c언어', value: 'C' },
-  { label: '파이썬', value: 'Python' },
-  { label: '자료구조', value: 'Data structure' },
-];
+const emits = defineEmits(['change-quiz-type']);
+const goBack = () => {
+  emits('change-quiz-type', '');
+};
 
-const subCategoryOptions = [
-  { label: '색', value: 'Color' },
-  { label: '스택', value: 'Stack' },
-  { label: '큐', value: 'Queue' },
-  { label: '그래프', value: 'Graph' },
-];
-
-const choices = ref([
-  { value: '1', label: '' },
-  { value: '2', label: '' },
-  { value: '3', label: '' },
-  { value: '4', label: '' },
-]);
-
-const mainCategory = ref(''); //대분류
-const subCategory = ref(''); //소분류
-const choiceOptions = ref([]); //선지
-
-const question = ref(''); //문제
-const answer = ref(''); //답
-const commentary = ref(''); //해설
-
-watch(
-  choices,
-  newChoices => {
-    choiceOptions.value = newChoices.map((choice, index) => ({
-      label: `${index + 1}`,
-      value: choice.value,
-    }));
-  },
-  { deep: true, immediate: true },
-);
-
-//첨부파일명 표시
 const fileName = ref('');
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
@@ -136,23 +105,54 @@ const fileInputHandler = event => {
     fileName.value = event.target.files[0].name;
   }
 };
-//뒤로가기
-const emits = defineEmits(['change-quiz-type']);
-const goBack = () => {
-  emits('change-quiz-type', '');
-};
+
+const subjectOptions = [
+  { label: 'c언어', value: 'C' },
+  { label: '파이썬', value: 'Python' },
+  { label: '자료구조', value: 'Data structure' },
+];
+
+const detailSubjectOptions = [
+  { label: '스택', value: 'Stack' },
+  { label: '큐', value: 'Queue' },
+  { label: '그래프', value: 'Graph' },
+];
+
+const subject = ref('');
+const detailSubjet = ref('');
+const quiz = ref('');
+const option = ref([
+  { label: '', value: '1' },
+  { label: '', value: '2' },
+  { label: '', value: '3' },
+  { label: '', value: '4' },
+]);
+const answer = ref('');
+const commentary = ref('');
+
+// watch(
+//   option,
+//   newChoices => {
+//     // newChoices.forEach((choice, index) => {
+//     //   choice.label = `${index + 1}번 보기`;
+//     // });
+//   },
+//   { deep: true, immediate: true },
+// );
 
 const submitQuiz = () => {
-  // 여기에 문제 제출 로직을 구현합니다.
-  console.log('제출된 문제:', {
-    mainCategory: mainCategory.value, //대
-    subCategory: subCategory.value, //소
-    question: question.value, //문제
-    answer: answer.value, //답
-    choices: choices.value, //보기
-    commentary: commentary.value, //해설
-    fileName: fileName.value, //첨부파일
-  });
+  const quizData = {
+    subjectId: subject.value,
+    detailSubject: detailSubjet.value,
+    jsonContent: JSON.stringify({
+      type: '1',
+      quiz: quiz.value,
+      option: option.value.map(choice => choice.label),
+      answer: answer.value,
+      commentary: commentary.value,
+    }),
+  };
+  console.log('서버에 제출될 데이터:', quizData);
 };
 </script>
 
