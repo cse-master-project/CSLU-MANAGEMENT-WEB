@@ -1,37 +1,6 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
-      <q-card class="my-card">
-        <q-card-section>
-          <div class="text-h5">{{ quiz.subject }}</div>
-          <div class="text-subtitle2 q-mt-xs">{{ quiz.detailSubject }}</div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-badge
-            v-if="quiz.permissionStatus === 0"
-            color="orange"
-            text-color="white"
-          >
-            승인 대기 중
-          </q-badge>
-          <q-badge
-            v-else-if="quiz.permissionStatus === 1"
-            color="green"
-            text-color="white"
-          >
-            승인됨
-          </q-badge>
-          <q-badge
-            v-else-if="quiz.permissionStatus === 2"
-            color="red"
-            text-color="white"
-          >
-            반려됨: {{ quiz.reason }}
-          </q-badge>
-        </q-card-section>
-      </q-card>
-    </div>
+    <p>사용자 퀴즈 상세</p>
   </q-page>
 </template>
 
