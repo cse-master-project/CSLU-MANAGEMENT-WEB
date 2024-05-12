@@ -127,7 +127,7 @@ const detailSubjectOptions = [
 ];
 
 const subject = ref('');
-const detailSubjet = ref('');
+const detailSubject = ref('');
 const quiz = ref('');
 const answers = ref(['']);
 const leftOptions = ref({
