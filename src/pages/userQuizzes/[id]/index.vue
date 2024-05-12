@@ -49,7 +49,7 @@ const quizzes = ref([
     subject: '파이썬',
     detailSubject: 'list',
     jsonContent:
-      '{"type":"3","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
+      '{"type" : "3", "quiz" : "스택", "left_option":["1","2","3"], "right_option":["one","two","three"], "answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
     createAt: '2024-04-27T11:42:00.000Z',
     permission: 2,
   },
@@ -58,7 +58,7 @@ const quizzes = ref([
     subject: '자료구조',
     detailSubject: '스택',
     jsonContent:
-      '{"type":"3","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
+      '{"type":"4","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
     createAt: '2024-04-27T11:42:00.000Z',
     permission: 0,
   },
@@ -82,13 +82,19 @@ const currentQuiz = computed(() => {
 
 // 현재 퀴즈 내용 찾기(JSON). sonContent를 파싱하여 quizContent에 저장
 const quizContent = computed(() => {
-  if (currentQuiz.value) {
-    return JSON.parse(currentQuiz.value.jsonContent);
+  if (currentQuiz.value && currentQuiz.value.jsonContent) {
+    try {
+      return JSON.parse(currentQuiz.value.jsonContent);
+    } catch (e) {
+      console.error('JSON 파싱 오류:', e);
+      return null;
+    }
   }
   return null;
 });
 
 const type = quizContent.value.type;
+
 const quizTypeViewForm = type => {
   switch (type) {
     case '1':
