@@ -47,9 +47,28 @@ const quizzes = ref([
     quizId: 3,
     subject: '파이썬',
     detailSubject: 'list',
-    jsonContent: '{}',
+    jsonContent:
+      '{"type":"3","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
     createAt: '2024-04-27T11:42:00.000Z',
     permission: 2,
+  },
+  {
+    quizId: 4,
+    subject: '자료구조',
+    detailSubject: '스택',
+    jsonContent:
+      '{"type":"3","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
+    createAt: '2024-04-27T11:42:00.000Z',
+    permission: 0,
+  },
+  {
+    quizId: 5,
+    subject: '자료구조',
+    detailSubject: '스택',
+    jsonContent:
+      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
+    createAt: '2024-04-27T11:42:00.000Z',
+    permission: 1,
   },
 ]);
 
