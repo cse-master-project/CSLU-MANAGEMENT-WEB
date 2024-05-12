@@ -12,18 +12,8 @@
         <!-- 퀴즈 승인 상태 -->
         <QuizPermssionStatus :quiz="currentQuiz" />
 
-        <!-- 여기서부터 퀴즈 내용을 표시하는 부분입니다. -->
-        <q-card-section v-if="quizContent">
-          <div>{{ quizContent.quiz }}</div>
-          <q-option-group
-            :options="quizOptions"
-            v-model="selectedOption"
-            inline
-          ></q-option-group>
-          <div v-if="selectedOption === quizContent.answer">
-            정답입니다! {{ quizContent.commentary }}
-          </div>
-        </q-card-section>
+        <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
+        <component :quizcontent="quizContent" :is="quizTypeViewForm(type)" />
       </q-card>
     </div>
   </q-page>
@@ -31,7 +21,7 @@
 
 <script setup>
 import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
-import { ref, computed } from 'vue';
+import { ref, computed, defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
 
 const quizzes = ref([
@@ -48,7 +38,8 @@ const quizzes = ref([
     quizId: 2,
     subject: 'c언어',
     detailSubject: '포인터',
-    jsonContent: '{}',
+    jsonContent:
+      '{"type" : "2", "quiz": "스택은 ?","answer":"스택","commentary":"해설 ~"}',
     createAt: '2024-04-27T11:40:00.000Z',
     permission: 1,
   },
@@ -62,16 +53,14 @@ const quizzes = ref([
   },
 ]);
 
-// 현재 라우터 파라미터 가져오기
-const route = useRoute();
-const quizId = route.params.id;
+const route = useRoute(); // 현재 라우터 파라미터 가져오기
+const quizId = route.params.id; // 현재 퀴즈 찾기
 const currentQuiz = computed(() => {
   return quizzes.value.find(q => q.quizId === parseInt(quizId));
 });
+// console.log(currentQuiz.value);
 
-const selectedOption = ref('');
-
-// jsonContent를 파싱하여 quizContent에 저장
+// 현재 퀴즈 내용 찾기(JSON). sonContent를 파싱하여 quizContent에 저장
 const quizContent = computed(() => {
   if (currentQuiz.value) {
     return JSON.parse(currentQuiz.value.jsonContent);
@@ -79,16 +68,19 @@ const quizContent = computed(() => {
   return null;
 });
 
-// 퀴즈 옵션을 quizContent에서 추출
-const quizOptions = computed(() => {
-  if (quizContent.value && quizContent.value.option) {
-    return quizContent.value.option.map((option, index) => ({
-      label: option,
-      value: String(index + 1), // 옵션의 인덱스를 값으로 사용합니다.
-    }));
+const type = quizContent.value.type;
+const quizTypeViewForm = type => {
+  switch (type) {
+    case '1':
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/user/UserMultipleChoiceView.vue'),
+      );
+    case '2':
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/user/UserShortAnswerView.vue'),
+      );
   }
-  return [];
-});
+};
 </script>
 
 <style>

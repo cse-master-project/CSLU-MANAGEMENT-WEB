@@ -56,7 +56,7 @@ const quizzes = ref([
     jsonContent:
       '{"type" : "1","quiz" : "맞는 답을 고르시오.","option" : ["101호", "102호", "103호", "104호"],"answer" : "4", "commentary" : "해설"}',
     createAt: '2024-04-27T11:38:12.753Z',
-    permissionStatus: 0,
+    permission: 0,
   },
   {
     quizId: 2,
@@ -64,7 +64,7 @@ const quizzes = ref([
     detailSubject: '포인터',
     jsonContent: '{}',
     createAt: '2024-04-27T11:40:00.000Z',
-    permissionStatus: 1,
+    permission: 1,
   },
   {
     quizId: 3,
@@ -72,7 +72,7 @@ const quizzes = ref([
     detailSubject: 'list',
     jsonContent: '{}',
     createAt: '2024-04-27T11:42:00.000Z',
-    permissionStatus: 2,
+    permission: 2,
   },
 ]);
 
