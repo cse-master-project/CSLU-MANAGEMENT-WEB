@@ -10,8 +10,9 @@
         </q-card-section>
 
         <!-- 퀴즈 승인 상태 -->
-        <QuizPermssionStatus :quiz="currentQuiz" />
-
+        <q-card-section>
+          <QuizPermssionStatus :quiz="currentQuiz" />
+        </q-card-section>
         <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
         <component :quizcontent="quizContent" :is="quizTypeViewForm(type)" />
       </q-card>

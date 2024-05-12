@@ -12,31 +12,9 @@
           <q-item-label>{{ quiz.subject }}</q-item-label>
           <q-item-label caption>{{ quiz.detailSubject }}</q-item-label>
         </q-item-section>
+
         <q-item-section side top>
-          <q-chip
-            v-if="quiz.permissionStatus === 0"
-            color="orange"
-            text-color="white"
-            size="md"
-          >
-            승인 대기중
-          </q-chip>
-          <q-chip
-            v-else-if="quiz.permissionStatus === 1"
-            color="green"
-            text-color="white"
-            size="md"
-          >
-            승인
-          </q-chip>
-          <q-chip
-            v-else-if="quiz.permissionStatus === 2"
-            color="red"
-            text-color="white"
-            size="md"
-          >
-            반려
-          </q-chip>
+          <QuizPermssionStatus :quiz="quiz" />
         </q-item-section>
       </q-item>
     </q-list>
@@ -44,6 +22,7 @@
 </template>
 
 <script setup>
+import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -54,7 +33,7 @@ const quizzes = ref([
     subject: '자료구조',
     detailSubject: '스택',
     jsonContent:
-      '{"type" : "1","quiz" : "맞는 답을 고르시오.","option" : ["101호", "102호", "103호", "104호"],"answer" : "4", "commentary" : "해설"}',
+      '{"type" : "1","quiz" : "맞는 답을 고르시오.","option" : ["101호", "102호", "103호", "104호"],"answer" : "4", "commentary" : "해설 ~~~"}',
     createAt: '2024-04-27T11:38:12.753Z',
     permission: 0,
   },
@@ -62,7 +41,8 @@ const quizzes = ref([
     quizId: 2,
     subject: 'c언어',
     detailSubject: '포인터',
-    jsonContent: '{}',
+    jsonContent:
+      '{"type" : "2", "quiz": "스택은 ?","answer":"스택","commentary":"해설 ~"}',
     createAt: '2024-04-27T11:40:00.000Z',
     permission: 1,
   },
@@ -70,9 +50,28 @@ const quizzes = ref([
     quizId: 3,
     subject: '파이썬',
     detailSubject: 'list',
-    jsonContent: '{}',
+    jsonContent:
+      '{"type":"3","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
     createAt: '2024-04-27T11:42:00.000Z',
     permission: 2,
+  },
+  {
+    quizId: 4,
+    subject: '자료구조',
+    detailSubject: '스택',
+    jsonContent:
+      '{"type":"3","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
+    createAt: '2024-04-27T11:42:00.000Z',
+    permission: 0,
+  },
+  {
+    quizId: 5,
+    subject: '자료구조',
+    detailSubject: '스택',
+    jsonContent:
+      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
+    createAt: '2024-04-27T11:42:00.000Z',
+    permission: 1,
   },
 ]);
 
