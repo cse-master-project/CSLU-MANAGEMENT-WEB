@@ -2,7 +2,7 @@
   <q-form class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="text-h6 q-mb-md">문제 유형: 4지선다형</div>
+        <div class="text-h6 q-mb-md">문제 유형: 선긋기형</div>
         <div class="text-subtitle1">문제 : {{ quizcontent.quiz }}</div>
       </q-card-section>
 
