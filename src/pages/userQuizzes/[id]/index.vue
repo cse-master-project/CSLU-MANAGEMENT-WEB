@@ -58,7 +58,7 @@ const quizzes = ref([
     subject: '자료구조',
     detailSubject: '스택',
     jsonContent:
-      '{"type":"4","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
+      '{"type":"4","quiz":"스택은 ~","answer":"0","commentary":"해설^_^"}',
     createAt: '2024-04-27T11:42:00.000Z',
     permission: 0,
   },

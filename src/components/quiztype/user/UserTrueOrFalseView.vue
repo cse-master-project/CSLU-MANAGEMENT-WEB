@@ -2,22 +2,13 @@
   <q-form class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="text-h6 q-mb-md">문제 유형: 4지선다형</div>
+        <div class="text-h6 q-mb-md">문제 유형: o/x형</div>
         <div class="text-subtitle1">문제 : {{ quizcontent.quiz }}</div>
       </q-card-section>
 
       <q-card-section>
-        <div
-          v-for="(option, index) in quizcontent.option"
-          :key="index"
-          class="q-mb-md"
-        >
-          {{ index + 1 }}. {{ option }}
-        </div>
-      </q-card-section>
-
-      <q-card-section>
-        <div>정답: {{ quizcontent.option[quizcontent.answer - 1] }}</div>
+        <!-- 삼항 연산자를 사용하여 0이면 'X', 1이면 'O'로 표시 -->
+        <div>정답: {{ quizcontent.answer === 0 ? 'X' : 'O' }}</div>
       </q-card-section>
 
       <q-card-section>
