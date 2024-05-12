@@ -98,6 +98,18 @@ const quizTypeViewForm = type => {
       return defineAsyncComponent(() =>
         import('src/components/quiztype/user/UserShortAnswerView.vue'),
       );
+    case '3':
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/user/UserMatchingView.vue'),
+      );
+    case '4':
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/user/UserTrueOrFalseView.vue'),
+      );
+    case '5':
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/user/UserFillInTheBlank.vue'),
+      );
   }
 };
 </script>
