@@ -20,6 +20,8 @@
         <component :is="quizTypeViewForm(type)" :quizcontent="quizContent" />
       </q-card-section>
 
+      <q-card-section>사용자 ID : {{ currentQuiz.userId }}</q-card-section>
+
       <q-card-actions align="right" class="q-px-md q-py-sm">
         <q-btn flat color="negative" class="q-mr-sm" @click="notPermission"
           >반려</q-btn
@@ -39,7 +41,7 @@ import { useRoute } from 'vue-router';
 const quizzes = ref([
   {
     quizId: 1,
-    userId: 'wndud',
+    userId: '한주영',
     subject: '자료구조',
     detailSubject: '스택',
     jsonContent:
@@ -49,7 +51,7 @@ const quizzes = ref([
   },
   {
     quizId: 2,
-    userId: 'alsdud',
+    userId: '박예진',
     subject: 'c언어',
     detailSubject: '포인터',
     jsonContent: '{}',
@@ -58,10 +60,11 @@ const quizzes = ref([
   },
   {
     quizId: 3,
-    userId: 'dPwls',
+    userId: '박민영',
     subject: '파이썬',
-    detailSubject: 'list',
-    jsonContent: '{}',
+    detailSubject: '개념',
+    jsonContent:
+      '{"type":"4","quiz":"파이썬은 쉽다.","answer":"0","commentary":"쉽다"}',
     createAt: '2024-04-27T11:42:00.000Z',
     permissionStatus: 0,
   },
