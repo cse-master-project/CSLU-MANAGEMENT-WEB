@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+//원래는 pinia에 있는 auth 호출이였는데....
 import { signInWithGoogle } from 'src/services/auth';
 //상태를 변경할 수 있는 이벤트
 // defineEmits(['changeView']);
