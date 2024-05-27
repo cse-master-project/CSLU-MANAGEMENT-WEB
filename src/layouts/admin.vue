@@ -27,14 +27,27 @@
         />
         <q-btn stretch flat label="미승인 문제" to="/admin/adminNotapproved" />
         <q-btn stretch flat label="신고 문제" to="/admin/adminReported" />
+        <q-btn
+          rounded
+          label="로그인"
+          color="light-blue-13"
+          @click="openAdminLogin"
+        />
       </q-toolbar>
     </q-header>
     <q-page-container style="max-width: 1080px; margin: 0 auto">
       <router-view />
     </q-page-container>
+    <AdminLogin v-model="adminLogin" />
   </q-layout>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from 'vue';
+import AdminLogin from 'src/components/auth/AdminLogin.vue';
+//로그인
+const adminLogin = ref(false);
+const openAdminLogin = () => (adminLogin.value = true);
+</script>
 
 <style lang="scss" scoped></style>
