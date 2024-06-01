@@ -27,27 +27,57 @@
         />
         <q-btn stretch flat label="미승인 문제" to="/admin/adminNotapproved" />
         <q-btn stretch flat label="신고 문제" to="/admin/adminReported" />
+
         <q-btn
           rounded
-          label="로그인"
-          color="light-blue-13"
-          @click="openAdminLogin"
+          :label="isLoggedIn ? '관리자 로그인 중' : '로그인'"
+          :color="isLoggedIn ? 'orange' : 'light-blue-13'"
+          @click="isLoggedIn ? openLogoutDialog() : openAdminLogin()"
         />
       </q-toolbar>
     </q-header>
     <q-page-container style="max-width: 1080px; margin: 0 auto">
       <router-view />
     </q-page-container>
-    <AdminLogin v-model="adminLogin" />
+    <AdminLogin v-model="adminLogin" @login-success="handleLoginSuccess" />
+    <LogoutForm v-model="showLogout" @logout="handleLogout" />
   </q-layout>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import AdminLogin from 'src/components/auth/AdminLogin.vue';
-//로그인
+import LogoutForm from 'src/components/auth/LogoutForm.vue';
+
+// 로그인 다이얼로그 상태
 const adminLogin = ref(false);
-const openAdminLogin = () => (adminLogin.value = true);
+const isLoggedIn = ref(false);
+// 로그아웃 상태
+const showLogout = ref(false);
+
+const openAdminLogin = () => {
+  if (!isLoggedIn.value) adminLogin.value = true;
+};
+
+// 로그인 성공 핸들러
+const handleLoginSuccess = status => {
+  console.log('로그인 이벤트 수신');
+  if (status) {
+    isLoggedIn.value = true;
+    adminLogin.value = false;
+  }
+};
+
+// 로그아웃 다이얼로그 열기
+const openLogoutDialog = () => {
+  showLogout.value = true;
+};
+
+// 로그아웃 핸들러
+const handleLogout = () => {
+  isLoggedIn.value = false;
+  showLogout.value = false;
+};
 </script>
 
 <style lang="scss" scoped></style>

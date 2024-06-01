@@ -35,26 +35,35 @@
 import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 import { useManagerStore } from 'src/stores/auth';
-//import api from 'boot/axios';
+
+// 이벤트를 정의합니다.
+const emit = defineEmits(['login-success']);
+
+// 아이디와 패스워드 상태 관리
 const id = ref('');
 const pw = ref('');
+const modelValue = ref(false);
+
+// 로그인 데이터를 서버에 post 요청 전송
 const submitLogin = () => {
   const loginData = {
     managerId: id.value,
     managerPw: pw.value,
   };
   console.log('서버에 제출될 데이터:', loginData);
+
+  // useManagerStore 사용해 Pinia 스토어 접근, 서버 응답 데이터를 스토어에 저장
   const managerStore = useManagerStore();
   api
     .post('/api/manager/login', loginData)
     .then(response => {
-      //console.log('서버 응답:', response.data);
       managerStore.setAuthData(response.data);
-      // 성공적으로 서버에 데이터를 전송한 후의 동작
+      // 로그인 성공 이벤트 트리거
+      emit('login-success', true);
+      console.log('로그인 이벤트 발생');
     })
     .catch(error => {
-      //console.error('서버 응답 오류:', error);
-      // 서버에 데이터 전송 중 오류가 발생한 경우의 동작
+      console.error('서버 응답 오류:', error);
     });
 };
 </script>
@@ -65,7 +74,3 @@ const submitLogin = () => {
   font-family: 'Arial', sans-serif;
 }
 </style>
-<route lang="yaml">
-meta:
-  layout: admin
-</route>
