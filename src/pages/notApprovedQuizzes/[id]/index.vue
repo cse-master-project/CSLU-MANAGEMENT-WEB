@@ -35,40 +35,12 @@
 
 <script setup>
 import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
-import { ref, computed, defineAsyncComponent } from 'vue';
+import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { api } from 'src/boot/axios';
+import { useManagerStore } from 'src/stores/auth';
 
-const quizzes = ref([
-  {
-    quizId: 1,
-    userId: '한주영',
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type" : "1","quiz" : "맞는 답을 고르시오.","option" : ["101호", "102호", "103호", "104호"],"answer" : "4", "commentary" : "해설 ~~~"}',
-    createAt: '2024-04-27T11:38:12.753Z',
-    permissionStatus: 0,
-  },
-  {
-    quizId: 2,
-    userId: '박예진',
-    subject: 'c언어',
-    detailSubject: '포인터',
-    jsonContent: '{}',
-    createAt: '2024-04-27T11:40:00.000Z',
-    permissionStatus: 0,
-  },
-  {
-    quizId: 3,
-    userId: '박민영',
-    subject: '파이썬',
-    detailSubject: '개념',
-    jsonContent:
-      '{"type":"4","quiz":"파이썬은 쉽다.","answer":"0","commentary":"쉽다"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permissionStatus: 0,
-  },
-]);
+const quizzes = ref([]);
 
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
@@ -89,7 +61,9 @@ const quizContent = computed(() => {
   return null;
 });
 
-const type = quizContent.value.type;
+const type = computed(() => {
+  return currentQuiz.value ? currentQuiz.value.quizType.toString() : null;
+});
 
 const quizTypeViewForm = type => {
   switch (type) {
@@ -123,6 +97,31 @@ const quizTypeViewForm = type => {
     console.log('허가 X');
   };
 };
+
+const managerStore = useManagerStore();
+const accessToken = managerStore.accessToken;
+
+// 서버에서 데이터 가져오기
+const fetchQuizzes = async () => {
+  try {
+    const response = await api.get('/api/management/quiz/unapproved', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    quizzes.value = response.data.content; // 서버로부터 받아온 데이터를 quizzes에 저장
+    console.log(quizzes.value);
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+  }
+};
+
+onMounted(() => {
+  fetchQuizzes();
+  console.log('currentQuiz:', currentQuiz.value);
+  console.log('quizContent:', quizContent.value);
+  console.log('type:', type.value);
+});
 </script>
 
 <style>
