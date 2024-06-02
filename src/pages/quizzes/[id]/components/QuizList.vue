@@ -18,39 +18,31 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
+import { useManagerStore } from 'src/stores/auth';
 
-// 임시 데이터
-const quizzes = ref([
-  {
-    quizId: 1,
-    userId: '한주영',
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent: '{}',
-    createAt: '2024-04-27T11:38:12.753Z',
-    permissionStatus: 0,
-  },
-  {
-    quizId: 2,
-    userId: '박예진',
-    subject: 'c언어',
-    detailSubject: '포인터',
-    jsonContent: '{}',
-    createAt: '2024-04-27T11:40:00.000Z',
-    permissionStatus: 0,
-  },
-  {
-    quizId: 3,
-    userId: '박민영',
-    subject: '파이썬',
-    detailSubject: 'list',
-    jsonContent: '{}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permissionStatus: 0,
-  },
-]);
+const quizzes = ref([]);
+
+const managerStore = useManagerStore();
+const accessToken = managerStore.accessToken;
+
+const fetchQuizzes = async () => {
+  try {
+    const response = await api.get('/api/quiz/default', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    quizzes.value = response.data.content; // 서버로부터 받아온 데이터를 quizzes에 저장
+    console.log(quizzes.value);
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+  }
+};
+
+onMounted(fetchQuizzes); // 컴포넌트가 마운트되었을 때 데이터를 불러옴
 
 const router = useRouter();
 
