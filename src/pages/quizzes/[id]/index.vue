@@ -35,7 +35,6 @@ const quizzes = ref([]);
 
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
-
 const currentQuiz = computed(() => {
   return quizzes.value.find(q => q.quizId === parseInt(quizId));
 });
