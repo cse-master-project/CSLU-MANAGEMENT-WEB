@@ -10,17 +10,14 @@
         <div class="text-subtitle2">{{ currentQuiz.detailSubject }}</div>
       </q-card-section>
 
-      <!-- 퀴즈 승인 상태 -->
-      <q-card-section class="q-pa-md">
-        <QuizPermssionStatus :quiz="currentQuiz" />
-      </q-card-section>
-
       <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
       <q-card-section class="q-pa-md">
         <component :is="quizTypeViewForm(type)" :quizcontent="quizContent" />
       </q-card-section>
 
-      <q-card-section>사용자 ID : {{ currentQuiz.userId }}</q-card-section>
+      <q-card-section
+        >사용자 ID : {{ currentQuiz.userNickname }}</q-card-section
+      >
 
       <q-card-actions align="right" class="q-px-md q-py-sm">
         <q-btn flat color="negative" class="q-mr-sm" @click="notPermission"
@@ -34,7 +31,6 @@
 </template>
 
 <script setup>
-import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
@@ -88,14 +84,6 @@ const quizTypeViewForm = type => {
         import('src/components/quiztype/user/UserFillInTheBlank.vue'),
       );
   }
-
-  const submitQuiz = () => {
-    console.log(currentQuiz.value); // 현재 퀴즈 내용을 콘솔에 출력
-  };
-
-  const notPermission = () => {
-    console.log('허가 X');
-  };
 };
 
 const managerStore = useManagerStore();

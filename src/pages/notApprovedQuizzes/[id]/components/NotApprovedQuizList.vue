@@ -11,16 +11,8 @@
               <div class="text-subtitle2">{{ quiz.detailSubject }}</div>
             </q-card-section>
 
-            <q-card-section> 사용자ID : {{ quiz.userId }} </q-card-section>
-
             <q-card-section>
-              <q-chip
-                v-if="quiz.permissionStatus === 0"
-                color="orange"
-                text-color="white"
-              >
-                승인 대기중
-              </q-chip>
+              사용자ID : {{ quiz.userNickname }}
             </q-card-section>
           </q-card>
         </div>
