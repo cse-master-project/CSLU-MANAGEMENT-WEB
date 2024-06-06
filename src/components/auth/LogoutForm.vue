@@ -13,53 +13,35 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { api } from 'src/boot/axios';
-import { useManagerStore } from 'src/stores/auth';
+import { ref } from 'vue';
+import { useAdminAuthStore } from 'src/stores/adminAuth';
+import { adminAuth } from 'src/services/adminAuth';
+import { useRouter } from 'vue-router';
 
-const props = defineProps({
-  modelValue: Boolean,
-});
+// Pinia 스토어 사용
+const adminStore = useAdminAuthStore();
+const router = useRouter();
 
-const emit = defineEmits(['update:modelValue', 'logout']);
+// 다이얼로그의 열림/닫힘 상태를 제어하는 반응형 변수
+const show = ref();
 
-const show = ref(props.modelValue);
-
-watch(
-  () => props.modelValue,
-  newVal => {
-    show.value = newVal;
-  },
-);
-
-watch(show, newVal => {
-  emit('update:modelValue', newVal);
-});
-
-const close = () => {
-  emit('update:modelValue', false);
-};
-
+// 로그아웃 데이터를 서버에 post 요청 전송
 const logout = async () => {
-  const managerStore = useManagerStore();
-  const accessToken = managerStore.accessToken; // 토큰을 상태에서 가져옴
   try {
-    await api.post(
-      '/api/manager/logout',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
+    const accessToken = adminStore.accessToken; // accessToken을 스토어에서 가져옵니다.
+    await adminAuth.logout(accessToken); // accessToken을 인자로 넘깁니다.
+    adminStore.logout();
     console.log('로그아웃 성공');
-    managerStore.logout(); // 로그아웃 상태로 변경
-    emit('logout'); // 부모 컴포넌트에 로그아웃 이벤트 전달
-    close(); // 다이얼로그 닫기
+    // 로그아웃 성공 후 로그인 페이지로 리디렉션
+    router.push('/admin/adminLogin');
   } catch (error) {
     console.error('로그아웃 실패:', error);
   }
+};
+
+// 다이얼로그 닫기
+const close = () => {
+  show.value = false;
 };
 </script>
 
