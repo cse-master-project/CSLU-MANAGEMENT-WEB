@@ -8,7 +8,7 @@
         </q-card-section>
         <q-separator />
         <q-card-section>
-          <NotApprovedQuizList />
+          <!-- <NotApprovedQuizList /> -->
         </q-card-section>
       </q-card>
       <!-- 신고 문제 카드 -->
@@ -18,7 +18,7 @@
         </q-card-section>
         <q-separator />
         <q-card-section>
-          <ReportedQuizList />
+          <!-- <ReportedQuizList /> -->
         </q-card-section>
       </q-card>
     </div>
