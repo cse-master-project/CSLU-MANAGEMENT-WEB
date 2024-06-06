@@ -25,8 +25,13 @@
           label="사용자 문제 관리"
           to="/admin/adminUsermanagement"
         />
-        <q-btn stretch flat label="미승인 문제" to="/admin/adminNotapproved" />
-        <q-btn stretch flat label="신고 문제" to="/admin/adminReported" />
+        <q-btn
+          stretch
+          flat
+          label="미승인 문제 관리"
+          to="/admin/adminNotapproved"
+        />
+        <q-btn stretch flat label="신고 문제 관리" to="/admin/adminReported" />
 
         <q-btn
           rounded
