@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const api = axios.create({
   // 기본 URL
-  baseURL: 'http://203.232.193.164:8080',
+  baseURL: 'http://203.232.193.164:8081',
   // 헤더 설정
   headers: {
     'Content-Type': 'application/json',
