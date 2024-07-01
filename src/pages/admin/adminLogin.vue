@@ -43,11 +43,11 @@ import { adminAuth } from 'src/services/adminAuth';
 const id = ref('');
 const pw = ref('');
 
-// Pinia 스토어 사용
-const adminStore = useAdminAuthStore();
-
 // 라우터 사용
 const router = useRouter();
+
+// Pinia 스토어 사용
+const adminStore = useAdminAuthStore();
 
 // 로그인 데이터를 서버에 post 요청 전송
 const submitLogin = async () => {

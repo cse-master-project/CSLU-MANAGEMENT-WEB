@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 
+// Pinia 스토어 정의
 export const useAdminAuthStore = defineStore('adminAuth', {
   // 상태 정의
   state: () => ({
@@ -8,7 +9,7 @@ export const useAdminAuthStore = defineStore('adminAuth', {
     refreshIseAt: '',
     refreshExpAt: '',
   }),
-  // accessToken이 빈문자열이 아닌경우 true 반환.
+  // accessToken이 빈문자열이 아닌 경우 true 반환.
   getters: {
     isAuthenticated: state => !!state.accessToken,
   },
