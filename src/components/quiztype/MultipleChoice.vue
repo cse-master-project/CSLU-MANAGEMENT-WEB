@@ -111,6 +111,7 @@
 import { ref, defineEmits, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
+import useCategories from 'src/services/useCategories.js';
 
 const emits = defineEmits(['change-quiz-type']);
 
@@ -126,22 +127,8 @@ const fileInputHandler = event => {
   }
 };
 
-const categories = ref([]);
-const subjectOptions = ref([]);
-const detailSubjectOptions = ref([]);
-
-const fetchCategories = async () => {
-  try {
-    const response = await api.get('/api/quiz/subject');
-    categories.value = response.data;
-    subjectOptions.value = categories.value.map(category => category.subject);
-    detailSubjectOptions.value = categories.value.flatMap(
-      category => category.detailSubject,
-    );
-  } catch (error) {
-    console.error('카테고리를 불러오는 중 오류가 발생했습니다:', error);
-  }
-};
+const { categories, subjectOptions, detailSubjectOptions, fetchCategories } =
+  useCategories();
 
 onMounted(fetchCategories);
 
