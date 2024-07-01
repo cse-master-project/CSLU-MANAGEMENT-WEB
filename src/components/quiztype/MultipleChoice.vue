@@ -1,7 +1,9 @@
 <template>
+  <!-- 퀴즈 등록 폼 -->
   <q-form class="q-pa-md">
     <q-card>
       <q-card-section>
+        <!-- 대분류 선택 -->
         <q-select
           v-model="subject"
           :options="subjectOptions"
@@ -10,6 +12,7 @@
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
         />
+        <!-- 소분류 선택 -->
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
@@ -17,6 +20,7 @@
           outlined
           class="q-mb-md"
         />
+        <!-- 문제 입력 -->
         <q-input
           v-model="quiz"
           type="textarea"
@@ -27,6 +31,7 @@
           class="q-mb-md"
         />
 
+        <!-- 보기 입력 -->
         <div
           v-for="index in 4"
           :key="`choice-${index}`"
@@ -43,16 +48,17 @@
           />
         </div>
 
+        <!-- 정답 입력 (숫자만 가능) -->
         <q-input
-          v-model="answer"
-          type="textarea"
-          label="정답"
+          v-model.number="answer"
+          type="number"
+          label="정답 (숫자 입력)"
           outlined
-          autogrow
-          style="width: 10%"
+          style="width: 20%"
           class="q-mb-md"
         />
 
+        <!-- 해설 입력 -->
         <q-input
           v-model="commentary"
           type="textarea"
@@ -63,6 +69,7 @@
         />
       </q-card-section>
 
+      <!-- 파일 첨부 섹션 -->
       <q-card-section class="container">
         <label for="file">
           <div class="styled-file-input">
@@ -73,34 +80,40 @@
         <input type="file" id="file" @change="fileInputHandler" />
       </q-card-section>
 
+      <!-- 액션 버튼 섹션 -->
       <q-card-actions align="right">
         <q-btn
           class="backbtn"
-          @click="goBack()"
+          @click="goBack"
           style="width: 10%; margin: 3% 1%"
-          >뒤로가기</q-btn
         >
+          뒤로가기
+        </q-btn>
         <q-btn
           class="registerbtn"
           @click="submitQuiz"
           style="width: 10%; margin: 3% 0"
-          >문제 등록</q-btn
         >
+          문제 등록
+        </q-btn>
       </q-card-actions>
     </q-card>
   </q-form>
 </template>
 
 <script setup>
-import { ref, defineEmits, onMounted, computed } from 'vue';
+import { ref, defineEmits, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
-import { useManagerStore } from 'src/stores/auth';
 
+// 이벤트 정의.
 const emits = defineEmits(['change-quiz-type']);
+
+// 뒤로가기 버튼 눌렀을 때 호출됨.
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
+// 파일 첨부와 관련된 상태 및 처리 함수.
 const fileName = ref('');
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
@@ -109,21 +122,16 @@ const fileInputHandler = event => {
   }
 };
 
-// 서버에서 과목 분류 가져오기
+// 서버에서 과목 분류 데이터 가져와 상태로 저장.
 const categories = ref([]);
 const subjectOptions = ref([]);
 const detailSubjectOptions = ref([]);
 
-// 서버에서 카테고리 데이터를 가져오는 함수
+// 서버에서 카테고리 데이터를 가져오는 함수.
 const fetchCategories = async () => {
   try {
-    const response = await api.get('/api/quiz/subject', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await api.get('/api/quiz/subject');
     categories.value = response.data;
-    console.log('카테고리: ', categories.value);
 
     // 대분류와 소분류 옵션 설정
     subjectOptions.value = categories.value.map(category => category.subject);
@@ -135,12 +143,10 @@ const fetchCategories = async () => {
   }
 };
 
-// 컴포넌트가 마운트된 후에 카테고리 데이터를 가져오는 함수를 호출합니다.
+// 컴포넌트가 마운트된 후에 카테고리 데이터를 가져오는 함수를 호출.
 onMounted(fetchCategories);
 
-const managerStore = useManagerStore();
-const accessToken = managerStore.accessToken;
-
+// 사용자가 입력한 데이터 상태.
 const subject = ref('');
 const detailSubject = ref('');
 const quiz = ref('');
@@ -150,10 +156,10 @@ const option = ref([
   { label: '', value: '3' },
   { label: '', value: '4' },
 ]);
-const answer = ref('');
+const answer = ref(null); // 정답은 숫자
 const commentary = ref('');
 
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
+// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수.
 const updateDetailSubjectOptions = () => {
   const selectedCategory = categories.value.find(
     category => category.subject === subject.value,
@@ -181,20 +187,17 @@ const submitQuiz = () => {
     }),
     hasImage: false,
   };
-  console.log('서버에 제출될 데이터:', quizData);
+  // console.log('서버에 제출될 데이터:', quizData);
   api
-    .post('/api/quiz/default', quizData, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
+    .post('/api/quiz/default', quizData)
     .then(response => {
       console.log('서버 응답:', response.data);
-      // 성공적으로 서버에 데이터를 전송한 후의 동작
+      // 성공적으로 서버에 데이터를 전송한 후의 동작.
     })
     .catch(error => {
       console.error('서버 응답 오류:', error);
-      // 서버에 데이터 전송 중 오류가 발생한 경우의 동작
+      // 서버에 데이터 전송 중 오류가 발생한 경우의 동작 추가
+      // 예: 사용자에게 오류 메시지 표시
     });
 };
 </script>
