@@ -71,14 +71,21 @@
       </q-card-actions>
     </q-card>
   </q-form>
+  <!-- SubmitQuizSuccess 컴포넌트 -->
+  <SubmitQuizSuccess
+    v-if="submitQuizSuccess"
+    :submit-quiz-success="submitQuizSuccess"
+  />
 </template>
 
 <script setup>
 import { ref, defineEmits, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
-import { useManagerStore } from 'src/stores/auth';
+import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
+import useCategories from 'src/services/useCategories.js';
 
 const emits = defineEmits(['change-quiz-type']);
+
 const goBack = () => {
   emits('change-quiz-type', '');
 };
@@ -91,35 +98,10 @@ const fileInputHandler = event => {
   }
 };
 
-// 서버에서 과목 분류 가져오기
-const categories = ref([]);
-const subjectOptions = ref([]);
-const detailSubjectOptions = ref([]);
+const { categories, subjectOptions, detailSubjectOptions, fetchCategories } =
+  useCategories();
 
-// 서버에서 카테고리 데이터를 가져오는 함수
-const fetchCategories = async () => {
-  try {
-    const response = await api.get('/api/quiz/subject', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    categories.value = response.data;
-    // 대분류와 소분류 옵션 설정
-    subjectOptions.value = categories.value.map(category => category.subject);
-    detailSubjectOptions.value = categories.value.flatMap(
-      category => category.detailSubject,
-    );
-  } catch (error) {
-    console.error('카테고리를 불러오는 중 오류가 발생했습니다:', error);
-  }
-};
-
-// 컴포넌트가 마운트된 후에 카테고리 데이터를 가져오는 함수를 호출합니다.
 onMounted(fetchCategories);
-
-const managerStore = useManagerStore();
-const accessToken = managerStore.accessToken;
 
 const subject = ref('');
 const detailSubject = ref('');
@@ -141,6 +123,8 @@ const updateDetailSubjectOptions = () => {
 
 const filteredDetailSubjectOptions = ref([]);
 
+const submitQuizSuccess = ref(false);
+
 // 서버에 문제 제출.
 const submitQuiz = () => {
   const quizData = {
@@ -156,18 +140,28 @@ const submitQuiz = () => {
   };
   console.log('서버에 제출될 데이터:', quizData);
   api
-    .post('/api/quiz/default', quizData, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
+    .post('/api/quiz/default', quizData)
     .then(response => {
-      console.log('서버 응답:', response.data);
-      // 성공적으로 서버에 데이터를 전송한 후의 동작
+      // console.log('서버 응답:', response.data);
+      submitQuizSuccess.value = true;
     })
     .catch(error => {
-      console.error('서버 응답 오류:', error);
-      // 서버에 데이터 전송 중 오류가 발생한 경우의 동작
+      //console.error('서버 응답 오류:', error);
+      if (error.response.status === 400) {
+        // 예: 사용자에게 문제가 부족하거나 잘못된 데이터를 입력했다고 알림
+        alert(
+          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
+        );
+      } else if (error.response.status === 500) {
+        // 예: 서버 측에서 처리 중 오류 발생
+        alert(
+          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        );
+      } else {
+        // 기타 다른 오류 상황에 대한 처리
+        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+      }
+      // 실패 시 사용자 경험을 개선할 수 있는 추가적인 로직 추가
     });
 };
 </script>

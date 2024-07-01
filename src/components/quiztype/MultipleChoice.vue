@@ -159,6 +159,7 @@ const filteredDetailSubjectOptions = ref([]);
 
 const submitQuizSuccess = ref(false);
 
+// 서버에 문제 제출.
 const submitQuiz = () => {
   const quizData = {
     subject: subject.value,
@@ -172,7 +173,7 @@ const submitQuiz = () => {
     }),
     hasImage: false,
   };
-
+  // console.log('서버에 제출될 데이터:', quizData);
   api
     .post('/api/quiz/default', quizData)
     .then(response => {
