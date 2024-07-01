@@ -2,20 +2,24 @@
   <q-form class="q-pa-md">
     <q-card>
       <q-card-section>
+        <!-- 대분류 선택 -->
         <q-select
           v-model="subject"
           :options="subjectOptions"
           label="대분류"
           outlined
           class="q-mb-md"
+          @update:model-value="updateDetailSubjectOptions"
         />
+        <!-- 소분류 선택 -->
         <q-select
-          v-model="detailSubjet"
-          :options="detailSubjectOptions"
+          v-model="detailSubject"
+          :options="filteredDetailSubjectOptions"
           label="소분류"
           outlined
           class="q-mb-md"
         />
+        <!-- 문제 입력 -->
         <q-input
           v-model="quiz"
           type="textarea"
@@ -26,38 +30,70 @@
           class="q-mb-md"
         />
 
+        <!-- 왼쪽 그룹 옵션 입력 -->
         <div class="option-container">
           <div class="left">
-            <!--왼쪽그룹-->
-            <q-input label="a" v-model="leftOptions.a" outlined />
-            <q-input label="b" v-model="leftOptions.b" outlined />
-            <q-input label="c" v-model="leftOptions.c" outlined />
-          </div>
-          <div class="right">
-            <!--오른쪽 그룹-->
-            <q-input label="a`" v-model="rightOptions.a" outlined />
-            <q-input label="b`" v-model="rightOptions.b" outlined />
-            <q-input label="c`" v-model="rightOptions.c" outlined />
-          </div>
-        </div>
-
-        <div>
-          <div v-for="(answer, index) in answers" :key="index" class="q-mb-md">
             <q-input
-              v-model="answers[index]"
-              type="text"
-              class="q-mb-md"
+              label="a"
+              v-model="leftOptions.a"
               outlined
-              placeholder="답을 입력해주세요"
-              style="margin: 3% 0; width: 30%"
+              placeholder="왼쪽 그룹의 옵션 a를 입력하세요"
+              class="q-mb-md"
             />
-            <!--툴팁입니다. -->
-            <q-tooltip style="font-size: 1rem">
-              ata`,btc`처럼 입력해주세요. a: 노란꽃 a':벚꽃 b':개나리 -> atb'
-            </q-tooltip>
+            <q-input
+              label="b"
+              v-model="leftOptions.b"
+              outlined
+              placeholder="왼쪽 그룹의 옵션 b를 입력하세요"
+              class="q-mb-md"
+            />
+            <q-input
+              label="c"
+              v-model="leftOptions.c"
+              outlined
+              placeholder="왼쪽 그룹의 옵션 c를 입력하세요"
+              class="q-mb-md"
+            />
+          </div>
+          <!-- 오른쪽 그룹 옵션 입력 -->
+          <div class="right">
+            <q-input
+              label="a`"
+              v-model="rightOptions.a"
+              outlined
+              placeholder="오른쪽 그룹의 옵션 a를 입력하세요"
+              class="q-mb-md"
+            />
+            <q-input
+              label="b`"
+              v-model="rightOptions.b"
+              outlined
+              placeholder="오른쪽 그룹의 옵션 b를 입력하세요"
+              class="q-mb-md"
+            />
+            <q-input
+              label="c`"
+              v-model="rightOptions.c"
+              outlined
+              placeholder="오른쪽 그룹의 옵션 c를 입력하세요"
+              class="q-mb-md"
+            />
           </div>
         </div>
 
+        <!-- 정답 입력 -->
+        <!-- 정답 입력 -->
+        <div v-for="(answer, key) in answers" :key="key" class="q-mb-md">
+          <q-input
+            v-model="answers[key]"
+            type="text"
+            outlined
+            placeholder="답을 입력해주세요 (예: a는 a'이다)"
+            class="q-mb-md"
+          />
+        </div>
+
+        <!-- 해설 입력 -->
         <q-input
           v-model="commentary"
           type="textarea"
@@ -67,6 +103,7 @@
           style="margin: 3% 0"
         />
 
+        <!-- 파일 첨부 섹션 -->
         <section class="container">
           <label for="file">
             <div class="styled-file-input">
@@ -78,30 +115,41 @@
         </section>
       </q-card-section>
 
+      <!-- 액션 버튼 섹션 -->
       <q-card-actions align="right">
         <q-btn
           class="backbtn"
-          @click="goBack()"
+          @click="goBack"
           style="width: 10%; margin: 3% 1%"
-          >뒤로가기</q-btn
         >
-
+          뒤로가기
+        </q-btn>
         <q-btn
           class="registerbtn"
           @click="submitQuiz"
           style="width: 10%; margin: 3% 0"
-          >문제 등록</q-btn
         >
+          문제 등록
+        </q-btn>
       </q-card-actions>
     </q-card>
   </q-form>
+
+  <!-- SubmitQuizSuccess 컴포넌트 -->
+  <SubmitQuizSuccess
+    v-if="submitQuizSuccess"
+    :submit-quiz-success="submitQuizSuccess"
+  />
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
-import { QInput } from 'quasar';
+import { ref, defineEmits, onMounted } from 'vue';
+import { api } from 'src/boot/axios';
+import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
+import useCategories from 'src/services/useCategories.js';
 
 const emits = defineEmits(['change-quiz-type']);
+
 const goBack = () => {
   emits('change-quiz-type', '');
 };
@@ -114,22 +162,20 @@ const fileInputHandler = event => {
   }
 };
 
-const subjectOptions = [
-  { label: 'c언어', value: 'C' },
-  { label: '파이썬', value: 'Python' },
-  { label: '자료구조', value: 'Data structure' },
-];
+// useCategories에서 가져오는 데이터와 상태 변수들
+const { categories, subjectOptions, detailSubjectOptions, fetchCategories } =
+  useCategories();
 
-const detailSubjectOptions = [
-  { label: '스택', value: 'Stack' },
-  { label: '큐', value: 'Queue' },
-  { label: '그래프', value: 'Graph' },
-];
+onMounted(fetchCategories);
 
 const subject = ref('');
 const detailSubject = ref('');
 const quiz = ref('');
-const answers = ref(['']);
+const answers = ref({
+  a: '',
+  b: '',
+  c: '',
+});
 const leftOptions = ref({
   a: '',
   b: '',
@@ -143,34 +189,65 @@ const rightOptions = ref({
 });
 const commentary = ref('');
 
+const updateDetailSubjectOptions = () => {
+  const selectedCategory = categories.value.find(
+    category => category.subject === subject.value,
+  );
+  if (selectedCategory) {
+    filteredDetailSubjectOptions.value = selectedCategory.detailSubject;
+  } else {
+    filteredDetailSubjectOptions.value = [];
+  }
+};
+
+const filteredDetailSubjectOptions = ref([]);
+
+const submitQuizSuccess = ref(false);
+
 const submitQuiz = () => {
+  // 사용자가 입력한 답을 서버에 보낼 형식으로 변환
+  const transformedAnswers = Object.values(answers.value).map(answer => {
+    // '이다' 문자열 제거
+    const transformedAnswer = answer.replace(/이다/g, '');
+    const [left, right] = transformedAnswer.trim().split('는');
+    return `${left}t${right}`;
+  });
   const quizData = {
     subjectId: subject.value,
     detailSubject: detailSubject.value,
+    quizType: '3',
     jsonContent: JSON.stringify({
-      type: '3',
       quiz: quiz.value,
-      left_option: [
-        leftOptions.value.a,
-        leftOptions.value.b,
-        leftOptions.value.c,
-      ],
-      right_option: [
-        rightOptions.value.a,
-        rightOptions.value.b,
-        rightOptions.value.c,
-      ],
-      answer: answers.value,
+      left_option: leftOptions.value,
+      right_option: rightOptions.value,
+      answer: transformedAnswers,
       commentary: commentary.value,
     }),
+    hasImage: false,
   };
   console.log('서버에 제출될 데이터:', quizData);
+  api
+    .post('/api/quiz/default', quizData)
+    .then(response => {
+      submitQuizSuccess.value = true;
+    })
+    .catch(error => {
+      if (error.response.status === 400) {
+        alert(
+          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요.',
+        );
+      } else if (error.response.status === 500) {
+        alert(
+          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        );
+      } else {
+        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+      }
+    });
 };
 </script>
 
 <style scoped lang="scss">
-@import '/src/css/QuizBtn.css';
-
 .option-container {
   display: flex;
   margin: 30px 0;
@@ -183,6 +260,7 @@ const submitQuiz = () => {
   margin: 10px auto;
   width: 300px;
 }
+
 .left > *,
 .right > * {
   margin: 10px 0;
