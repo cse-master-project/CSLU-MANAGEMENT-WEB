@@ -99,21 +99,28 @@
       </q-card-actions>
     </q-card>
   </q-form>
+
+  <!-- SubmitQuizSuccess 컴포넌트 -->
+  <SubmitQuizSuccess
+    v-if="submitQuizSuccess"
+    :submit-quiz-success="submitQuizSuccess"
+  />
 </template>
 
 <script setup>
 import { ref, defineEmits, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
+import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
+import { useRouter } from 'vue-router';
 
-// 이벤트 정의.
 const emits = defineEmits(['change-quiz-type']);
 
-// 뒤로가기 버튼 눌렀을 때 호출됨.
+const router = useRouter();
+
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
-// 파일 첨부와 관련된 상태 및 처리 함수.
 const fileName = ref('');
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
@@ -122,18 +129,14 @@ const fileInputHandler = event => {
   }
 };
 
-// 서버에서 과목 분류 데이터 가져와 상태로 저장.
 const categories = ref([]);
 const subjectOptions = ref([]);
 const detailSubjectOptions = ref([]);
 
-// 서버에서 카테고리 데이터를 가져오는 함수.
 const fetchCategories = async () => {
   try {
     const response = await api.get('/api/quiz/subject');
     categories.value = response.data;
-
-    // 대분류와 소분류 옵션 설정
     subjectOptions.value = categories.value.map(category => category.subject);
     detailSubjectOptions.value = categories.value.flatMap(
       category => category.detailSubject,
@@ -143,10 +146,8 @@ const fetchCategories = async () => {
   }
 };
 
-// 컴포넌트가 마운트된 후에 카테고리 데이터를 가져오는 함수를 호출.
 onMounted(fetchCategories);
 
-// 사용자가 입력한 데이터 상태.
 const subject = ref('');
 const detailSubject = ref('');
 const quiz = ref('');
@@ -156,10 +157,9 @@ const option = ref([
   { label: '', value: '3' },
   { label: '', value: '4' },
 ]);
-const answer = ref(null); // 정답은 숫자
+const answer = ref(null);
 const commentary = ref('');
 
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수.
 const updateDetailSubjectOptions = () => {
   const selectedCategory = categories.value.find(
     category => category.subject === subject.value,
@@ -173,7 +173,8 @@ const updateDetailSubjectOptions = () => {
 
 const filteredDetailSubjectOptions = ref([]);
 
-// 서버에 문제 제출.
+const submitQuizSuccess = ref(false);
+
 const submitQuiz = () => {
   const quizData = {
     subject: subject.value,
@@ -187,17 +188,15 @@ const submitQuiz = () => {
     }),
     hasImage: false,
   };
-  // console.log('서버에 제출될 데이터:', quizData);
+
   api
     .post('/api/quiz/default', quizData)
     .then(response => {
       console.log('서버 응답:', response.data);
-      // 성공적으로 서버에 데이터를 전송한 후의 동작.
+      submitQuizSuccess.value = true;
     })
     .catch(error => {
       console.error('서버 응답 오류:', error);
-      // 서버에 데이터 전송 중 오류가 발생한 경우의 동작 추가
-      // 예: 사용자에게 오류 메시지 표시
     });
 };
 </script>
