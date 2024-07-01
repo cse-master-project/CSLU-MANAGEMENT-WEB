@@ -111,11 +111,8 @@
 import { ref, defineEmits, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
-import { useRouter } from 'vue-router';
 
 const emits = defineEmits(['change-quiz-type']);
-
-const router = useRouter();
 
 const goBack = () => {
   emits('change-quiz-type', '');
@@ -192,11 +189,26 @@ const submitQuiz = () => {
   api
     .post('/api/quiz/default', quizData)
     .then(response => {
-      console.log('서버 응답:', response.data);
+      // console.log('서버 응답:', response.data);
       submitQuizSuccess.value = true;
     })
     .catch(error => {
-      console.error('서버 응답 오류:', error);
+      //console.error('서버 응답 오류:', error);
+      if (error.response.status === 400) {
+        // 예: 사용자에게 문제가 부족하거나 잘못된 데이터를 입력했다고 알림
+        alert(
+          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
+        );
+      } else if (error.response.status === 500) {
+        // 예: 서버 측에서 처리 중 오류 발생
+        alert(
+          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        );
+      } else {
+        // 기타 다른 오류 상황에 대한 처리
+        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+      }
+      // 실패 시 사용자 경험을 개선할 수 있는 추가적인 로직 추가
     });
 };
 </script>
