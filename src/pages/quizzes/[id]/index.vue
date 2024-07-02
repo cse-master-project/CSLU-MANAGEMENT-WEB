@@ -5,6 +5,7 @@
       v-if="currentQuiz"
       style="width: 90%; max-width: 600px"
     >
+      <!-- 대분류, 소분류, 만든날짜 -->
       <q-card-section class="q-pa-md">
         <div class="text-h6 q-mb-xs text-orange">{{ currentQuiz.subject }}</div>
         <div class="text-subtitle2 q-mt-sm">
@@ -20,6 +21,13 @@
         <component
           :is="quizTypeViewForm(currentQuiz.quizType)"
           :quizcontent="quizContent"
+          v-if="!isEditing"
+        />
+        <component
+          :is="quizTypeEditForm(currentQuiz.quizType)"
+          :quizcontent="quizContent"
+          @update:quizcontent="updateQuizContent"
+          v-if="isEditing"
         />
       </q-card-section>
 
@@ -29,7 +37,8 @@
           color="negative"
           class="my-btn small-btn"
           icon="edit"
-          @click="quizModify"
+          @click="isEditing = true"
+          v-if="!isEditing"
         >
           수정
         </q-btn>
@@ -106,6 +115,34 @@ const quizTypeViewForm = quizType => {
   }
 };
 
+//문제 수정하기.
+const quizTypeEditForm = quizType => {
+  switch (quizType) {
+    case 1:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/MultipleChoiceEdit.vue'),
+      );
+    case 2:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/ShortAnswerEdit.vue'),
+      );
+    case 3:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/MatchingEdit.vue'),
+      );
+    case 4:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/TrueOrFalseEdit.vue'),
+      );
+    case 5:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/FillInTheBlankEdit.vue'),
+      );
+    default:
+      return null;
+  }
+};
+
 //서버에서 데이터 가져오기
 const fetchQuizzes = async () => {
   try {
@@ -125,6 +162,7 @@ onMounted(() => {
 });
 
 // 퀴즈 수정 기능
+const isEditing = ref(false); // 수정 모드 플래그
 
 // 퀴즈 폐기 기능 TODO
 // const deleteCurrentQuiz = async () => {
