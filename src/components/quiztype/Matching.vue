@@ -34,61 +34,54 @@
         <div class="option-container">
           <div class="left">
             <q-input
-              label="a"
-              v-model="leftOptions.a"
+              v-model="leftOptions[0]"
               outlined
-              placeholder="왼쪽 그룹의 옵션 a를 입력하세요"
+              placeholder="왼쪽 그룹의 옵션을 입력하세요"
               class="q-mb-md"
             />
             <q-input
-              label="b"
-              v-model="leftOptions.b"
+              v-model="leftOptions[1]"
               outlined
-              placeholder="왼쪽 그룹의 옵션 b를 입력하세요"
+              placeholder="왼쪽 그룹의 옵션을 입력하세요"
               class="q-mb-md"
             />
             <q-input
-              label="c"
-              v-model="leftOptions.c"
+              v-model="leftOptions[2]"
               outlined
-              placeholder="왼쪽 그룹의 옵션 c를 입력하세요"
+              placeholder="왼쪽 그룹의 옵션을 입력하세요"
               class="q-mb-md"
             />
           </div>
           <!-- 오른쪽 그룹 옵션 입력 -->
           <div class="right">
             <q-input
-              label="a`"
-              v-model="rightOptions.a"
+              v-model="rightOptions[0]"
               outlined
-              placeholder="오른쪽 그룹의 옵션 a를 입력하세요"
+              placeholder="오른쪽 그룹의 옵션을 입력하세요"
               class="q-mb-md"
             />
             <q-input
-              label="b`"
-              v-model="rightOptions.b"
+              v-model="rightOptions[1]"
               outlined
-              placeholder="오른쪽 그룹의 옵션 b를 입력하세요"
+              placeholder="오른쪽 그룹의 옵션을 입력하세요"
               class="q-mb-md"
             />
             <q-input
-              label="c`"
-              v-model="rightOptions.c"
+              v-model="rightOptions[2]"
               outlined
-              placeholder="오른쪽 그룹의 옵션 c를 입력하세요"
+              placeholder="오른쪽 그룹의 옵션을 입력하세요"
               class="q-mb-md"
             />
           </div>
         </div>
 
         <!-- 정답 입력 -->
-        <!-- 정답 입력 -->
-        <div v-for="(answer, key) in answers" :key="key" class="q-mb-md">
+        <div v-for="(answer, index) in answers" :key="index" class="q-mb-md">
           <q-input
-            v-model="answers[key]"
+            v-model="answers[index]"
             type="text"
             outlined
-            placeholder="답을 입력해주세요 (예: a는 a'이다)"
+            placeholder="답을 입력해주세요 (예: 0는0)"
             class="q-mb-md"
           />
         </div>
@@ -171,22 +164,9 @@ onMounted(fetchCategories);
 const subject = ref('');
 const detailSubject = ref('');
 const quiz = ref('');
-const answers = ref({
-  a: '',
-  b: '',
-  c: '',
-});
-const leftOptions = ref({
-  a: '',
-  b: '',
-  c: '',
-});
-
-const rightOptions = ref({
-  a: '',
-  b: '',
-  c: '',
-});
+const answers = ref(['', '', '']);
+const leftOptions = ref(['', '', '']);
+const rightOptions = ref(['', '', '']);
 const commentary = ref('');
 
 const updateDetailSubjectOptions = () => {
@@ -206,14 +186,12 @@ const submitQuizSuccess = ref(false);
 
 const submitQuiz = () => {
   // 사용자가 입력한 답을 서버에 보낼 형식으로 변환
-  const transformedAnswers = Object.values(answers.value).map(answer => {
-    // '이다' 문자열 제거
-    const transformedAnswer = answer.replace(/이다/g, '');
-    const [left, right] = transformedAnswer.trim().split('는');
-    return `${left}t${right}`;
+  const transformedAnswers = answers.value.map(answer => {
+    const [left, right] = answer.trim().split('는');
+    return `${left.trim()}t${right.trim()}`;
   });
   const quizData = {
-    subjectId: subject.value,
+    subject: subject.value,
     detailSubject: detailSubject.value,
     quizType: '3',
     jsonContent: JSON.stringify({
