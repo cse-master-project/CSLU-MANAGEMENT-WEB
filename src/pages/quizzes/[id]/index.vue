@@ -6,13 +6,21 @@
       style="width: 90%; max-width: 600px"
     >
       <q-card-section class="q-pa-md">
-        <div class="text-h5 q-mb-xs">{{ currentQuiz.subject }}</div>
-        <div class="text-subtitle2">{{ currentQuiz.detailSubject }}</div>
+        <div class="text-h6 q-mb-xs text-orange">{{ currentQuiz.subject }}</div>
+        <div class="text-subtitle2 q-mt-sm">
+          {{ currentQuiz.detailSubject }}
+        </div>
+        <div class="text-caption text-createAt">
+          {{ formatDate(currentQuiz.createAt) }}
+        </div>
       </q-card-section>
 
       <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
       <q-card-section class="q-pa-md">
-        <component :is="quizTypeViewForm(type)" :quizcontent="quizContent" />
+        <component
+          :is="quizTypeViewForm(currentQuiz.quizType)"
+          :quizcontent="quizContent"
+        />
       </q-card-section>
 
       <q-card-actions align="right" class="q-px-md q-py-sm">
@@ -30,16 +38,16 @@ import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { useManagerStore } from 'src/stores/auth';
+import { date } from 'quasar';
 
 const quizzes = ref([]);
-
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
+
 const currentQuiz = computed(() => {
   return quizzes.value.find(q => q.quizId === parseInt(quizId));
 });
 
-// 현재 퀴즈 내용 찾기(JSON). sonContent를 파싱하여 quizContent에 저장
 const quizContent = computed(() => {
   if (currentQuiz.value && currentQuiz.value.jsonContent) {
     try {
@@ -52,29 +60,25 @@ const quizContent = computed(() => {
   return null;
 });
 
-const type = computed(() => {
-  return currentQuiz.value ? currentQuiz.value.quizType.toString() : null;
-});
-
-const quizTypeViewForm = type => {
-  switch (type) {
-    case '1':
+const quizTypeViewForm = quizType => {
+  switch (quizType) {
+    case 1:
       return defineAsyncComponent(() =>
         import('src/components/quiztype/user/UserMultipleChoiceView.vue'),
       );
-    case '2':
+    case 2:
       return defineAsyncComponent(() =>
         import('src/components/quiztype/user/UserShortAnswerView.vue'),
       );
-    case '3':
+    case 3:
       return defineAsyncComponent(() =>
         import('src/components/quiztype/user/UserMatchingView.vue'),
       );
-    case '4':
+    case 4:
       return defineAsyncComponent(() =>
         import('src/components/quiztype/user/UserTrueOrFalseView.vue'),
       );
-    case '5':
+    case 5:
       return defineAsyncComponent(() =>
         import('src/components/quiztype/user/UserFillInTheBlank.vue'),
       );
@@ -86,7 +90,6 @@ const quizTypeViewForm = type => {
 const managerStore = useManagerStore();
 const accessToken = managerStore.accessToken;
 
-// 서버에서 데이터 가져오기
 const fetchQuizzes = async () => {
   try {
     const response = await api.get('/api/quiz/default', {
@@ -94,25 +97,35 @@ const fetchQuizzes = async () => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    quizzes.value = response.data.content; // 서버로부터 받아온 데이터를 quizzes에 저장
-    console.log(quizzes.value);
+    quizzes.value = response.data.content;
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
 
+const formatDate = dateString => {
+  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
+
 onMounted(() => {
   fetchQuizzes();
-  console.log('currentQuiz:', currentQuiz.value);
-  console.log('quizContent:', quizContent.value);
-  console.log('type:', type.value);
 });
 </script>
 
-<style>
+<style scoped>
 .my-card {
   max-width: 400px;
   margin: auto;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+.text-orange {
+  color: orange; /* 주황색 글자 색상 */
+}
+
+.text-createAt {
+  font-size: 0.75rem; /* 작은 글씨 */
+  color: #888888; /* 회색 */
 }
 </style>
 
