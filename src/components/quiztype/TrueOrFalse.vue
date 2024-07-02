@@ -2,6 +2,7 @@
   <q-form class="q-pa-md">
     <q-card>
       <q-card-section>
+        <!-- 대분류 선택 -->
         <q-select
           v-model="subject"
           :options="subjectOptions"
@@ -10,6 +11,7 @@
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
         />
+        <!-- 소분류 선택 -->
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
@@ -17,6 +19,7 @@
           outlined
           class="q-mb-md"
         />
+        <!-- 문제 입력 -->
         <q-input
           v-model="quiz"
           type="textarea"
@@ -26,9 +29,9 @@
           maxlength="300"
           class="q-mb-md"
         />
-        <!--OX-->
+        <!-- O/X 선택 -->
         <q-option-group v-model="selectedAnswer" :options="options" inline />
-
+        <!-- 해설 입력 -->
         <q-input
           v-model="commentary"
           type="textarea"
@@ -37,7 +40,7 @@
           autogrow
           style="margin: 3% 0"
         />
-        <!--첨부파일-->
+        <!-- 파일 첨부 섹션 -->
         <section class="container">
           <label for="file">
             <div class="styled-file-input">
@@ -48,21 +51,22 @@
           <input type="file" id="file" @change="fileInputHandler" />
         </section>
       </q-card-section>
-
+      <!-- 액션 버튼 섹션 -->
       <q-card-actions align="right">
         <q-btn
           class="backbtn"
-          @click="goBack()"
+          @click="goBack"
           style="width: 10%; margin: 3% 1%"
-          >뒤로가기</q-btn
         >
-
+          뒤로가기
+        </q-btn>
         <q-btn
           class="registerbtn"
           @click="submitQuiz"
           style="width: 10%; margin: 3% 0"
-          >문제 등록</q-btn
         >
+          문제 등록
+        </q-btn>
       </q-card-actions>
     </q-card>
   </q-form>
@@ -108,7 +112,6 @@ const quiz = ref('');
 const selectedAnswer = ref(null);
 const commentary = ref('');
 
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   const selectedCategory = categories.value.find(
     category => category.subject === subject.value,
@@ -126,7 +129,7 @@ const submitQuizSuccess = ref(false);
 
 const submitQuiz = () => {
   const quizData = {
-    subjectId: subject.value,
+    subject: subject.value,
     detailSubject: detailSubject.value,
     quizType: '4',
     jsonContent: JSON.stringify({
@@ -139,30 +142,40 @@ const submitQuiz = () => {
   api
     .post('/api/quiz/default', quizData)
     .then(response => {
-      // console.log('서버 응답:', response.data);
       submitQuizSuccess.value = true;
     })
     .catch(error => {
-      //console.error('서버 응답 오류:', error);
       if (error.response.status === 400) {
-        // 예: 사용자에게 문제가 부족하거나 잘못된 데이터를 입력했다고 알림
         alert(
           '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
         );
       } else if (error.response.status === 500) {
-        // 예: 서버 측에서 처리 중 오류 발생
         alert(
           '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
         );
       } else {
-        // 기타 다른 오류 상황에 대한 처리
         alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
       }
-      // 실패 시 사용자 경험을 개선할 수 있는 추가적인 로직 추가
     });
 };
 </script>
 
-<style lang="scss" scoped>
-@import '/src/css/QuizBtn.css';
+<style scoped lang="scss">
+.option-container {
+  display: flex;
+  margin: 30px 0;
+}
+
+.left,
+.right {
+  display: flex;
+  flex-direction: column;
+  margin: 10px auto;
+  width: 300px;
+}
+
+.left > *,
+.right > * {
+  margin: 10px 0;
+}
 </style>
