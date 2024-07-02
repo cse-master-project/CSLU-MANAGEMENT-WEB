@@ -6,7 +6,7 @@ import { useAdminAuthStore } from 'src/stores/adminAuth';
 
 const api = axios.create({
   // 기본 URL
-  baseURL: 'http://203.232.193.164:8081',
+  baseURL: 'http://203.232.193.164:8080',
   // 헤더 설정
   headers: {
     'Content-Type': 'application/json',
