@@ -7,7 +7,7 @@
     />
     <!-- quizType에 따라 동적 컴포넌트를 표시. -->
     <component
-      :is="quizTypeViewForm[quizType]"
+      :is="quizTypeCreateForm[quizType]"
       @change-quiz-type="changeQuizType"
       v-if="quizType !== ''"
     />
@@ -25,7 +25,7 @@ const changeQuizType = mode => {
   quizType.value = mode;
 };
 // 동적컴포넌트 정의 (비동기적)
-const quizTypeViewForm = {
+const quizTypeCreateForm = {
   MultipleChoice: defineAsyncComponent(() =>
     import('src/components/quiztype/MultipleChoice.vue'),
   ),

@@ -124,6 +124,8 @@ onMounted(() => {
   fetchQuizzes();
 });
 
+// 퀴즈 수정 기능
+
 // 퀴즈 폐기 기능 TODO
 // const deleteCurrentQuiz = async () => {
 //   await quizDelete(currentQuiz.value);
