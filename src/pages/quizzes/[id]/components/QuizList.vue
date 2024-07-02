@@ -26,13 +26,6 @@
           </q-card>
         </div>
       </q-list>
-
-      <q-pagination
-        v-model="currentPage"
-        :max="totalPages - 1"
-        @input="handlePageChange"
-        class="q-mt-md"
-      />
     </div>
   </q-page>
 </template>
@@ -45,35 +38,17 @@ import { date } from 'quasar';
 
 const quizzes = ref([]);
 
-const PAGE_SIZE = 20; // 페이지당 퀴즈 개수
-let currentPage = ref(0); // 현재 페이지 번호
-let totalPages = ref(0); // 전체 페이지 수
-
-const fetchQuizzes = async (page = 0) => {
+const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/quiz/default', {
-      params: {
-        page,
-        size: PAGE_SIZE,
-        sort: 'createAt,desc',
-      },
-    });
+    const response = await api.get('/api/quiz/default');
     quizzes.value = response.data.content;
     console.log(quizzes.value);
-    totalPages.value = response.data.totalPages;
-    currentPage.value = page; // currentPage 값 업데이트
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
 
-onMounted(() => {
-  fetchQuizzes();
-});
-
-const handlePageChange = page => {
-  fetchQuizzes(page);
-};
+onMounted(fetchQuizzes);
 
 const router = useRouter();
 
