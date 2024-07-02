@@ -38,7 +38,7 @@
           color="primary"
           class="my-btn small-btn"
           icon="delete"
-          @click="quizDelete"
+          @click="handleQuizDelete"
         >
           폐기
         </q-btn>
@@ -57,6 +57,7 @@ import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
 import DeleteQuizSuccess from 'src/components/quiz/DeleteQuizSuccess.vue';
+import { deleteQuizSuccess, quizDelete } from 'src/services/quizDelete.js';
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
@@ -124,18 +125,8 @@ onMounted(() => {
 });
 
 // 퀴즈 폐기 기능.
-const deleteQuizSuccess = ref(false);
-
-const quizDelete = async () => {
-  try {
-    await api.delete(`/api/management/quiz/${currentQuiz.value.quizId}`);
-    // 삭제 성공 시 로직
-    // console.log("삭제되었습니다.")
-    deleteQuizSuccess.value = true;
-  } catch (error) {
-    // console.error('퀴즈 삭제에 실패했습니다.', error);
-    alert('문제 폐기 중 예상치 못한 오류가 발생했습니다.');
-  }
+const handleQuizDelete = () => {
+  quizDelete(currentQuiz.value.quizId);
 };
 </script>
 
