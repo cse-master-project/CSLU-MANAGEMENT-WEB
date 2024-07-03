@@ -26,6 +26,7 @@
         <component
           :is="quizTypeEditForm(currentQuiz.quizType)"
           :quizcontent="quizContent"
+          :currentquiz="currentQuiz"
           @update:quizcontent="updateQuizContent"
           v-if="isEditing"
         />
@@ -87,6 +88,8 @@ const quizContent = computed(() => {
   }
   return null;
 });
+
+console.log('현재', currentQuiz, 'json:', quizContent);
 
 const quizTypeViewForm = quizType => {
   switch (quizType) {
