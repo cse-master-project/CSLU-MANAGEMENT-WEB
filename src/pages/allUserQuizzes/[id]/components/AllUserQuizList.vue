@@ -21,20 +21,12 @@
 import { ref, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
-import { useManagerStore } from 'src/stores/auth';
 
 const quizzes = ref([]);
 
-const managerStore = useManagerStore();
-const accessToken = managerStore.accessToken;
-
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/quiz/user', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await api.get('/api/quiz/user');
     quizzes.value = response.data.content; // 서버로부터 받아온 데이터를 quizzes에 저장
     console.log(quizzes.value);
   } catch (error) {

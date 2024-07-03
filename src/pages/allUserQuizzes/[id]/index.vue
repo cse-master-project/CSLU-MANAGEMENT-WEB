@@ -18,10 +18,9 @@
 
       <q-card-actions align="right" class="q-px-md q-py-sm">
         <q-btn flat color="negative" class="q-mr-sm" @click="notPermission"
-          >수정</q-btn
+          >반려</q-btn
         >
-
-        <q-btn flat color="primary" @click="submitQuiz">폐기</q-btn>
+        <q-btn flat color="primary" @click="submitQuiz">문제등록</q-btn>
       </q-card-actions>
     </q-card>
   </q-page>
@@ -31,7 +30,6 @@
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
-import { useManagerStore } from 'src/stores/auth';
 
 const quizzes = ref([]);
 
@@ -41,7 +39,7 @@ const currentQuiz = computed(() => {
   return quizzes.value.find(q => q.quizId === parseInt(quizId));
 });
 
-// 현재 퀴즈 내용 찾기(JSON). sonContent를 파싱하여 quizContent에 저장
+// 현재 퀴즈 내용 찾기(JSON). jsonContent를 파싱하여 quizContent에 저장
 const quizContent = computed(() => {
   if (currentQuiz.value && currentQuiz.value.jsonContent) {
     try {
@@ -58,50 +56,67 @@ const type = computed(() => {
   return currentQuiz.value ? currentQuiz.value.quizType.toString() : null;
 });
 
-const quizTypeViewForm = type => {
-  switch (type) {
-    case '1':
+const quizTypeViewForm = quizType => {
+  switch (quizType) {
+    case 1:
       return defineAsyncComponent(() =>
-        import('src/components/quiztype/user/UserMultipleChoiceView.vue'),
+        import('src/components/quiztype/quizView/MultipleChoiceView.vue'),
       );
-    case '2':
+    case 2:
       return defineAsyncComponent(() =>
-        import('src/components/quiztype/user/UserShortAnswerView.vue'),
+        import('src/components/quiztype/quizView/ShortAnswerView.vue'),
       );
-    case '3':
+    case 3:
       return defineAsyncComponent(() =>
-        import('src/components/quiztype/user/UserMatchingView.vue'),
+        import('src/components/quiztype/quizView/MatchingView.vue'),
       );
-    case '4':
+    case 4:
       return defineAsyncComponent(() =>
-        import('src/components/quiztype/user/UserTrueOrFalseView.vue'),
+        import('src/components/quiztype/quizView/TrueOrFalseView.vue'),
       );
-    case '5':
+    case 5:
       return defineAsyncComponent(() =>
-        import('src/components/quiztype/user/UserFillInTheBlank.vue'),
+        import('src/components/quiztype/quizView/FillInTheBlank.vue'),
       );
     default:
       return null;
   }
 };
 
-const managerStore = useManagerStore();
-const accessToken = managerStore.accessToken;
-
 // 서버에서 데이터 가져오기
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/quiz/user', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await api.get('/api/quiz/user');
     quizzes.value = response.data.content; // 서버로부터 받아온 데이터를 quizzes에 저장
     console.log(quizzes.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
+
+// 퀴즈 등록 함수
+// const submitQuiz = async () => {
+//   try {
+//     const response = await api.post(`/api/quiz/submit/${currentQuiz.value.quizId}`);
+//     console.log('퀴즈 등록 성공:', response.data);
+//     alert('퀴즈가 성공적으로 등록되었습니다.');
+//   } catch (error) {
+//     console.error('퀴즈 등록 실패:', error);
+//     alert('퀴즈 등록에 실패했습니다.');
+//   }
+// };
+
+// 퀴즈 반려 함수
+// const notPermission = async () => {
+//   try {
+//     const response = await api.post(`/api/quiz/reject/${currentQuiz.value.quizId}`);
+//     console.log('퀴즈 반려 성공:', response.data);
+//     alert('퀴즈가 반려되었습니다.');
+//   } catch (error) {
+//     console.error('퀴즈 반려 실패:', error);
+//     alert('퀴즈 반려에 실패했습니다.');
+//   }
+// };
 
 onMounted(() => {
   fetchQuizzes();
