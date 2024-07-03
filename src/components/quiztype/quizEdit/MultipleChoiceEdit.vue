@@ -9,13 +9,14 @@
       />
     </div>
 
-    <q-select
-      v-model="localQuizContent.answer"
-      :options="answerOptions"
-      label="정답"
-      option-value="value"
-      option-label="label"
-    />
+    <q-input
+          v-model.number="localQuizContent.answer"
+          type="number"
+          label="정답 (숫자 입력)"
+          outlined
+          style="width: 20%"
+          class="q-mb-md"
+        />
 
     <q-input v-model="localQuizContent.commentary" label="해설" />
 
@@ -46,12 +47,12 @@ const emit = defineEmits(['update:quizcontent', 'editComplete']);
 
 const localQuizContent = ref(props.quizcontent);
 
-const answerOptions = ref([
-  { value: 1, label: '1번' },
-  { value: 2, label: '2번' },
-  { value: 3, label: '3번' },
-  { value: 4, label: '4번' },
-]);
+// const answerOptions = ref([
+//   { value: 1, label: '1번' },
+//   { value: 2, label: '2번' },
+//   { value: 3, label: '3번' },
+//   { value: 4, label: '4번' },
+// ]);
 
 const submitQuiz = async () => {
   // 올바른 보기값을 추출하여 optionsValues에 할당
@@ -60,7 +61,7 @@ const submitQuiz = async () => {
   const quizData = {
     quiz: localQuizContent.value.quiz,
     option: optionsValues, // 옵션 라벨만 추출하여 배열로 전달
-    answer: localQuizContent.value.answer.value,
+    answer: localQuizContent.value.answer,
     commentary: localQuizContent.value.commentary,
   };
 
