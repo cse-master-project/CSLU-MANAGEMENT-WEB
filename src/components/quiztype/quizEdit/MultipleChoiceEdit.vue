@@ -47,13 +47,6 @@ const emit = defineEmits(['update:quizcontent', 'editComplete']);
 
 const localQuizContent = ref(props.quizcontent);
 
-// const answerOptions = ref([
-//   { value: 1, label: '1번' },
-//   { value: 2, label: '2번' },
-//   { value: 3, label: '3번' },
-//   { value: 4, label: '4번' },
-// ]);
-
 const submitQuiz = async () => {
   // 올바른 보기값을 추출하여 optionsValues에 할당
   const optionsValues = Object.values(localQuizContent.value.option);
