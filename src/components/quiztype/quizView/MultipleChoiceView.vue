@@ -17,7 +17,7 @@
       </q-card-section>
 
       <q-card-section>
-        <div>정답: {{ quizcontent.option[quizcontent.answer - 1] }}</div>
+        <div>정답: {{ quizcontent.answer }}</div>
       </q-card-section>
 
       <q-card-section>

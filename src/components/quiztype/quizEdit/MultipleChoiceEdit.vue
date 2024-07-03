@@ -74,6 +74,7 @@ const submitQuiz = async () => {
     alert('수정이 완료되었습니다 ^_^');
 
     emit('update:quizcontent', localQuizContent.value);
+    emit('editComplete');
   } catch (error) {
     console.error('수정 오류:', error);
     alert('문제 수정 중 오류가 발생했습니다.');

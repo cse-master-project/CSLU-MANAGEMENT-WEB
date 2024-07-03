@@ -28,6 +28,7 @@
           :quizcontent="quizContent"
           :currentquiz="currentQuiz"
           @update:quizcontent="updateQuizContent"
+          @editComplete="isEditing = false"
           v-if="isEditing"
         />
       </q-card-section>
@@ -186,6 +187,14 @@ const quizDelete = async () => {
     alert('문제 폐기 중 예상치 못한 오류가 발생했습니다.');
   }
 };
+
+const updateQuizContent = newContent => {
+  if (currentQuiz.value) {
+    currentQuiz.value.jsonContent = JSON.stringify(newContent);
+  }
+};
+
+console.log
 </script>
 
 <style scoped>
