@@ -12,6 +12,13 @@
           </q-toolbar-title>
         </q-btn>
 
+        <q-btn
+          stretch
+          flat
+          label="챕터 관리"
+          to="/admin/adminSubjectManagement"
+        />
+
         <q-btn stretch flat label="기본 문제 추가" to="/admin/adminCreate" />
         <q-btn
           stretch
