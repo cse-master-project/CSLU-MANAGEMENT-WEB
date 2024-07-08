@@ -1,92 +1,172 @@
 <template>
-  <div>
-    <!-- 문제 입력 -->
-    <q-input v-model="localQuizContent.quiz" label="문제" outlined />
+  <q-form class="q-pa-md">
+    <q-card>
+      <q-card-section>
+        <q-select
+          v-model="subject"
+          :options="subjectOptions"
+          label="대분류"
+          outlined
+          class="q-mb-md"
+          @update:model-value="updateDetailSubjectOptions"
+        />
+        <q-select
+          v-model="detailSubject"
+          :options="filteredDetailSubjectOptions"
+          label="소분류"
+          outlined
+          class="q-mb-md"
+        />
+        <q-input
+          v-model="quiz"
+          type="textarea"
+          outlined
+          rows="4"
+          placeholder="문제를 입력해주세요"
+          maxlength="300"
+          class="q-mb-md"
+        />
 
-    <!-- 정답 입력 (O/X 선택) -->
-    <q-option-group
-      v-model="localQuizContent.answer"
-      :options="options"
-      inline
-      label="정답"
-    />
-
-    <!-- 해설 입력 -->
-    <q-input
-      v-model="localQuizContent.commentary"
-      type="textarea"
-      label="해설"
-      outlined
-      autogrow
-    />
-
-    <!-- 수정 완료 버튼 -->
-    <q-btn
-      flat
-      color="negative"
-      class="my-btn small-btn"
-      icon="edit"
-      @click="submitQuiz"
-    >
-      수정 완료
-    </q-btn>
-  </div>
+        <q-select
+          v-model="answer"
+          :options="answerOptions"
+          label="답"
+          outlined
+          class="q-mb-md"
+        />
+        <q-input
+          v-model="commentary"
+          type="textarea"
+          placeholder="해설을 입력해주세요"
+          outlined
+          autogrow
+          style="margin: 3% 0"
+        />
+        <!--첨부파일-->
+        <section class="container">
+          <label for="file">
+            <div class="styled-file-input">
+              <div class="attachment-button">🔗 FILE UPLOAD</div>
+              <p v-if="fileName" class="attached-file">{{ fileName }}</p>
+            </div>
+          </label>
+          <input type="file" id="file" @change="fileInputHandler" />
+        </section>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn
+          class="backbtn"
+          @click="goBack()"
+          style="width: 10%; margin: 3% 1%"
+          >뒤로가기</q-btn
+        >
+        <q-btn
+          class="registerbtn"
+          @click="submitQuiz"
+          style="width: 10%; margin: 3% 0"
+          >문제 등록</q-btn
+        >
+      </q-card-actions>
+    </q-card>
+  </q-form>
+  <!-- SubmitQuizSuccess 컴포넌트 -->
+  <SubmitQuizSuccess
+    v-if="submitQuizSuccess"
+    :submit-quiz-success="submitQuizSuccess"
+  />
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineEmits, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
+import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
+import useCategories from 'src/services/useCategories.js';
 
-// 부모 컴포넌트로부터 데이터를 props로 받음
-const props = defineProps({
-  quizcontent: Object, // 현재 수정할 O/X 퀴즈 데이터
-  currentquiz: Object, // 현재 수정 중인 퀴즈의 기본 정보
-});
+const emits = defineEmits(['change-quiz-type']);
 
-// 이벤트 emit을 정의하여 부모 컴포넌트에 이벤트를 발생시킴
-const emit = defineEmits(['update:quizcontent', 'editComplete']);
+const goBack = () => {
+  emits('change-quiz-type', '');
+};
 
-// 로컬 상태 변수 정의
-const localQuizContent = ref({ ...props.quizcontent }); // 현재 퀴즈 데이터
+const fileName = ref('');
+const fileInputHandler = event => {
+  const files = event.target && event.target.files;
+  if (files && files[0]) {
+    fileName.value = event.target.files[0].name;
+  }
+};
 
-// O/X 선택 옵션 정의
-const options = [
+const { categories, subjectOptions, detailSubjectOptions, fetchCategories } =
+  useCategories();
+
+onMounted(fetchCategories);
+
+const subject = ref('');
+const detailSubject = ref('');
+const quiz = ref('');
+const answer = ref(1);
+const commentary = ref('');
+
+const answerOptions = [
   { label: 'O', value: 1 },
   { label: 'X', value: 0 },
 ];
 
-// 문제 수정 완료 처리 함수
-const submitQuiz = async () => {
-  const quizData = {
-    quiz: localQuizContent.value.quiz,
-    answer: localQuizContent.value.answer,
-    commentary: localQuizContent.value.commentary,
-  };
-
-  try {
-    // API를 통해 수정된 데이터를 서버로 전송
-    const response = await api.patch(
-      `/api/management/quiz/${props.currentquiz.quizId}`,
-      quizData,
-    );
-    console.log('응답:', response.data); // 서버 응답 확인
-    alert('수정이 완료되었습니다 ^_^');
-
-    // 부모 컴포넌트에 수정된 데이터 업데이트 이벤트 발생
-    emit('update:quizcontent', localQuizContent.value);
-    // 수정 완료 이벤트 발생
-    emit('editComplete');
-  } catch (error) {
-    console.error('수정 오류:', error);
-    alert('문제 수정 중 오류가 발생했습니다.');
+// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
+const updateDetailSubjectOptions = () => {
+  const selectedCategory = categories.value.find(
+    category => category.subject === subject.value,
+  );
+  if (selectedCategory) {
+    filteredDetailSubjectOptions.value = selectedCategory.detailSubject;
+  } else {
+    filteredDetailSubjectOptions.value = [];
   }
+};
+
+const filteredDetailSubjectOptions = ref([]);
+
+const submitQuizSuccess = ref(false);
+
+// 서버에 문제 제출.
+const submitQuiz = () => {
+  const quizData = {
+    subject: subject.value,
+    detailSubject: detailSubject.value,
+    quizType: '4',
+    jsonContent: JSON.stringify({
+      quiz: quiz.value,
+      answer: answer.value.value,
+      commentary: commentary.value,
+    }),
+    hasImage: false,
+  };
+  console.log('서버에 제출될 데이터:', quizData);
+  api
+    .post('/api/quiz/default', quizData)
+    .then(response => {
+      submitQuizSuccess.value = true;
+    })
+    .catch(error => {
+      if (error.response.status === 400) {
+        alert(
+          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
+        );
+      } else if (error.response.status === 500) {
+        alert(
+          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        );
+      } else {
+        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+      }
+    });
 };
 </script>
 
-<style scoped>
-.my-btn {
-  border-radius: 10px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-  padding: 8px 16px;
+<style scoped lang="scss">
+@import '/src/css/QuizBtn.css';
+
+.textbox {
+  font-family: 'Arial', sans-serif;
 }
 </style>
