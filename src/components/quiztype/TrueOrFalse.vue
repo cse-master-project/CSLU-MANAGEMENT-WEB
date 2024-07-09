@@ -96,7 +96,7 @@ const fileInputHandler = event => {
   }
 };
 
-const { categories, subjectOptions, detailSubjectOptions, fetchCategories } =
+const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
 
 onMounted(fetchCategories);
@@ -112,19 +112,14 @@ const answerOptions = [
   { label: 'X', value: 0 },
 ];
 
+const filteredDetailSubjectOptions = ref([]);
+
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
-  const selectedCategory = categories.value.find(
-    category => category.subject === subject.value,
+  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
+    subject.value,
   );
-  if (selectedCategory) {
-    filteredDetailSubjectOptions.value = selectedCategory.detailSubject;
-  } else {
-    filteredDetailSubjectOptions.value = [];
-  }
 };
-
-const filteredDetailSubjectOptions = ref([]);
 
 const submitQuizSuccess = ref(false);
 
