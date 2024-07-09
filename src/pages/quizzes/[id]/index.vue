@@ -5,14 +5,16 @@
       v-if="currentQuiz"
       style="width: 90%; max-width: 600px"
     >
-      <!-- 대분류, 소분류, 만든날짜 -->
+      <!-- 과목, 챕터, 생성일 -->
       <q-card-section class="q-pa-md">
-        <div class="text-h6 q-mb-xs text-orange">{{ currentQuiz.subject }}</div>
+        <div class="text-h6 q-mb-xs text-orange">
+          과목 : {{ currentQuiz.subject }}
+        </div>
         <div class="text-subtitle2 q-mt-sm">
-          {{ currentQuiz.detailSubject }}
+          챕터 : {{ currentQuiz.detailSubject }}
         </div>
         <div class="text-caption text-createAt">
-          {{ formatDate(currentQuiz.createAt) }}
+          생성일 : {{ formatDate(currentQuiz.createAt) }}
         </div>
       </q-card-section>
 
@@ -23,6 +25,7 @@
           :quizcontent="quizContent"
           v-if="!isEditing"
         />
+        <!-- 퀴즈 수정시 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
         <component
           :is="quizTypeEditForm(currentQuiz.quizType)"
           :quizcontent="quizContent"
@@ -36,6 +39,15 @@
       <q-card-actions align="right" class="q-px-md q-py-sm">
         <q-btn
           flat
+          color="primary"
+          class="my-btn small-btn"
+          icon="delete"
+          @click="quizDelete"
+        >
+          폐기
+        </q-btn>
+        <q-btn
+          flat
           color="negative"
           class="my-btn small-btn"
           icon="edit"
@@ -43,15 +55,6 @@
           v-if="!isEditing"
         >
           수정
-        </q-btn>
-        <q-btn
-          flat
-          color="primary"
-          class="my-btn small-btn"
-          icon="delete"
-          @click="quizDelete"
-        >
-          폐기
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -194,7 +197,7 @@ const updateQuizContent = newContent => {
   }
 };
 
-console.log
+console.log;
 </script>
 
 <style scoped>
