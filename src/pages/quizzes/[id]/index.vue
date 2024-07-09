@@ -42,7 +42,7 @@
           color="primary"
           class="my-btn small-btn"
           icon="delete"
-          @click="quizDelete"
+          @click="isDelete = true"
         >
           폐기
         </q-btn>
@@ -59,6 +59,11 @@
       </q-card-actions>
     </q-card>
   </q-page>
+  <DeleteQuizConfirmation
+    v-if="isDelete"
+    :is-delete="isDelete"
+    @update:isDelete="isDelete = $event"
+  />
   <DeleteQuizSuccess
     v-if="deleteQuizSuccess"
     :delete-quiz-success="deleteQuizSuccess"
@@ -71,6 +76,7 @@ import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
 import DeleteQuizSuccess from 'src/components/quiz/DeleteQuizSuccess.vue';
+import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.vue';
 // import { quizDelete, deleteQuizSuccess } from 'src/services/quizDelete.js'; // quizDelete.js에서 import
 
 const quizzes = ref([]);
@@ -171,25 +177,23 @@ onMounted(() => {
 // 퀴즈 수정 기능
 const isEditing = ref(false); // 수정 모드 플래그
 
-// 퀴즈 폐기 기능 TODO
-// const deleteCurrentQuiz = async () => {
-//   await quizDelete(currentQuiz.value);
-//   deleteQuizSuccess.value = true; // deleteQuizSuccess 변수를 true로 설정
-// };
 // 퀴즈 폐기 기능.
 const deleteQuizSuccess = ref(false);
 
-const quizDelete = async () => {
-  try {
-    await api.delete(`/api/management/quiz/${currentQuiz.value.quizId}`);
-    // 삭제 성공 시 로직
-    // console.log("삭제되었습니다.")
-    deleteQuizSuccess.value = true;
-  } catch (error) {
-    // console.error('퀴즈 삭제에 실패했습니다.', error);
-    alert('문제 폐기 중 예상치 못한 오류가 발생했습니다.');
-  }
-};
+// 퀴즈 페기 확인 기능
+const isDelete = ref(false);
+
+// const quizDelete = async () => {
+//   try {
+//     await api.delete(`/api/management/quiz/${currentQuiz.value.quizId}`);
+//     // 삭제 성공 시 로직
+//     // console.log("삭제되었습니다.")
+//     deleteQuizSuccess.value = true;
+//   } catch (error) {
+//     // console.error('퀴즈 삭제에 실패했습니다.', error);
+//     alert('문제 폐기 중 예상치 못한 오류가 발생했습니다.');
+//   }
+// };
 
 const updateQuizContent = newContent => {
   if (currentQuiz.value) {
