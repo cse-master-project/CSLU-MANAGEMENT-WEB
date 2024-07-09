@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
@@ -63,6 +63,12 @@ const quizzes = ref([]);
 const subject = ref('');
 const detailSubject = ref('');
 const filteredDetailSubjectOptions = ref([]);
+
+watch(subject, () => {
+  // 과목이 변경될 때마다 챕터 선택 초기화
+  detailSubject.value = '';
+  updateDetailSubjectOptions();
+});
 
 onMounted(async () => {
   await fetchCategories();
@@ -86,15 +92,18 @@ const goToQuizDetail = quizId => {
   router.push(`/quizzes/${quizId}`);
 };
 
-//대분류에 따른 소분류 필터링 함수.
+//과목에 따른 챕터 필터링 함수.
 const updateDetailSubjectOptions = () => {
   filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
     subject.value,
   );
 };
 
-//
-const sortQuizzes = () => {};
+// 퀴즈 정렬하기.
+const sortQuizzes = () => {
+  console.log(subject);
+  console.log(detailSubject);
+};
 
 // 문제 형식에 따라 유형 알려주기.
 const formatQuizType = quizType => {
