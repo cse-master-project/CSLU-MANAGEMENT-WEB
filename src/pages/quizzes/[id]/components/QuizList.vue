@@ -75,12 +75,18 @@ onMounted(async () => {
   await fetchQuizzes();
 });
 
+const quizSubject = ref([]);
+const quizDetailSubject = ref([]);
 //서버에서 퀴즈 목록 들고 오기.
 const fetchQuizzes = async () => {
   try {
     const response = await api.get('/api/quiz/default');
     quizzes.value = response.data.content;
+    quizSubject.value = quizzes.value.map(quiz => quiz.subject);
+    quizDetailSubject.value = quizzes.value.map(quiz => quiz.detailSubject);
     console.log('퀴즈목록 : ', quizzes.value);
+    console.log('과목목록 : ', quizSubject.value);
+    console.log('챕터목록 : ', quizDetailSubject.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
@@ -101,8 +107,10 @@ const updateDetailSubjectOptions = () => {
 
 // 퀴즈 정렬하기.
 const sortQuizzes = () => {
-  console.log(subject);
-  console.log(detailSubject);
+  console.log(subject.value); //이건 목록에서 선택한 과목
+  console.log(detailSubject.value); //이건 목록에서 선택한 챕터
+  console.log(quizSubject.value); //이건 서버에서 가져온 과목
+  console.log(quizDetailSubject.value); //이건 서버에서 가져온 챕터
 };
 
 // 문제 형식에 따라 유형 알려주기.
