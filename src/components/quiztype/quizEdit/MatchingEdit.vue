@@ -48,6 +48,15 @@
         color="negative"
         class="my-btn small-btn"
         icon="edit"
+        @click="editCancle"
+      >
+        수정 취소
+      </q-btn>
+      <q-btn
+        flat
+        color="negative"
+        class="my-btn small-btn"
+        icon="edit"
         @click="submitQuiz"
       >
         수정완료
@@ -65,10 +74,16 @@ const props = defineProps({
   currentquiz: Object,
 });
 
-const emit = defineEmits(['update:quizcontent', 'editComplete']);
+const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
 
 const localQuizContent = ref({ ...props.quizcontent });
 
+// 수정 취소 기능
+const editCancle = () => {
+  emit('update:isEditing', 'false');
+};
+
+//수정 완료 기능.
 const submitQuiz = async () => {
   const quizData = {
     quiz: localQuizContent.value.quiz,
@@ -87,10 +102,14 @@ const submitQuiz = async () => {
     alert('수정이 완료되었습니다 ^_^');
 
     emit('update:quizcontent', localQuizContent.value);
-    emit('editComplete');
+    emit('update:isEditing');
   } catch (error) {
-    console.error('수정 오류:', error);
-    alert('문제 수정 중 오류가 발생했습니다.');
+    if (error.response && error.response.status === 400) {
+      alert('바뀐게 없습니다 .. ㅜㅠ');
+    } else {
+      console.error('수정 오류:', error);
+      alert('문제 수정 중 오류가 발생했습니다.');
+    }
   }
 };
 </script>

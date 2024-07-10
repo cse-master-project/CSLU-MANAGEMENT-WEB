@@ -31,7 +31,7 @@
           :quizcontent="quizContent"
           :currentquiz="currentQuiz"
           @update:quizcontent="updateQuizContent"
-          @editComplete="isEditing = false"
+          @update:isEditing="isEditing = false"
           v-if="isEditing"
         />
       </q-card-section>
@@ -78,10 +78,29 @@ const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
 
+//서버에서 퀴즈 데이터 가져오기.
+const fetchQuizzes = async () => {
+  try {
+    const response = await api.get('/api/quiz/default');
+    quizzes.value = response.data.content;
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+  }
+};
+// 생성일 포맷팅.
+const formatDate = dateString => {
+  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
+
+onMounted(() => {
+  fetchQuizzes();
+});
+
+//퀴즈ID에 맞는 현재 퀴즈.
 const currentQuiz = computed(() => {
   return quizzes.value.find(q => q.quizId === parseInt(quizId));
 });
-
+//JSON 파싱.
 const quizContent = computed(() => {
   if (currentQuiz.value && currentQuiz.value.jsonContent) {
     try {
@@ -93,9 +112,9 @@ const quizContent = computed(() => {
   }
   return null;
 });
-
 //console.log('현재', currentQuiz, 'json:', quizContent);
 
+// 퀴타입별 보여주기.(View)
 const quizTypeViewForm = quizType => {
   switch (quizType) {
     case 1:
@@ -123,7 +142,7 @@ const quizTypeViewForm = quizType => {
   }
 };
 
-//문제 수정하기.
+//퀴즈 타입별 문제 수정하기.(Edit)
 const quizTypeEditForm = quizType => {
   switch (quizType) {
     case 1:
@@ -151,35 +170,18 @@ const quizTypeEditForm = quizType => {
   }
 };
 
-//서버에서 데이터 가져오기
-const fetchQuizzes = async () => {
-  try {
-    const response = await api.get('/api/quiz/default');
-    quizzes.value = response.data.content;
-  } catch (error) {
-    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
-  }
-};
-
-const formatDate = dateString => {
-  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
-};
-
-onMounted(() => {
-  fetchQuizzes();
-});
-
 // 퀴즈 수정 기능
 const isEditing = ref(false); // 수정 모드 플래그
 
-// 퀴즈 페기 확인 기능
-const isDelete = ref(false);
-
+// 수정한 퀴즈 다시 update
 const updateQuizContent = newContent => {
   if (currentQuiz.value) {
     currentQuiz.value.jsonContent = JSON.stringify(newContent);
   }
 };
+
+// 퀴즈 페기 확인 기능
+const isDelete = ref(false);
 </script>
 
 <style scoped>

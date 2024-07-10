@@ -1,7 +1,7 @@
 <template>
   <div>
+    <div class="text-h6 q-mb-md">문제 유형: 4지선다형</div>
     <q-input v-model="localQuizContent.quiz" label="문제" />
-
     <div v-for="(option, index) in localQuizContent.option" :key="index">
       <q-input
         v-model="localQuizContent.option[index]"
@@ -10,16 +10,24 @@
     </div>
 
     <q-input
-          v-model.number="localQuizContent.answer"
-          type="number"
-          label="정답 (숫자 입력)"
-          outlined
-          style="width: 20%"
-          class="q-mb-md"
-        />
+      v-model.number="localQuizContent.answer"
+      type="number"
+      label="정답 (숫자 입력)"
+      outlined
+      style="width: 20%"
+      class="q-mb-md"
+    />
 
     <q-input v-model="localQuizContent.commentary" label="해설" />
-
+    <q-btn
+      flat
+      color="negative"
+      class="my-btn small-btn"
+      icon="edit"
+      @click="editCancle"
+    >
+      수정 취소
+    </q-btn>
     <q-btn
       flat
       color="negative"
@@ -43,10 +51,16 @@ const props = defineProps({
 });
 
 //이벤트 보내기.(현재컴포넌트->다른컴포넌트)
-const emit = defineEmits(['update:quizcontent', 'editComplete']);
+const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
 
 const localQuizContent = ref(props.quizcontent);
 
+// 수정 취소 기능.
+const editCancle = () => {
+  emit('update:isEditing', 'false');
+};
+
+// 수정 완료 기능.
 const submitQuiz = async () => {
   // 올바른 보기값을 추출하여 optionsValues에 할당
   const optionsValues = Object.values(localQuizContent.value.option);
@@ -67,10 +81,14 @@ const submitQuiz = async () => {
     alert('수정이 완료되었습니다 ^_^');
 
     emit('update:quizcontent', localQuizContent.value);
-    emit('editComplete');
+    emit('update:isEditing');
   } catch (error) {
-    console.error('수정 오류:', error);
-    alert('문제 수정 중 오류가 발생했습니다.');
+    if (error.response && error.response.status === 400) {
+      alert('바뀐게 없습니다 .. ㅜㅠ');
+    } else {
+      console.error('수정 오류:', error);
+      alert('문제 수정 중 오류가 발생했습니다.');
+    }
   }
 };
 </script>
