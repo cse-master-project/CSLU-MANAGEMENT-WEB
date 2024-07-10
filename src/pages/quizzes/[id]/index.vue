@@ -62,11 +62,8 @@
   <DeleteQuizConfirmation
     v-if="isDelete"
     :is-delete="isDelete"
+    :current-quiz="currentQuiz"
     @update:isDelete="isDelete = $event"
-  />
-  <DeleteQuizSuccess
-    v-if="deleteQuizSuccess"
-    :delete-quiz-success="deleteQuizSuccess"
   />
 </template>
 
@@ -75,9 +72,7 @@ import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
-import DeleteQuizSuccess from 'src/components/quiz/DeleteQuizSuccess.vue';
 import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.vue';
-// import { quizDelete, deleteQuizSuccess } from 'src/services/quizDelete.js'; // quizDelete.js에서 import
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
@@ -99,7 +94,7 @@ const quizContent = computed(() => {
   return null;
 });
 
-console.log('현재', currentQuiz, 'json:', quizContent);
+//console.log('현재', currentQuiz, 'json:', quizContent);
 
 const quizTypeViewForm = quizType => {
   switch (quizType) {
@@ -177,31 +172,14 @@ onMounted(() => {
 // 퀴즈 수정 기능
 const isEditing = ref(false); // 수정 모드 플래그
 
-// 퀴즈 폐기 기능.
-const deleteQuizSuccess = ref(false);
-
 // 퀴즈 페기 확인 기능
 const isDelete = ref(false);
-
-// const quizDelete = async () => {
-//   try {
-//     await api.delete(`/api/management/quiz/${currentQuiz.value.quizId}`);
-//     // 삭제 성공 시 로직
-//     // console.log("삭제되었습니다.")
-//     deleteQuizSuccess.value = true;
-//   } catch (error) {
-//     // console.error('퀴즈 삭제에 실패했습니다.', error);
-//     alert('문제 폐기 중 예상치 못한 오류가 발생했습니다.');
-//   }
-// };
 
 const updateQuizContent = newContent => {
   if (currentQuiz.value) {
     currentQuiz.value.jsonContent = JSON.stringify(newContent);
   }
 };
-
-console.log;
 </script>
 
 <style scoped>
