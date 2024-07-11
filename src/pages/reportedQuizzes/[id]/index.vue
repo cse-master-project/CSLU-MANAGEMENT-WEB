@@ -13,6 +13,7 @@
           생성일 : {{ formatDate(quizzes.createAt) }}
         </div>
       </q-card-section>
+      <!-- 신고 문제 이유 표시 -->
 
       <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
       <q-card-section class="q-pa-md">
@@ -32,6 +33,17 @@
         />
       </q-card-section>
 
+      <div class="text-h6 q-mb-xs text-red">신고된 이유</div>
+      <div v-for="report in reports" :key="report.quizReportId" class="q-mt-sm">
+        <q-item>
+          <q-item-section>
+            <q-item-label>{{ report.content }}</q-item-label>
+            <q-item-label caption>{{
+              formatDate(report.reportAt)
+            }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </div>
       <q-card-actions align="right" class="q-px-md q-py-sm">
         <q-btn
           flat
@@ -68,7 +80,7 @@ import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
-import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.vue';
+import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
@@ -79,7 +91,7 @@ const fetchQuizzes = async () => {
   try {
     const response = await api.get(`/api/quiz/${quizId}`);
     quizzes.value = response.data;
-    console.log('퀴즈value:', quizzes.value);
+    console.log('신고문제:', quizzes.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
@@ -89,8 +101,20 @@ const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 };
 
+// 신고문제된 이유들 가져오기.
+const reports = ref([]);
+const fetchReoports = async () => {
+  try {
+    const response = await api.get(`/api/quiz/${quizId}/report`);
+    reports.value = response.data;
+    console.log('신고문제 이유 :', reports.value);
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+  }
+};
 onMounted(() => {
   fetchQuizzes();
+  fetchReoports();
 });
 
 //JSON 파싱.
