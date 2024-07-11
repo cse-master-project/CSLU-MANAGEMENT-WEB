@@ -1,83 +1,169 @@
 <template>
   <q-page padding>
-    <q-list bordered class="rounded-borders">
-      <q-item
-        v-for="quiz in quizzes"
-        :key="quiz.quizId"
-        clickable
-        v-ripple
-        @click="goToQuizDetail(quiz.quizId)"
-      >
-        <q-item-section>
-          <q-item-label>{{ quiz.subject }}</q-item-label>
-          <q-item-label caption>{{ quiz.detailSubject }}</q-item-label>
-        </q-item-section>
-
-        <q-item-section side top>
-          <QuizPermssionStatus :quiz="quiz" />
-        </q-item-section>
-      </q-item>
-    </q-list>
+    <div class="q-pa-md">
+      <q-select
+        v-model="subject"
+        :options="subjectOptions"
+        label="과목 선택"
+        class="q-mb-md"
+        @update:model-value="updateDetailSubjectOptions"
+      ></q-select>
+      <q-select
+        v-model="detailSubject"
+        :options="filteredDetailSubjectOptions"
+        label="챕터 선택"
+        class="q-mb-md"
+      ></q-select>
+      <q-btn @click="sortQuizzes">문제정렬</q-btn>
+      <q-list bordered class="rounded-borders">
+        <div v-for="quiz in quizzes" :key="quiz.quizId" class="q-mb-md">
+          <q-card
+            clickable
+            v-ripple
+            @click="goToQuizDetail(quiz.quizId)"
+            class="my-card"
+          >
+            <q-card-section class="card-content">
+              <div class="row justify-between">
+                <div class="text-h6 text-subject">
+                  과목 : {{ quiz.subject }}
+                </div>
+                <div class="text-body2">
+                  {{ formatQuizType(quiz.quizType) }}
+                </div>
+              </div>
+              <div class="row justify-between">
+                <div class="text-subtitle2">
+                  챕터 : {{ quiz.detailSubject }}
+                </div>
+              </div>
+              <div class="text-caption text-createAt">
+                생성일 : {{ formatDate(quiz.createAt) }}
+              </div>
+              <!-- TODO permissionStatus(0:대기,1:승인,2:거절) -->
+            </q-card-section>
+          </q-card>
+        </div>
+      </q-list>
+    </div>
   </q-page>
 </template>
 
 <script setup>
-import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
+import { date } from 'quasar';
+import useCategories from 'src/services/useCategories.js';
 
-// 임시 데이터
-const quizzes = ref([
-  {
-    quizId: 1,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type" : "1","quiz" : "맞는 답을 고르시오.","option" : ["101호", "102호", "103호", "104호"],"answer" : "4", "commentary" : "해설 ~~~"}',
-    createAt: '2024-04-27T11:38:12.753Z',
-    permission: 0,
-  },
-  {
-    quizId: 2,
-    subject: 'c언어',
-    detailSubject: '포인터',
-    jsonContent:
-      '{"type" : "2", "quiz": "스택은 ?","answer":"스택","commentary":"해설 ~"}',
-    createAt: '2024-04-27T11:40:00.000Z',
-    permission: 1,
-  },
-  {
-    quizId: 3,
-    subject: '파이썬',
-    detailSubject: 'list',
-    jsonContent:
-      '{"type":"3","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 2,
-  },
-  {
-    quizId: 4,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"4","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 0,
-  },
-  {
-    quizId: 5,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 1,
-  },
-]);
+//카테고리 조회 서비스 사용.
+const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
+  useCategories();
+
+const quizzes = ref([]);
+const subject = ref('');
+const detailSubject = ref('');
+const filteredDetailSubjectOptions = ref([]);
+
+watch(subject, () => {
+  // 과목이 변경될 때마다 챕터 선택 초기화
+  detailSubject.value = '';
+  updateDetailSubjectOptions();
+});
+
+onMounted(async () => {
+  await fetchCategories();
+  await fetchQuizzes();
+});
+
+const quizSubject = ref([]);
+const quizDetailSubject = ref([]);
+//서버에서 퀴즈 목록 들고 오기.
+const fetchQuizzes = async () => {
+  try {
+    const response = await api.get('/api/quiz/my');
+    quizzes.value = response.data.content;
+    quizSubject.value = quizzes.value.map(quiz => quiz.subject);
+    quizDetailSubject.value = quizzes.value.map(quiz => quiz.detailSubject);
+    console.log('퀴즈목록 : ', quizzes.value);
+    console.log('과목목록 : ', quizSubject.value);
+    console.log('챕터목록 : ', quizDetailSubject.value);
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+  }
+};
 
 const router = useRouter();
 
-function goToQuizDetail(quizId) {
-  router.push(`/userQuizzes/${quizId}`);
-}
+const goToQuizDetail = quizId => {
+  router.push(`/quizzes/${quizId}`); //퀴즈ID에 맞게 : /퀴즈ID
+};
+
+//과목에 따른 챕터 필터링 함수.
+const updateDetailSubjectOptions = () => {
+  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
+    subject.value,
+  );
+};
+
+// 퀴즈 정렬하기.
+const sortQuizzes = () => {
+  console.log(subject.value); //이건 목록에서 선택한 과목
+  console.log(detailSubject.value); //이건 목록에서 선택한 챕터
+  console.log(quizSubject.value); //이건 서버에서 가져온 과목
+  console.log(quizDetailSubject.value); //이건 서버에서 가져온 챕터
+};
+
+// 문제 형식에 따라 유형 알려주기.
+const formatQuizType = quizType => {
+  switch (quizType) {
+    case 1:
+      return '<4지선다형>';
+    case 2:
+      return '<단답형>';
+    case 3:
+      return '<선긋기형>';
+    case 4:
+      return '<O/X형>';
+    case 5:
+      return '<빈칸 채우기형>';
+    default:
+      return '<알 수 없는 유형>';
+  }
+};
+
+// 시간 알려주기.
+const formatDate = dateString => {
+  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
 </script>
+
+<style scoped>
+.my-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.my-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  padding: 10px;
+}
+
+.text-subject {
+  font-weight: bold;
+  color: #ffa500; /* 주황색 */
+}
+
+.text-createAt {
+  font-size: 0.75rem; /* 작은 글씨 */
+  color: #888888; /* 회색 */
+}
+</style>
+
+<route lang="yaml">
+meta:
+  layout: admin
+</route>
