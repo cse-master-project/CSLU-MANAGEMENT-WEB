@@ -1,12 +1,13 @@
 <template>
   <q-form class="q-pa-md">
     <q-card>
+      <q-p>빈칸채우기형</q-p>
       <q-card-section>
         <!-- 대분류 선택 -->
         <q-select
           v-model="subject"
           :options="subjectOptions"
-          label="대분류"
+          label="과목"
           outlined
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
@@ -15,7 +16,7 @@
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
-          label="소분류"
+          label="챕터"
           outlined
           class="q-mb-md"
         />
