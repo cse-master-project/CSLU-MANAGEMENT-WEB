@@ -71,7 +71,7 @@ import { api } from 'src/boot/axios';
 
 const props = defineProps({
   quizcontent: Object,
-  currentquiz: Object,
+  quizzes: Object,
 });
 
 const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
@@ -95,7 +95,7 @@ const submitQuiz = async () => {
 
   try {
     const response = await api.patch(
-      `/api/management/quiz/${props.currentquiz.quizId}`,
+      `/api/management/quiz/${props.quizzes.quizId}`,
       quizData,
     );
     console.log('응답:', response.data); // 서버 응답 확인

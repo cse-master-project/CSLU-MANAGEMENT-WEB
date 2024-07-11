@@ -95,7 +95,7 @@ const fetchQuizzes = async () => {
 const router = useRouter();
 
 const goToQuizDetail = quizId => {
-  router.push(`/quizzes/${quizId}`);
+  router.push(`/quizzes/${quizId}`); //퀴즈ID에 맞게 : /퀴즈ID
 };
 
 //과목에 따른 챕터 필터링 함수.

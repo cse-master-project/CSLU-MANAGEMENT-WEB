@@ -35,7 +35,7 @@ import { api } from 'src/boot/axios';
 // 데이터 받기.(다른 컴포넌트 -> 현재 컴포넌트)
 const props = defineProps({
   quizcontent: Object,
-  currentquiz: Object,
+  quizzes: Object,
 });
 
 // 이벤트 보내기.(현재 컴포넌트 -> 다른 컴포넌트)
@@ -58,7 +58,7 @@ const submitQuiz = async () => {
 
   try {
     const response = await api.patch(
-      `/api/management/quiz/${props.currentquiz.quizId}`,
+      `/api/management/quiz/${props.quizzes.quizId}`,
       quizData,
     );
     console.log('응답:', response.data); // 서버 응답 확인

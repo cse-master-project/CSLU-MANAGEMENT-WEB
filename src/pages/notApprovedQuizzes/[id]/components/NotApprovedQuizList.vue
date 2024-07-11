@@ -11,19 +11,22 @@
           >
             <q-card-section class="card-content">
               <div class="row justify-between">
-                <div class="text-h6 text-subject">{{ quiz.subject }}</div>
+                <div class="text-h6 text-subject">
+                  과목 : {{ quiz.subject }}
+                </div>
                 <div class="text-body2">
                   {{ formatQuizType(quiz.quizType) }}
                 </div>
               </div>
               <div class="row justify-between">
-                <div class="text-subtitle2">{{ quiz.detailSubject }}</div>
+                <div class="text-subtitle2">
+                  챕터 : {{ quiz.detailSubject }}
+                </div>
               </div>
               <div class="text-caption text-createAt">
-                {{ formatDate(quiz.createAt) }}
+                생성일 : {{ formatDate(quiz.createAt) }}
               </div>
             </q-card-section>
-
             <q-card-section>
               사용자ID : {{ quiz.userNickname }}
             </q-card-section>

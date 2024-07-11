@@ -1,35 +1,31 @@
 <template>
   <q-page class="q-pa-md flex flex-center">
-    <q-card
-      class="my-card"
-      v-if="currentQuiz"
-      style="width: 90%; max-width: 600px"
-    >
+    <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 600px">
       <!-- 과목, 챕터, 생성일 -->
       <q-card-section class="q-pa-md">
         <div class="text-h6 q-mb-xs text-orange">
-          과목 : {{ currentQuiz.subject }}
+          과목 : {{ quizzes.subject }}
         </div>
         <div class="text-subtitle2 q-mt-sm">
-          챕터 : {{ currentQuiz.detailSubject }}
+          챕터 : {{ quizzes.detailSubject }}
         </div>
         <div class="text-caption text-createAt">
-          생성일 : {{ formatDate(currentQuiz.createAt) }}
+          생성일 : {{ formatDate(quizzes.createAt) }}
         </div>
       </q-card-section>
 
       <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
       <q-card-section class="q-pa-md">
         <component
-          :is="quizTypeViewForm(currentQuiz.quizType)"
+          :is="quizTypeViewForm(quizzes.quizType)"
           :quizcontent="quizContent"
           v-if="!isEditing"
         />
         <!-- 퀴즈 수정시 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
         <component
-          :is="quizTypeEditForm(currentQuiz.quizType)"
+          :is="quizTypeEditForm(quizzes.quizType)"
           :quizcontent="quizContent"
-          :currentquiz="currentQuiz"
+          :quizzes="quizzes"
           @update:quizcontent="updateQuizContent"
           @update:isEditing="isEditing = false"
           v-if="isEditing"
@@ -62,7 +58,7 @@
   <DeleteQuizConfirmation
     v-if="isDelete"
     :is-delete="isDelete"
-    :current-quiz="currentQuiz"
+    :current-quiz="quizzes"
     @update:isDelete="isDelete = $event"
   />
 </template>
@@ -77,12 +73,14 @@ import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.v
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
+// console.log('퀴즈아이디:', quizId);
 
-//서버에서 퀴즈 데이터 가져오기.
+//서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/quiz/default');
-    quizzes.value = response.data.content;
+    const response = await api.get(`/api/quiz/${quizId}`);
+    quizzes.value = response.data;
+    console.log('퀴즈value:', quizzes.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
@@ -97,14 +95,12 @@ onMounted(() => {
 });
 
 //퀴즈ID에 맞는 현재 퀴즈.
-const currentQuiz = computed(() => {
-  return quizzes.value.find(q => q.quizId === parseInt(quizId));
-});
+
 //JSON 파싱.
 const quizContent = computed(() => {
-  if (currentQuiz.value && currentQuiz.value.jsonContent) {
+  if (quizzes.value && quizzes.value.jsonContent) {
     try {
-      return JSON.parse(currentQuiz.value.jsonContent);
+      return JSON.parse(quizzes.value.jsonContent);
     } catch (e) {
       console.error('JSON 파싱 오류:', e);
       return null;
@@ -112,7 +108,7 @@ const quizContent = computed(() => {
   }
   return null;
 });
-//console.log('현재', currentQuiz, 'json:', quizContent);
+//console.log('현재', quizzes, 'json:', quizContent);
 
 // 퀴타입별 보여주기.(View)
 const quizTypeViewForm = quizType => {
@@ -175,8 +171,8 @@ const isEditing = ref(false); // 수정 모드 플래그
 
 // 수정한 퀴즈 다시 update
 const updateQuizContent = newContent => {
-  if (currentQuiz.value) {
-    currentQuiz.value.jsonContent = JSON.stringify(newContent);
+  if (quizzes.value) {
+    quizzes.value.jsonContent = JSON.stringify(newContent);
   }
 };
 

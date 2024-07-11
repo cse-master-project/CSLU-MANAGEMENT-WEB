@@ -85,9 +85,10 @@ const fetchQuizzes = async () => {
     quizSubject.value = quizzes.value.map(quiz => quiz.subject);
     quizDetailSubject.value = quizzes.value.map(quiz => quiz.detailSubject);
     console.log('퀴즈목록 : ', quizzes.value);
-    console.log('과목목록 : ', quizSubject.value);
-    console.log('챕터목록 : ', quizDetailSubject.value);
+    //console.log('과목목록 : ', quizSubject.value);
+    //console.log('챕터목록 : ', quizDetailSubject.value);
   } catch (error) {
+    alert('퀴즈 데이터를 불러오는데 실패했습니다.');
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };

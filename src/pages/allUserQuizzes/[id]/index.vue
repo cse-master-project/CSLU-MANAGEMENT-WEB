@@ -5,9 +5,17 @@
       v-if="currentQuiz"
       style="width: 90%; max-width: 600px"
     >
+      <!-- 과목, 챕터, 생성일 -->
       <q-card-section class="q-pa-md">
-        <div class="text-h5 q-mb-xs">{{ currentQuiz.subject }}</div>
-        <div class="text-subtitle2">{{ currentQuiz.detailSubject }}</div>
+        <div class="text-h6 q-mb-xs text-orange">
+          과목 : {{ currentQuiz.subject }}
+        </div>
+        <div class="text-subtitle2 q-mt-sm">
+          챕터 : {{ currentQuiz.detailSubject }}
+        </div>
+        <div class="text-caption text-createAt">
+          생성일 : {{ formatDate(currentQuiz.createAt) }}
+        </div>
       </q-card-section>
 
       <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
