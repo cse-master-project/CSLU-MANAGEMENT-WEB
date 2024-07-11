@@ -64,16 +64,17 @@
 </template>
 
 <script setup>
-import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
+import { quizTypeViewForm } from 'src/utils/quizTypeViewForm';
+import { quizTypeEditForm } from 'src/utils/quizTypeEditForm';
 import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
-// console.log('퀴즈아이디:', quizId);
 
 //서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
 const fetchQuizzes = async () => {
@@ -94,8 +95,6 @@ onMounted(() => {
   fetchQuizzes();
 });
 
-//퀴즈ID에 맞는 현재 퀴즈.
-
 //JSON 파싱.
 const quizContent = computed(() => {
   if (quizzes.value && quizzes.value.jsonContent) {
@@ -108,63 +107,12 @@ const quizContent = computed(() => {
   }
   return null;
 });
-//console.log('현재', quizzes, 'json:', quizContent);
 
 // 퀴타입별 보여주기.(View)
-const quizTypeViewForm = quizType => {
-  switch (quizType) {
-    case 1:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizView/MultipleChoiceView.vue'),
-      );
-    case 2:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizView/ShortAnswerView.vue'),
-      );
-    case 3:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizView/MatchingView.vue'),
-      );
-    case 4:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizView/TrueOrFalseView.vue'),
-      );
-    case 5:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizView/FillInTheBlank.vue'),
-      );
-    default:
-      return null;
-  }
-};
+// import { quizTypeViewForm } from 'src/utils/quizTypeViewForm';
 
 //퀴즈 타입별 문제 수정하기.(Edit)
-const quizTypeEditForm = quizType => {
-  switch (quizType) {
-    case 1:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/MultipleChoiceEdit.vue'),
-      );
-    case 2:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/ShortAnswerEdit.vue'),
-      );
-    case 3:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/MatchingEdit.vue'),
-      );
-    case 4:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/TrueOrFalseEdit.vue'),
-      );
-    case 5:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/FillInTheBlankEdit.vue'),
-      );
-    default:
-      return null;
-  }
-};
+// import { quizTypeEditForm } from 'src/utils/quizTypeEditForm';
 
 // 퀴즈 수정 기능
 const isEditing = ref(false); // 수정 모드 플래그
