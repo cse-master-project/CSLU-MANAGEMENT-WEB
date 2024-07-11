@@ -64,12 +64,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
-import { quizTypeViewForm } from 'src/utils/quizTypeViewForm';
-import { quizTypeEditForm } from 'src/utils/quizTypeEditForm';
 import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
@@ -109,10 +107,60 @@ const quizContent = computed(() => {
 });
 
 // 퀴타입별 보여주기.(View)
-// import { quizTypeViewForm } from 'src/utils/quizTypeViewForm';
+const quizTypeViewForm = quizType => {
+  switch (quizType) {
+    case 1:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizView/MultipleChoiceView.vue'),
+      );
+    case 2:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizView/ShortAnswerView.vue'),
+      );
+    case 3:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizView/MatchingView.vue'),
+      );
+    case 4:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizView/TrueOrFalseView.vue'),
+      );
+    case 5:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizView/FillInTheBlank.vue'),
+      );
+    default:
+      return null;
+  }
+};
 
 //퀴즈 타입별 문제 수정하기.(Edit)
-// import { quizTypeEditForm } from 'src/utils/quizTypeEditForm';
+const quizTypeEditForm = quizType => {
+  switch (quizType) {
+    case 1:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/MultipleChoiceEdit.vue'),
+      );
+    case 2:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/ShortAnswerEdit.vue'),
+      );
+    case 3:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/MatchingEdit.vue'),
+      );
+    case 4:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/TrueOrFalseEdit.vue'),
+      );
+    case 5:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/FillInTheBlankEdit.vue'),
+      );
+    default:
+      return null;
+  }
+};
 
 // 퀴즈 수정 기능
 const isEditing = ref(false); // 수정 모드 플래그
