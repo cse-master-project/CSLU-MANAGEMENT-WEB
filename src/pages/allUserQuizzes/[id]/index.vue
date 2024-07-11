@@ -68,7 +68,7 @@ import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
-import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.vue';
+import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기

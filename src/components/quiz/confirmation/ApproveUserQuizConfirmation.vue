@@ -37,10 +37,13 @@ const router = useRouter();
 //퀴즈 승인 기능.
 const quizApprove = async () => {
   try {
-    await api.put(`/api/management/quiz/${props.currentQuiz.quizId}/approve`);
-    // 삭제 성공 시 로직(alert말고 딴거 해야함.)
+    console.log('승인 요청 보냄');
+    const response = await api.put(
+      `/api/management/quiz/${props.currentQuiz.quizId}/approve`,
+    );
+    console.log('서버 응답:', response.data);
     alert('퀴즈가 승인 되었습니다.');
-    router.push('/admin/admin/adminNotApproved'); // 성공 후 페이지 이동
+    router.push('/admin/adminNotApproved'); // 성공 후 페이지 이동
     emit('update:isApprove', false);
   } catch (error) {
     console.error('퀴즈 승인에 실패했습니다.', error);
