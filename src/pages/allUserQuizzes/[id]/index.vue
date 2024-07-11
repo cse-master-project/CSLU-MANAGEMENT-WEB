@@ -1,57 +1,103 @@
 <template>
   <q-page class="q-pa-md flex flex-center">
-    <q-card
-      class="my-card"
-      v-if="currentQuiz"
-      style="width: 90%; max-width: 600px"
-    >
+    <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 600px">
       <!-- 과목, 챕터, 생성일 -->
       <q-card-section class="q-pa-md">
         <div class="text-h6 q-mb-xs text-orange">
-          과목 : {{ currentQuiz.subject }}
+          과목 : {{ quizzes.subject }}
         </div>
         <div class="text-subtitle2 q-mt-sm">
-          챕터 : {{ currentQuiz.detailSubject }}
+          챕터 : {{ quizzes.detailSubject }}
         </div>
         <div class="text-caption text-createAt">
-          생성일 : {{ formatDate(currentQuiz.createAt) }}
+          생성일 : {{ formatDate(quizzes.createAt) }}
         </div>
       </q-card-section>
 
       <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
       <q-card-section class="q-pa-md">
-        <component :is="quizTypeViewForm(type)" :quizcontent="quizContent" />
+        <component
+          :is="quizTypeViewForm(quizzes.quizType)"
+          :quizcontent="quizContent"
+          v-if="!isEditing"
+        />
+        <!-- 퀴즈 수정시 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
+        <component
+          :is="quizTypeEditForm(quizzes.quizType)"
+          :quizcontent="quizContent"
+          :quizzes="quizzes"
+          @update:quizcontent="updateQuizContent"
+          @update:isEditing="isEditing = false"
+          v-if="isEditing"
+        />
       </q-card-section>
-      <q-card-section>사용자 ID : {{ currentQuiz.userId }}</q-card-section>
 
       <q-card-actions align="right" class="q-px-md q-py-sm">
-        <q-btn flat color="negative" class="q-mr-sm" @click="notPermission"
-          >반려</q-btn
+        <q-btn
+          flat
+          color="primary"
+          class="my-btn small-btn"
+          icon="delete"
+          @click="isDelete = true"
         >
-        <q-btn flat color="primary" @click="submitQuiz">문제등록</q-btn>
+          폐기
+        </q-btn>
+        <q-btn
+          flat
+          color="negative"
+          class="my-btn small-btn"
+          icon="edit"
+          @click="isEditing = true"
+          v-if="!isEditing"
+        >
+          수정
+        </q-btn>
       </q-card-actions>
     </q-card>
   </q-page>
+  <DeleteQuizConfirmation
+    v-if="isDelete"
+    :is-delete="isDelete"
+    :current-quiz="quizzes"
+    @update:isDelete="isDelete = $event"
+  />
 </template>
 
 <script setup>
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
+import { date } from 'quasar';
+import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
-
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
-const currentQuiz = computed(() => {
-  return quizzes.value.find(q => q.quizId === parseInt(quizId));
+
+//서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
+const fetchQuizzes = async () => {
+  try {
+    const response = await api.get(`/api/quiz/${quizId}`);
+    quizzes.value = response.data;
+    console.log('퀴즈value:', quizzes.value);
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+  }
+};
+// 생성일 포맷팅.
+const formatDate = dateString => {
+  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
+
+onMounted(() => {
+  fetchQuizzes();
 });
 
-// 현재 퀴즈 내용 찾기(JSON). jsonContent를 파싱하여 quizContent에 저장
+//JSON 파싱.
 const quizContent = computed(() => {
-  if (currentQuiz.value && currentQuiz.value.jsonContent) {
+  if (quizzes.value && quizzes.value.jsonContent) {
     try {
-      return JSON.parse(currentQuiz.value.jsonContent);
+      return JSON.parse(quizzes.value.jsonContent);
     } catch (e) {
       console.error('JSON 파싱 오류:', e);
       return null;
@@ -60,10 +106,7 @@ const quizContent = computed(() => {
   return null;
 });
 
-const type = computed(() => {
-  return currentQuiz.value ? currentQuiz.value.quizType.toString() : null;
-});
-
+// 퀴타입별 보여주기.(View)
 const quizTypeViewForm = quizType => {
   switch (quizType) {
     case 1:
@@ -91,53 +134,67 @@ const quizTypeViewForm = quizType => {
   }
 };
 
-// 서버에서 데이터 가져오기
-const fetchQuizzes = async () => {
-  try {
-    const response = await api.get('/api/quiz/user');
-    quizzes.value = response.data.content; // 서버로부터 받아온 데이터를 quizzes에 저장
-    console.log(quizzes.value);
-  } catch (error) {
-    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+//퀴즈 타입별 문제 수정하기.(Edit)
+const quizTypeEditForm = quizType => {
+  switch (quizType) {
+    case 1:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/MultipleChoiceEdit.vue'),
+      );
+    case 2:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/ShortAnswerEdit.vue'),
+      );
+    case 3:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/MatchingEdit.vue'),
+      );
+    case 4:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/TrueOrFalseEdit.vue'),
+      );
+    case 5:
+      return defineAsyncComponent(() =>
+        import('src/components/quiztype/quizEdit/FillInTheBlankEdit.vue'),
+      );
+    default:
+      return null;
   }
 };
 
-// 퀴즈 등록 함수
-// const submitQuiz = async () => {
-//   try {
-//     const response = await api.post(`/api/quiz/submit/${currentQuiz.value.quizId}`);
-//     console.log('퀴즈 등록 성공:', response.data);
-//     alert('퀴즈가 성공적으로 등록되었습니다.');
-//   } catch (error) {
-//     console.error('퀴즈 등록 실패:', error);
-//     alert('퀴즈 등록에 실패했습니다.');
-//   }
-// };
+// 퀴즈 수정 기능
+const isEditing = ref(false); // 수정 모드 플래그
 
-// 퀴즈 반려 함수
-// const notPermission = async () => {
-//   try {
-//     const response = await api.post(`/api/quiz/reject/${currentQuiz.value.quizId}`);
-//     console.log('퀴즈 반려 성공:', response.data);
-//     alert('퀴즈가 반려되었습니다.');
-//   } catch (error) {
-//     console.error('퀴즈 반려 실패:', error);
-//     alert('퀴즈 반려에 실패했습니다.');
-//   }
-// };
+// 수정한 퀴즈 다시 update
+const updateQuizContent = newContent => {
+  if (quizzes.value) {
+    quizzes.value.jsonContent = JSON.stringify(newContent);
+  }
+};
 
-onMounted(() => {
-  fetchQuizzes();
-  console.log('currentQuiz:', currentQuiz.value);
-  console.log('quizContent:', quizContent.value);
-  console.log('type:', type.value);
-});
+// 퀴즈 페기 확인 기능
+const isDelete = ref(false);
 </script>
 
-<style>
+<style scoped>
 .my-card {
   max-width: 400px;
   margin: auto;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+.text-orange {
+  color: orange; /* 주황색 글자 색상 */
+}
+
+.text-createAt {
+  font-size: 0.75rem; /* 작은 글씨 */
+  color: #888888; /* 회색 */
+}
+.my-btn {
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 8px 16px;
 }
 </style>
 
