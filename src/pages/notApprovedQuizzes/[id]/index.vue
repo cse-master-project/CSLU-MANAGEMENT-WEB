@@ -25,11 +25,19 @@
       <q-card-actions align="right" class="q-px-md q-py-sm">
         <q-btn
           flat
-          color="primary"
+          color="red"
           class="my-btn small-btn"
           @click="isReject = true"
         >
           반려
+        </q-btn>
+        <q-btn
+          flat
+          color="primary"
+          class="my-btn small-btn"
+          @click="isApprove = true"
+        >
+          승인
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -40,6 +48,12 @@
     :current-quiz="quizzes"
     @update:isReject="isReject = $event"
   />
+  <ApproveUserQuizConfirmation
+    v-if="isApprove"
+    :is-approve="isApprove"
+    :current-quiz="quizzes"
+    @update:isApprove="isApprove = $event"
+  />
 </template>
 
 <script setup>
@@ -48,6 +62,7 @@ import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
 import RejectUserQuizConfirmation from 'src/components/quiz/confirmation/RejectUserQuizConfirmation.vue';
+import ApproveUserQuizConfirmation from 'src/components/quiz/confirmation/ApproveUserQuizConfirmation.vue';
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
@@ -113,8 +128,11 @@ const quizTypeViewForm = quizType => {
   }
 };
 
-// 퀴즈 페기 확인 기능
+// 퀴즈 반려 확인 기능
 const isReject = ref(false);
+
+// 퀴즈 승인 확인 기능
+const isApprove = ref(false);
 </script>
 
 <style scoped>
