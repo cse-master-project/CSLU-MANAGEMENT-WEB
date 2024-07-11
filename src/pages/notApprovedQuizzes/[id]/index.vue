@@ -27,19 +27,18 @@
           flat
           color="primary"
           class="my-btn small-btn"
-          icon="delete"
-          @click="isDelete = true"
+          @click="isReject = true"
         >
           반려
         </q-btn>
       </q-card-actions>
     </q-card>
   </q-page>
-  <DeleteQuizConfirmation
-    v-if="isDelete"
-    :is-delete="isDelete"
+  <RejectUserQuizConfirmation
+    v-if="isReject"
+    :is-reject="isReject"
     :current-quiz="quizzes"
-    @update:isDelete="isDelete = $event"
+    @update:isReject="isReject = $event"
   />
 </template>
 
@@ -48,7 +47,7 @@ import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
-import DeleteQuizConfirmation from 'src/components/quiz/DeleteQuizConfirmation.vue';
+import RejectUserQuizConfirmation from 'src/components/quiz/confirmation/RejectUserQuizConfirmation.vue';
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
@@ -114,36 +113,8 @@ const quizTypeViewForm = quizType => {
   }
 };
 
-//퀴즈 타입별 문제 수정하기.(Edit)
-const quizTypeEditForm = quizType => {
-  switch (quizType) {
-    case 1:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/MultipleChoiceEdit.vue'),
-      );
-    case 2:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/ShortAnswerEdit.vue'),
-      );
-    case 3:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/MatchingEdit.vue'),
-      );
-    case 4:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/TrueOrFalseEdit.vue'),
-      );
-    case 5:
-      return defineAsyncComponent(() =>
-        import('src/components/quiztype/quizEdit/FillInTheBlankEdit.vue'),
-      );
-    default:
-      return null;
-  }
-};
-
 // 퀴즈 페기 확인 기능
-const isDelete = ref(false);
+const isReject = ref(false);
 </script>
 
 <style scoped>
