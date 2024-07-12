@@ -34,15 +34,6 @@
   <div class="down">
     <a href="#" class="link-wrapper">
       <div class="img-wrapper">
-        <img src="/apple-logo.png" />
-      </div>
-      <div class="content-wrapper">
-        <h6>App Store</h6>
-      </div>
-    </a>
-
-    <a href="#" class="link-wrapper">
-      <div class="img-wrapper">
         <img src="/google-play.png" />
       </div>
       <div class="content-wrapper">
