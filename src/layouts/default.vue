@@ -21,22 +21,20 @@
           rounded
           label="로그인"
           color="light-blue-13"
-          @click="openAuthDialog"
+          @click="isLogin = true"
         />
       </q-toolbar>
     </q-header>
     <q-page-container :style="pageContainerStyles">
       <router-view />
     </q-page-container>
-    <AuthDialog v-model="authDialog" />
+    <UserLoginGoogle v-if="isLogin" :is-login="isLogin" />
   </q-layout>
 </template>
 <script setup>
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
-
-//로그인 다이얼로그
-import AuthDialog from 'src/components/auth/AuthDialog.vue';
+import UserLoginGoogle from 'src/components/auth/UserLoginGoogle.vue';
 
 // 페이지 크기를 나타내는 코드.
 const route = useRoute();
@@ -45,9 +43,11 @@ const pageContainerStyles = computed(() => ({
   maxWidth: route.meta?.width || '1080px',
   margin: '0 auto',
 }));
+
 //로그인 다이얼로그상태
-const authDialog = ref(false);
-const openAuthDialog = () => (authDialog.value = true);
+// const authDialog = ref(false);
+// const openAuthDialog = () => (authDialog.value = true);
+const isLogin = ref(false);
 </script>
 
 <style lang="scss" scoped></style>
