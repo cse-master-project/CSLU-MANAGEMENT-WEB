@@ -4,7 +4,9 @@
       <div class="col-6 col-md-8">
         <q-card flat class="q-pa-md text-left">
           <q-card-section>
-            <div class="text-h4">경상국립대 컴공 신입생의 첫걸음</div>
+            <div class="text-h4" style="font-weight: bold">
+              경상국립대 컴공 신입생의 첫걸음
+            </div>
             <div class="text-subtitle1" style="margin: 20px 0">
               복습에서부터 성공까지, 당신을 안내합니다.
             </div>
@@ -31,16 +33,6 @@
       </div>
     </div>
   </q-page>
-  <div class="down">
-    <a href="#" class="link-wrapper">
-      <div class="img-wrapper">
-        <img src="/google-play.png" />
-      </div>
-      <div class="content-wrapper">
-        <h6>Google Play</h6>
-      </div>
-    </a>
-  </div>
 </template>
 
 <script setup>
@@ -111,6 +103,5 @@ img {
 
 .down {
   display: flex;
-  margin-top: -40px; /* 마진 상단 값을 조절하여 더 위로 올립니다. 필요에 따라 값을 조정하세요. */
 }
 </style>

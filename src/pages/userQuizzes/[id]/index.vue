@@ -26,12 +26,6 @@
       <!-- TODO permissionStatus(0:대기,1:승인,2:거절) -->
     </q-card>
   </q-page>
-  <DeleteQuizConfirmation
-    v-if="isDelete"
-    :is-delete="isDelete"
-    :current-quiz="quizzes"
-    @update:isDelete="isDelete = $event"
-  />
 </template>
 
 <script setup>
@@ -39,7 +33,6 @@ import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { date } from 'quasar';
-import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
@@ -127,8 +120,3 @@ const quizTypeViewForm = quizType => {
   padding: 8px 16px;
 }
 </style>
-
-<route lang="yaml">
-meta:
-  layout: admin
-</route>
