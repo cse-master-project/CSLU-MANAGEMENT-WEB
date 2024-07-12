@@ -2,6 +2,7 @@
   <q-page>
     <q-card class="text-center" flat>
       <div class="quiztype-container">
+        <q-title class="title">문제 유형을 고르세요.</q-title>
         <q-btn
           v-for="quizType in quizTypes"
           :key="quizType.id"
@@ -12,7 +13,6 @@
           {{ quizType.name }}
         </q-btn>
       </div>
-      <q-btn @click="emitQuizType" class="createbtn">문제생성</q-btn>
     </q-card>
   </q-page>
 </template>
@@ -33,6 +33,7 @@ const quizTypes = ref([
 
 const selectQuizType = value => {
   selectedQuizType.value = value;
+  emitQuizType(); // 퀴즈 유형을 선택하자마자 내보냅니다.
 };
 
 const emitQuizType = () => {
@@ -41,6 +42,11 @@ const emitQuizType = () => {
 </script>
 
 <style>
+.title {
+  font-size: 25px;
+  font-weight: bold;
+  margin: 5% 0;
+}
 .quiztype-container {
   display: flex;
   flex-direction: column; /* 이 부분을 추가하여 세로 나열 */
@@ -53,47 +59,28 @@ const emitQuizType = () => {
 .q-card.text-center {
   margin: 20px auto;
   padding: 20px;
-  border-radius: 20px;
-  border: 1px solid #e0e0e0;
+  border: 0px solid #e0e0e0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 800px;
 }
 
-.createbtn {
-  padding: 12px 24px;
-  background-color: hsl(188, 51%, 54%);
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-weight: 500;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 30%;
-  margin-top: 40px; /* 이 값을 조정하여 버튼 사이의 간격을 늘림 */
-}
-
 .quiz-type-btn {
   padding: 12px 24px;
-  background-color: hsl(192, 29%, 84%);
+  background-color: #ffffff;
   border: none;
-  border-radius: 12px;
-  color: white;
+  color: black;
   font-weight: 500;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 30%;
+  width: 70%;
   margin-top: 20px;
 }
 
 .createbtn:hover,
 .quiz-type-btn:hover {
-  background-color: hsl(188, 51%, 54%);
-}
-
-.selected-btn {
-  background-color: hsl(188, 51%, 54%); /* 선택된 버튼의 배경 색상 */
+  background-color: #0091da;
+  color: white;
 }
 
 /* 추가된 스타일 */
