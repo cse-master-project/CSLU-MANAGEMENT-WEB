@@ -4,7 +4,12 @@
       <!-- 툴바 & 제목 -->
       <q-toolbar class="toolbar">
         <q-btn flat dense to="/" class="toolbar-item">
-          <q-toolbar-title class="title"> CSLU </q-toolbar-title>
+          <q-toolbar-title class="title">
+            <q-avatar>
+              <img src="/gnu2.jpg" />
+            </q-avatar>
+            CSLU
+          </q-toolbar-title>
         </q-btn>
 
         <q-btn
@@ -74,6 +79,7 @@ const pageContainerStyles = computed(() => ({
 
 //로그인 다이얼로그상태
 const isLogin = ref(false);
+
 // 현재 경로와 비교하여 활성화된 버튼을 감지하는 함수
 const isActive = path => route.path === path;
 </script>
@@ -105,7 +111,7 @@ const isActive = path => route.path === path;
 .toolbar-item {
   margin-left: 16px; /* 필요에 따라 조정 */
   margin-right: 16px; /* 필요에 따라 조정 */
-  font-size: 1rem; /* 글씨 크기 조정 */
+  font-size: 1.1rem; /* 글씨 크기 조정 */
   position: relative;
 }
 
