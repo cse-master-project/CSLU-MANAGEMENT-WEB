@@ -1,7 +1,7 @@
 <template>
   <q-form class="q-pa-md">
     <div class="title-container">
-      <q-title class="title">OX</q-title>
+      <q-title class="title">O/X형</q-title>
     </div>
     <q-card>
       <q-card-section class="cs">

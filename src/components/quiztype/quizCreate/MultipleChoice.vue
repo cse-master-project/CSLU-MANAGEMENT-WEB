@@ -2,7 +2,7 @@
   <!-- 퀴즈 등록 폼 -->
   <q-form class="q-pa-md">
     <div class="title-container">
-      <q-title class="title">4지선다</q-title>
+      <q-title class="title">4지선다형</q-title>
     </div>
     <q-card>
       <q-card-section>

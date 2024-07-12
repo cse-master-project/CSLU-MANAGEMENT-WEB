@@ -1,7 +1,7 @@
 <template>
   <q-form class="q-pa-md">
     <div class="title-container">
-      <q-title class="title">단답</q-title>
+      <q-title class="title">단답형</q-title>
     </div>
     <q-card>
       <q-card-section>

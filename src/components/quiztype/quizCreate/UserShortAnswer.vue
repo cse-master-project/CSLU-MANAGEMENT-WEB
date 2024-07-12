@@ -1,50 +1,56 @@
 <template>
   <q-form class="q-pa-md">
+    <div class="title-container">
+      <q-title class="title">단답형</q-title>
+    </div>
     <q-card>
-      <q-p>단답형</q-p>
       <q-card-section>
+        <q-label>과목<span class="required">*</span></q-label>
         <q-select
           v-model="subject"
           :options="subjectOptions"
-          label="과목"
           outlined
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
         />
+        <q-label>챕터<span class="required">*</span></q-label>
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
-          label="챕터"
           outlined
           class="q-mb-md"
         />
+        <q-label>문제<span class="required">*</span></q-label>
         <q-input
           v-model="quiz"
           type="textarea"
           outlined
-          rows="4"
-          placeholder="문제를 입력해주세요"
-          maxlength="300"
+          rows="3"
+          maxlength="100"
+          counter
           class="q-mb-md"
         />
-
+        <q-label>답안<span class="required">*</span></q-label>
         <q-input
           v-model="answer"
           type="textarea"
           autogrow
           outlined
-          placeholder="답을 입력해주세요"
-          class="textbox"
-          style="margin: 3% 0; width: 30%"
+          class="q-mb-md"
+          style="width: 30%"
         />
+        <q-label>해설<span class="required">*</span></q-label>
         <q-input
           v-model="commentary"
           type="textarea"
-          placeholder="해설을 입력해주세요"
           outlined
           autogrow
-          style="margin: 3% 0"
+          class="q-mb-md"
+          style="margin: 0 0"
         />
+      </q-card-section>
+
+      <q-card-section>
         <!--첨부파일-->
         <section class="container">
           <label for="file">
@@ -80,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, onMounted } from 'vue';
+import { ref, defineEmits, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
@@ -118,6 +124,11 @@ const updateDetailSubjectOptions = () => {
     subject.value,
   );
 };
+watch(subject, () => {
+  // 과목이 변경될 때마다 챕터 선택 초기화
+  detailSubject.value = '';
+  updateDetailSubjectOptions();
+});
 
 const submitQuizSuccess = ref(false);
 
@@ -164,8 +175,4 @@ const submitQuiz = () => {
 
 <style scoped lang="scss">
 @import '/src/css/QuizBtn.css';
-
-.textbox {
-  font-family: 'Arial', sans-serif;
-}
 </style>

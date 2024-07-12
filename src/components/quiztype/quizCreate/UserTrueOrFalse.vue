@@ -1,49 +1,59 @@
 <template>
   <q-form class="q-pa-md">
+    <div class="title-container">
+      <q-title class="title">O/X형</q-title>
+    </div>
     <q-card>
-      <q-p>o/x형</q-p>
-      <q-card-section>
+      <q-card-section class="cs">
+        <!-- 대분류 선택 -->
+        <q-label>과목<span class="required">*</span></q-label>
         <q-select
           v-model="subject"
           :options="subjectOptions"
-          label="과목"
           outlined
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
         />
+        <!-- 소분류 선택 -->
+        <q-label>챕터<span class="required">*</span></q-label>
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
-          label="챕터"
           outlined
           class="q-mb-md"
         />
+        <!-- 문제 입력 -->
+        <q-label>문제<span class="required">*</span></q-label>
         <q-input
           v-model="quiz"
           type="textarea"
+          rows="3"
           outlined
-          rows="4"
           placeholder="문제를 입력해주세요"
-          maxlength="300"
+          maxlength="100"
+          counter
           class="q-mb-md"
         />
-
-        <q-select
-          v-model="answer"
-          :options="answerOptions"
-          label="답"
-          outlined
-          class="q-mb-md"
+        <!-- O/X 선택 -->
+        <q-label>답안<span class="required">*</span></q-label>
+        <q-option-group
+          v-model="selectedAnswer"
+          :options="options"
+          class="q-mb-md large-option-group"
         />
+        <!-- 해설 입력 -->
+        <q-label>해설<span class="required">*</span></q-label>
         <q-input
           v-model="commentary"
           type="textarea"
           placeholder="해설을 입력해주세요"
           outlined
           autogrow
-          style="margin: 3% 0"
+          class="q-mb-md"
         />
-        <!--첨부파일-->
+      </q-card-section>
+      <q-card-section class="cs">
+        <!-- 파일 첨부 섹션 -->
         <section class="container">
           <label for="file">
             <div class="styled-file-input">
@@ -54,19 +64,22 @@
           <input type="file" id="file" @change="fileInputHandler" />
         </section>
       </q-card-section>
-      <q-card-actions align="right">
+      <!-- 액션 버튼 섹션 -->
+      <q-card-actions align="right" class="cs">
         <q-btn
           class="backbtn"
-          @click="goBack()"
+          @click="goBack"
           style="width: 10%; margin: 3% 1%"
-          >뒤로가기</q-btn
         >
+          뒤로가기
+        </q-btn>
         <q-btn
           class="registerbtn"
           @click="submitQuiz"
           style="width: 10%; margin: 3% 0"
-          >문제 등록</q-btn
         >
+          문제 등록
+        </q-btn>
       </q-card-actions>
     </q-card>
   </q-form>
@@ -78,7 +91,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, onMounted } from 'vue';
+import { ref, defineEmits, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
@@ -102,16 +115,15 @@ const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
 
 onMounted(fetchCategories);
 
-const subject = ref('');
-const detailSubject = ref('');
-const quiz = ref('');
-const answer = ref(1);
-const commentary = ref('');
-
-const answerOptions = [
+const options = [
   { label: 'O', value: 1 },
   { label: 'X', value: 0 },
 ];
+const subject = ref('');
+const detailSubject = ref('');
+const quiz = ref('');
+const selectedAnswer = ref(null);
+const commentary = ref('');
 
 const filteredDetailSubjectOptions = ref([]);
 
@@ -122,9 +134,14 @@ const updateDetailSubjectOptions = () => {
   );
 };
 
+watch(subject, () => {
+  // 과목이 변경될 때마다 챕터 선택 초기화
+  detailSubject.value = '';
+  updateDetailSubjectOptions();
+});
+
 const submitQuizSuccess = ref(false);
 
-// 서버에 문제 제출.
 const submitQuiz = () => {
   const quizData = {
     subject: subject.value,
@@ -132,10 +149,9 @@ const submitQuiz = () => {
     quizType: '4',
     jsonContent: JSON.stringify({
       quiz: quiz.value,
-      answer: answer.value.value,
+      answer: selectedAnswer.value,
       commentary: commentary.value,
     }),
-    hasImage: false,
   };
   console.log('서버에 제출될 데이터:', quizData);
   api
@@ -161,8 +177,4 @@ const submitQuiz = () => {
 
 <style scoped lang="scss">
 @import '/src/css/QuizBtn.css';
-
-.textbox {
-  font-family: 'Arial', sans-serif;
-}
 </style>
