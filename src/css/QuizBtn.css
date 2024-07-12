@@ -18,7 +18,7 @@
   padding: 10px 20px;
   background-color: #000;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 1px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -37,15 +37,16 @@
   gap: 16px;
   padding: 8px;
   border: 1px solid #ccc;
-  border-radius: 16px;
+  border-radius: 5px;
   width: 400px;
+  background-color: white;
 }
 
 .attachment-button {
   width: fit-content;
   padding: 16px;
   background-color: hsl(215, 100%, 59%);
-  border-radius: 12px;
+  border-radius: 5px;
   color: white;
   font-weight: bold;
   cursor: pointer;
@@ -65,18 +66,44 @@ input[type='file'] {
 .registerbtn {
   margin: 0 10px;
   padding: 16px;
-  background-color: hsl(188, 51%, 54%);
-  border-radius: 12px;
-  color: white;
+  background-color: #fff;
+  border-radius: 30px;
+  color: black;
   font-weight: bold;
   cursor: pointer;
+  height: 50px;
+  justify-content: center;
 }
 .backbtn {
   margin: 0 10px;
   padding: 16px;
-  background-color: hsl(192, 29%, 84%);
-  border-radius: 12px;
+  background-color: hsl(195, 2%, 35%);
+  border-radius: 30px;
   color: white;
   font-weight: bold;
   cursor: pointer;
+  height: 50px;
+  justify-content: center;
+}
+.required {
+  color: red;
+  margin-left: 5px;
+}
+.q-card {
+  background-color: #ededed;
+}
+.q-mb-md {
+  background-color: white !important;
+  border-radius: 5px;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  justify-content: center;
+}
+.title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
