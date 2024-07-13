@@ -30,6 +30,8 @@ const LoginGoogle = () => {
   googleSdkLoaded(google => {
     google.accounts.oauth2
       .initCodeClient({
+        client_id:
+          '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
         scope: 'email profile openid',
         redirect_uri: 'http://localhost:9000',
         callback: response => {
@@ -44,6 +46,9 @@ const LoginGoogle = () => {
     try {
       const response = await axios.post('https://oauth2.googleapis.com/token', {
         code,
+        client_id:
+          '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
+
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
       });
