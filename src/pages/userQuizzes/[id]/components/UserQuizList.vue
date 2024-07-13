@@ -94,6 +94,7 @@ const quizType = ref('');
 
 onMounted(async () => {
   await fetchQuizzes();
+  reject();
 });
 
 const fetchQuizzes = async () => {
@@ -103,7 +104,6 @@ const fetchQuizzes = async () => {
     // quizSubject.value = quizzes.value.map(quiz => quiz.subject);
     // quizDetailSubject.value = quizzes.value.map(quiz => quiz.detailSubject);
     console.log('퀴즈목록 : ', quizzes.value);
-
     // console.log('과목목록 : ', quizSubject.value);
     // console.log('챕터목록 : ', quizDetailSubject.value);
   } catch (error) {
