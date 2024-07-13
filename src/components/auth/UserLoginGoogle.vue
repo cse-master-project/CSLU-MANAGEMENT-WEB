@@ -98,7 +98,7 @@ const LoginGoogle = () => {
                 });
             } else if (!registered) {
               api
-                .post('/api/user/auth/google/sign_up', userData)
+                .post('/api/user/auth/google/sign-up', userData)
                 .then(response => {
                   const adminStore = useUserAuthStore();
                   adminStore.setAuthData(response.data);
