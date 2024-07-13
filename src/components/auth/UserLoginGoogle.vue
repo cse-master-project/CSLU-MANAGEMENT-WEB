@@ -18,11 +18,13 @@
 import { googleSdkLoaded } from 'vue3-google-login';
 import axios from 'axios';
 import { ref, defineProps } from 'vue';
-
+import { api } from 'src/boot/axios';
+import { useCookies } from 'vue3-cookies';
+const { cookies } = useCookies();
 const props = defineProps({
   isLogin: Boolean,
 });
-
+let userDetails = {};
 const visible = ref(props.isLogin);
 
 const LoginGoogle = () => {
@@ -36,25 +38,24 @@ const LoginGoogle = () => {
         redirect_uri: 'http://localhost:9000',
         callback: response => {
           if (response.code) {
-            this.sendCodeToBackend(response.code);
+            sendCodeToBackend(response.code);
           }
         },
       })
       .requestCode();
   });
-  sendCodeToBackend = async code => {
+  const sendCodeToBackend = async code => {
     try {
       const response = await axios.post('https://oauth2.googleapis.com/token', {
         code,
         client_id:
           '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
-
+        client_secret: 'secret',
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
       });
-
       const accessToken = response.data.access_token;
-      console.log(accessToken);
+      //console.log(accessToken);
 
       // Fetch user details using the access token
       const userResponse = await axios.get(
@@ -66,14 +67,59 @@ const LoginGoogle = () => {
         },
       );
 
+      //console.log('userResponse', userResponse);
       if (userResponse && userResponse.data) {
+        //console.log('1');
+        //console.log('userResponse.data', userResponse.data);
         // Set the userDetails data property to the userResponse object
-        this.userDetails = userResponse.data;
+        userDetails = userResponse.data;
+        console.log('userDetails', userDetails);
+        const userData = {
+          accessToken: accessToken,
+          nickname: userDetails.email,
+        };
+        api
+          .post('/api/user/auth/google/check', userData)
+          .then(response => {
+            console.log('registered', response.data.registered);
+            const registered = response.data.registered;
+            if (registered) {
+              api
+                .post('/api/user/auth/google/login', userData.accessToken)
+                .then(response => {
+                  //response.data.accessToken;
+                  //response.data.refreshToken;
+
+                  const access = response.data.accessToken;
+                  const refresh = response.data.refreshToken;
+                  cookies.set('accessToken', access, '1d');
+                  cookies.set('refreshToken', refresh, '7d');
+                });
+            } else if (!registered) {
+              api
+                .post('/api/user/auth/google/sign_up', userData)
+                .then(response => {
+                  const access = response.data.accessToken;
+                  const refresh = response.data.refreshToken;
+                  cookies.set('accessToken1', access, '1d');
+                  cookies.set('refreshToken1', refresh, '7d');
+                });
+            }
+          })
+          .catch(error => {
+            if (error.response.status === 400) {
+              alert(
+                '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요.',
+              );
+            }
+          });
       } else {
+        //console.log('12');
         // Handle the case where userResponse or userResponse.data is undefined
         console.error('Failed to fetch user details.');
       }
     } catch (error) {
+      //console.log('3');
       console.error('Token exchange failed:', error.response.data);
     }
   };
