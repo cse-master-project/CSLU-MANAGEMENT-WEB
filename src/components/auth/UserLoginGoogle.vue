@@ -28,11 +28,8 @@ const props = defineProps({
 let userDetails = {};
 const visible = ref(props.isLogin);
 
-const emit = defineEmits(['update:isLogin']);
-
 const LoginGoogle = () => {
   console.log('구글로그인');
-  emit('update:isLogin', false);
   googleSdkLoaded(google => {
     google.accounts.oauth2
       .initCodeClient({
@@ -54,7 +51,6 @@ const LoginGoogle = () => {
         code,
         client_id:
           '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
-
         client_secret: 'secret',
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
@@ -78,6 +74,21 @@ const LoginGoogle = () => {
         //console.log('userResponse.data', userResponse.data);
         // Set the userDetails data property to the userResponse object
         userDetails = userResponse.data;
+
+        console.log('userDetails', userDetails);
+        const userData = {
+          accessToken: accessToken,
+          nickname: userDetails.email,
+        };
+        api
+          .post('/api/user/auth/google/check', userData)
+          .then(response => {
+            console.log('registered', response.data.registered);
+            const registered = response.data.registered;
+            if (registered) {
+              api
+                .post('/api/user/auth/google/login', userData.accessToken)
+                .then(response => {
                   const adminStore = useUserAuthStore();
                   adminStore.setAuthData(response.data);
                   console.log('로그인 성공:', response.data);
