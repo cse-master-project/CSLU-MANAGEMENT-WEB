@@ -42,7 +42,7 @@ const LoginGoogle = () => {
       .initCodeClient({
         //구글 OAuth 클라이언트 초기화하고 인증 코드를 요청.
         client_id:
-          '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
+          '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
         scope: 'email profile openid',
         redirect_uri: 'http://localhost:9000',
         callback: response => {
@@ -59,7 +59,7 @@ const LoginGoogle = () => {
       const response = await axios.post('https://oauth2.googleapis.com/token', {
         code,
         client_id:
-          '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
+          '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
         client_secret: '',
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
