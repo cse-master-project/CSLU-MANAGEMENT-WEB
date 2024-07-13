@@ -20,6 +20,7 @@ import axios from 'axios';
 import { ref, defineProps } from 'vue';
 import { api } from 'src/boot/axios';
 import { useCookies } from 'vue3-cookies';
+import { useUserAuthStore } from 'src/stores/userAuth';
 const { cookies } = useCookies();
 const props = defineProps({
   isLogin: Boolean,
@@ -73,6 +74,7 @@ const LoginGoogle = () => {
         //console.log('userResponse.data', userResponse.data);
         // Set the userDetails data property to the userResponse object
         userDetails = userResponse.data;
+
         console.log('userDetails', userDetails);
         const userData = {
           accessToken: accessToken,
@@ -87,22 +89,23 @@ const LoginGoogle = () => {
               api
                 .post('/api/user/auth/google/login', userData.accessToken)
                 .then(response => {
-                  //response.data.accessToken;
-                  //response.data.refreshToken;
-
-                  const access = response.data.accessToken;
-                  const refresh = response.data.refreshToken;
-                  cookies.set('accessToken', access, '1d');
-                  cookies.set('refreshToken', refresh, '7d');
+                  const adminStore = useUserAuthStore();
+                  adminStore.setAuthData(response.data);
+                  console.log('로그인 성공:', response.data);
+                })
+                .catch(error => {
+                  console.log('로그인 실패:', error);
                 });
             } else if (!registered) {
               api
                 .post('/api/user/auth/google/sign_up', userData)
                 .then(response => {
-                  const access = response.data.accessToken;
-                  const refresh = response.data.refreshToken;
-                  cookies.set('accessToken1', access, '1d');
-                  cookies.set('refreshToken1', refresh, '7d');
+                  const adminStore = useUserAuthStore();
+                  adminStore.setAuthData(response.data);
+                  console.log('회원가입 성공:', response.data);
+                })
+                .catch(error => {
+                  console.log('회원가입 실패:', error);
                 });
             }
           })
