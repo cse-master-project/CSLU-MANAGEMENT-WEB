@@ -60,7 +60,11 @@
     <q-footer>
       <footerbar>CSLU © 2024 . All Rights Reserved. </footerbar></q-footer
     >
-    <UserLoginGoogle v-if="isLogin" :is-login="isLogin" />
+    <UserLoginGoogle
+      v-if="isLogin"
+      :is-login="isLogin"
+      @update:isLogin="isLogin = false"
+    />
   </q-layout>
 </template>
 

@@ -17,7 +17,7 @@
 <script setup>
 import { googleSdkLoaded } from 'vue3-google-login';
 import axios from 'axios';
-import { ref, defineProps } from 'vue';
+import { ref, defineProps, defineEmits } from 'vue';
 import { api } from 'src/boot/axios';
 import { useCookies } from 'vue3-cookies';
 const { cookies } = useCookies();
@@ -27,8 +27,11 @@ const props = defineProps({
 let userDetails = {};
 const visible = ref(props.isLogin);
 
+const emit = defineEmits(['update:isLogin']);
+
 const LoginGoogle = () => {
   console.log('구글로그인');
+  emit('update:isLogin', false);
   googleSdkLoaded(google => {
     google.accounts.oauth2
       .initCodeClient({
@@ -50,7 +53,7 @@ const LoginGoogle = () => {
         code,
         client_id:
           '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
-        client_secret: 'secret',
+        client_secret: '',
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
       });
