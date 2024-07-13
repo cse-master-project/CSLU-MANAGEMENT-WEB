@@ -19,20 +19,26 @@ import { googleSdkLoaded } from 'vue3-google-login';
 import axios from 'axios';
 import { ref, defineProps } from 'vue';
 import { api } from 'src/boot/axios';
-import { useCookies } from 'vue3-cookies';
-import { useUserAuthStore } from 'src/stores/userAuth';
-const { cookies } = useCookies();
+import { useCookies } from 'vue3-cookies'; //쿠키 관리 라이브러리
+import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상태관리
+
+const { cookies } = useCookies(); //쿠키 사용.
+
 const props = defineProps({
   isLogin: Boolean,
 });
-let userDetails = {};
-const visible = ref(props.isLogin);
+const visible = ref(props.isLogin); //다이얼로그의 가시성(부모로부터 isLogin받음.)
+
+let userDetails = {}; //사용자 정보 저장.
 
 const LoginGoogle = () => {
+  //구글 로그인 과정.
   console.log('구글로그인');
   googleSdkLoaded(google => {
+    //구글 SDK 로드된 후 실행.
     google.accounts.oauth2
       .initCodeClient({
+        //구글 OAuth 클라이언트 초기화하고 인증 코드를 요청.
         client_id:
           '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
         scope: 'email profile openid',
@@ -46,6 +52,7 @@ const LoginGoogle = () => {
       .requestCode();
   });
   const sendCodeToBackend = async code => {
+    //인증코드를 백엔드로 보내고,
     try {
       const response = await axios.post('https://oauth2.googleapis.com/token', {
         code,
@@ -54,12 +61,13 @@ const LoginGoogle = () => {
         client_secret: 'secret',
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
-      });
+      }); //구글에서 액세스 토큰을 받아오기.
       const accessToken = response.data.access_token;
       //console.log(accessToken);
 
       // Fetch user details using the access token
       const userResponse = await axios.get(
+        //액세스 토큰을 사용해 사용자 정보를 가져온다.
         'https://www.googleapis.com/oauth2/v3/userinfo',
         {
           headers: {
@@ -68,24 +76,26 @@ const LoginGoogle = () => {
         },
       );
 
-      //console.log('userResponse', userResponse);
+      console.log('userResponse', userResponse);
       if (userResponse && userResponse.data) {
         //console.log('1');
         //console.log('userResponse.data', userResponse.data);
         // Set the userDetails data property to the userResponse object
-        userDetails = userResponse.data;
+        userDetails = userResponse.data; //가져온 사용자 정보를 저장한다.
 
         console.log('userDetails', userDetails);
         const userData = {
+          //백엔드에 보내기 위한 사용자 데이터 객체.
           accessToken: accessToken,
           nickname: userDetails.email,
         };
         api
-          .post('/api/user/auth/google/check', userData)
+          .post('/api/user/auth/google/check', userData) //백엔드에 사용자 등록여부를 확인.
           .then(response => {
             console.log('registered', response.data.registered);
             const registered = response.data.registered;
             if (registered) {
+              //이미 등록된 경우
               api
                 .post('/api/user/auth/google/login', userData.accessToken)
                 .then(response => {
@@ -97,6 +107,7 @@ const LoginGoogle = () => {
                   console.log('로그인 실패:', error);
                 });
             } else if (!registered) {
+              //동록되지 않은 경우
               api
                 .post('/api/user/auth/google/sign-up', userData)
                 .then(response => {
