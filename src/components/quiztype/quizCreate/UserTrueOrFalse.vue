@@ -83,8 +83,8 @@
       </q-card-actions>
     </q-card>
   </q-form>
-  <!-- SubmitQuizSuccess 컴포넌트 -->
-  <SubmitQuizSuccess
+
+  <UserSubmitQuizSuccess
     v-if="submitQuizSuccess"
     :submit-quiz-success="submitQuizSuccess"
   />
@@ -92,9 +92,9 @@
 
 <script setup>
 import { ref, defineEmits, onMounted, watch } from 'vue';
-import { api } from 'src/boot/axios';
-import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
-import useCategories from 'src/services/useCategories.js';
+import { userApi } from 'src/boot/userAxios';
+import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
+import userUseCategories from 'src/services/userUseCategories.js';
 
 const emits = defineEmits(['change-quiz-type']);
 
@@ -111,7 +111,7 @@ const fileInputHandler = event => {
 };
 
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
+  userUseCategories();
 
 onMounted(fetchCategories);
 
@@ -154,7 +154,7 @@ const submitQuiz = () => {
     }),
   };
   console.log('서버에 제출될 데이터:', quizData);
-  api
+  userApi
     .post('/api/quiz/user', quizData)
     .then(response => {
       submitQuizSuccess.value = true;
