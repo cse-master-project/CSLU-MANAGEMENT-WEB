@@ -94,7 +94,6 @@ const quizType = ref('');
 
 onMounted(async () => {
   await fetchQuizzes();
-  reject();
 });
 
 const fetchQuizzes = async () => {
