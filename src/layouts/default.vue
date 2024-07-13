@@ -50,6 +50,7 @@
           label="로그인"
           color="light-blue-13"
           @click="isLogin = true"
+          @update:isLogin="false"
           class="toolbar-item"
         />
       </q-toolbar>

@@ -28,12 +28,14 @@ const props = defineProps({
   isLogin: Boolean,
 });
 const visible = ref(props.isLogin); //다이얼로그의 가시성(부모로부터 isLogin받음.)
+const emit = defineEmits(['update:isLogin']);
 
 let userDetails = {}; //사용자 정보 저장.
 
 const LoginGoogle = () => {
   //구글 로그인 과정.
-  console.log('구글로그인');
+  //console.log('구글로그인');
+  emit('update:isLogin', false);
   googleSdkLoaded(google => {
     //구글 SDK 로드된 후 실행.
     google.accounts.oauth2
@@ -58,12 +60,12 @@ const LoginGoogle = () => {
         code,
         client_id:
           '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
-        client_secret: 'secret',
+        client_secret: '',
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
       }); //구글에서 액세스 토큰을 받아오기.
       const accessToken = response.data.access_token;
-      //console.log(accessToken);
+      console.log('구글에서 액세스 토큰 : ', accessToken);
 
       // Fetch user details using the access token
       const userResponse = await axios.get(
@@ -76,23 +78,23 @@ const LoginGoogle = () => {
         },
       );
 
-      console.log('userResponse', userResponse);
+      console.log('구글에서 정보 받은거 : ', userResponse);
       if (userResponse && userResponse.data) {
         //console.log('1');
         //console.log('userResponse.data', userResponse.data);
         // Set the userDetails data property to the userResponse object
         userDetails = userResponse.data; //가져온 사용자 정보를 저장한다.
 
-        console.log('userDetails', userDetails);
+        console.log('사용자 정보를 저장한거 userDetails !!!', userDetails);
         const userData = {
           //백엔드에 보내기 위한 사용자 데이터 객체.
           accessToken: accessToken,
-          nickname: userDetails.email,
+          //nickname: userDetails.email,
         };
         api
           .post('/api/user/auth/google/check', userData) //백엔드에 사용자 등록여부를 확인.
           .then(response => {
-            console.log('registered', response.data.registered);
+            console.log('registered(회원가입여부)', response.data.registered);
             const registered = response.data.registered;
             if (registered) {
               //이미 등록된 경우
@@ -108,8 +110,12 @@ const LoginGoogle = () => {
                 });
             } else if (!registered) {
               //동록되지 않은 경우
+              const userData2 = {
+                accessToken: accessToken,
+                nickname: '쥉',
+              };
               api
-                .post('/api/user/auth/google/sign-up', userData)
+                .post('/api/user/auth/google/sign-up', userData2)
                 .then(response => {
                   const adminStore = useUserAuthStore();
                   adminStore.setAuthData(response.data);
