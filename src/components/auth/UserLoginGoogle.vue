@@ -18,7 +18,7 @@
 import { googleSdkLoaded } from 'vue3-google-login';
 import axios from 'axios';
 import { ref, defineProps } from 'vue';
-import { api } from 'src/boot/axios';
+import { userApi } from 'src/boot/userAxios';
 import { useCookies } from 'vue3-cookies'; //쿠키 관리 라이브러리
 import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상태관리
 
@@ -91,14 +91,14 @@ const LoginGoogle = () => {
           accessToken: accessToken,
           //nickname: userDetails.email,
         };
-        api
+        userApi
           .post('/api/user/auth/google/check', userData) //백엔드에 사용자 등록여부를 확인.
           .then(response => {
             console.log('registered(회원가입여부)', response.data.registered);
             const registered = response.data.registered;
             if (registered) {
               //이미 등록된 경우
-              api
+              userApi
                 .post('/api/user/auth/google/login', userData.accessToken)
                 .then(response => {
                   const adminStore = useUserAuthStore();
@@ -114,7 +114,7 @@ const LoginGoogle = () => {
                 accessToken: accessToken,
                 nickname: '쥉',
               };
-              api
+              userApi
                 .post('/api/user/auth/google/sign-up', userData2)
                 .then(response => {
                   const adminStore = useUserAuthStore();
