@@ -4,17 +4,18 @@
     <div class="row q-col-gutter-md q-py-md">
       <div class="col-12 col-md-3 q-my-md">
         <q-select
-          v-model="selectedSubject"
-          :options="subjects"
+          v-model="subject"
+          :options="subjectOptions"
           label="과목"
           outlined
           dense
+          @update:model-value="updateDetailSubjectOptions"
         />
       </div>
       <div class="col-12 col-md-3 q-my-md">
         <q-select
-          v-model="selectedChapter"
-          :options="chapters"
+          v-model="detailSubject"
+          :options="filteredDetailSubjectOptions"
           label="챕터"
           outlined
           dense
@@ -22,7 +23,7 @@
       </div>
       <div class="col-12 col-md-3 q-my-md">
         <q-select
-          v-model="selectedApproval"
+          v-model="permssionStatus"
           :options="approvalStatuses"
           label="승인 여부"
           outlined
@@ -31,7 +32,7 @@
       </div>
       <div class="col-12 col-md-3 q-my-md">
         <q-select
-          v-model="selectedQuestionType"
+          v-model="quizType"
           :options="questionTypes"
           label="문제 유형"
           outlined
@@ -63,8 +64,11 @@
           style="cursor: pointer"
         >
           <q-card-section>
-            <div class="text-h6">{{ quiz.subject }}</div>
-            <div class="text-subtitle2">{{ quiz.detailSubject }}</div>
+            <div class="text-h6">과목 : {{ quiz.subject }}</div>
+            <div class="text-subtitle2">챕터 : {{ quiz.detailSubject }}</div>
+            <div class="text-caption text-createAt">
+              생성일 : {{ formatDate(quiz.createAt) }}
+            </div>
           </q-card-section>
 
           <q-card-section>
@@ -78,106 +82,44 @@
 
 <script setup>
 import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
-import { ref } from 'vue';
+import { userApi } from 'src/boot/userAxios';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { date } from 'quasar';
 
-// 임시 데이터
-const quizzes = ref([
-  {
-    quizId: 1,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type" : "1","quiz" : "맞는 답을 고르시오.","option" : ["101호", "102호", "103호", "104호"],"answer" : "4", "commentary" : "해설 ~~~"}',
-    createAt: '2024-04-27T11:38:12.753Z',
-    permission: 0,
-  },
-  {
-    quizId: 2,
-    subject: 'c언어',
-    detailSubject: '포인터',
-    jsonContent:
-      '{"type" : "2", "quiz": "스택은 ?","answer":"스택","commentary":"해설 ~"}',
-    createAt: '2024-04-27T11:40:00.000Z',
-    permission: 1,
-  },
-  {
-    quizId: 3,
-    subject: '파이썬',
-    detailSubject: 'list',
-    jsonContent:
-      '{"type":"3","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 2,
-  },
-  {
-    quizId: 4,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"4","quiz":"스택","left_option":["1","2","3"],"right_option":["one","two","three"],"answer":["ata","btb","ctc"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 0,
-  },
-  {
-    quizId: 5,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 1,
-  },
-  {
-    quizId: 6,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 1,
-  },
-  {
-    quizId: 7,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 1,
-  },
-  {
-    quizId: 8,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 1,
-  },
-  {
-    quizId: 5,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 1,
-  },
-  {
-    quizId: 5,
-    subject: '자료구조',
-    detailSubject: '스택',
-    jsonContent:
-      '{"type":"5","quiz":"스택은 ( ) 이다.","answer":["LIFO"],"commentary":"해설^_^"}',
-    createAt: '2024-04-27T11:42:00.000Z',
-    permission: 1,
-  },
-]);
+const quizzes = ref([]);
+const subject = ref('');
+const detailSubject = ref('');
+const quizType = ref('');
+
+onMounted(async () => {
+  await fetchQuizzes();
+});
+
+const fetchQuizzes = async () => {
+  try {
+    const response = await userApi.get('/api/quiz/my');
+    quizzes.value = response.data;
+    // quizSubject.value = quizzes.value.map(quiz => quiz.subject);
+    // quizDetailSubject.value = quizzes.value.map(quiz => quiz.detailSubject);
+    console.log('퀴즈목록 : ', quizzes.value);
+
+    // console.log('과목목록 : ', quizSubject.value);
+    // console.log('챕터목록 : ', quizDetailSubject.value);
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+  }
+};
 
 const router = useRouter();
+
+const formatDate = dateString => {
+  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
 
 function goToQuizDetail(quizId) {
   router.push(`/userQuizzes/${quizId}`);
 }
+
+//Todo 정렬
 </script>
