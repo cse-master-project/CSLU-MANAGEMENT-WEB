@@ -46,12 +46,20 @@
         />
 
         <q-btn
+          v-if="!isUserLoggedIn"
           rounded
           label="로그인"
           color="light-blue-13"
           @click="isLogin = true"
           @update:isLogin="false"
           class="toolbar-item"
+        />
+        <q-btn
+          v-if="isUserLoggedIn"
+          rounded
+          label="로그아웃"
+          color="orange"
+          @click="isLogout = true"
         />
       </q-toolbar>
     </q-header>
@@ -66,6 +74,11 @@
       :is-login="isLogin"
       @update:isLogin="isLogin = false"
     />
+    <UserLogout
+      v-if="isLogout"
+      :is-logout="isLogout"
+      @update:isLogout="isLogout = false"
+    />
   </q-layout>
 </template>
 
@@ -73,6 +86,8 @@
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import UserLoginGoogle from 'src/components/auth/UserLoginGoogle.vue';
+import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상태관리
+import UserLogout from 'src/components/auth/UserLogout.vue';
 
 // 페이지 크기를 나타내는 코드.
 const route = useRoute();
@@ -84,6 +99,14 @@ const pageContainerStyles = computed(() => ({
 
 //로그인 다이얼로그상태
 const isLogin = ref(false);
+
+// 관리자 스토어 가져오기
+const userStore = useUserAuthStore();
+// 로그인 상태를 나타내는 반응형 데이터
+const isUserLoggedIn = computed(() => userStore.isAuthenticated);
+
+//로그아웃 기능
+const isLogout = ref(false);
 
 // 현재 경로와 비교하여 활성화된 버튼을 감지하는 함수
 const isActive = path => route.path === path;
