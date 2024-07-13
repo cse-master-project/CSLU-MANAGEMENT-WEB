@@ -105,6 +105,7 @@ const submitDetailSubject = async () => {
   const detailSubjectData = {
     subject: atSubject.value,
     detailSubject: addDetailSubject.value,
+    sortIndex: 0,
   };
   console.log(detailSubjectData);
   try {
