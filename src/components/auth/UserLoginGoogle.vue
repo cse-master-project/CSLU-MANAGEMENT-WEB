@@ -17,9 +17,10 @@
 <script setup>
 import { googleSdkLoaded } from 'vue3-google-login';
 import axios from 'axios';
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps } from 'vue';
 import { api } from 'src/boot/axios';
 import { useCookies } from 'vue3-cookies';
+import { useUserAuthStore } from 'src/stores/userAuth';
 const { cookies } = useCookies();
 const props = defineProps({
   isLogin: Boolean,
@@ -53,7 +54,8 @@ const LoginGoogle = () => {
         code,
         client_id:
           '130884765327-jacvju4thl4c1u6eduvb9v42i761itn5.apps.googleusercontent.com',
-        client_secret: '',
+
+        client_secret: 'secret',
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
       });
@@ -76,36 +78,23 @@ const LoginGoogle = () => {
         //console.log('userResponse.data', userResponse.data);
         // Set the userDetails data property to the userResponse object
         userDetails = userResponse.data;
-        console.log('userDetails', userDetails);
-        const userData = {
-          accessToken: accessToken,
-          nickname: userDetails.email,
-        };
-        api
-          .post('/api/user/auth/google/check', userData)
-          .then(response => {
-            console.log('registered', response.data.registered);
-            const registered = response.data.registered;
-            if (registered) {
-              api
-                .post('/api/user/auth/google/login', userData.accessToken)
-                .then(response => {
-                  //response.data.accessToken;
-                  //response.data.refreshToken;
-
-                  const access = response.data.accessToken;
-                  const refresh = response.data.refreshToken;
-                  cookies.set('accessToken', access, '1d');
-                  cookies.set('refreshToken', refresh, '7d');
+                  const adminStore = useUserAuthStore();
+                  adminStore.setAuthData(response.data);
+                  console.log('로그인 성공:', response.data);
+                })
+                .catch(error => {
+                  console.log('로그인 실패:', error);
                 });
             } else if (!registered) {
               api
                 .post('/api/user/auth/google/sign_up', userData)
                 .then(response => {
-                  const access = response.data.accessToken;
-                  const refresh = response.data.refreshToken;
-                  cookies.set('accessToken1', access, '1d');
-                  cookies.set('refreshToken1', refresh, '7d');
+                  const adminStore = useUserAuthStore();
+                  adminStore.setAuthData(response.data);
+                  console.log('회원가입 성공:', response.data);
+                })
+                .catch(error => {
+                  console.log('회원가입 실패:', error);
                 });
             }
           })
