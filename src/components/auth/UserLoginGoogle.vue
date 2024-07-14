@@ -8,14 +8,21 @@
       <q-card-actions align="right">
         <q-btn flat color="primary" label="구글로그인" @click="LoginGoogle" />
       </q-card-actions>
-      <q-card-actions align="right" v-if="signUpVisible">
+      <q-card-actions align="right" v-show="signUpVisible">
         <q-card-section class="q-pt-none">
           <q-input
-            v-model="id"
+            v-model="nickname"
             type="text"
             outlined
             placeholder="닉네임"
             class="q-mb-md"
+          />
+          <q-btn
+            rounded
+            label="회원가입"
+            color="light-blue-13"
+            @click="signUpGoogle"
+            class="toolbar-item"
           />
         </q-card-section>
       </q-card-actions>
@@ -39,14 +46,16 @@ const props = defineProps({
   isLogin: Boolean,
 });
 const visible = ref(props.isLogin); //다이얼로그의 가시성(부모로부터 isLogin받음.)
-const signUpVisible = false;
+const signUpVisible = ref(false);
+const googleacAcessToken = ref(null);
+const nickname = ref(null);
 const emit = defineEmits(['update:isLogin']);
 
 let userDetails = {}; //사용자 정보 저장.
 const LoginGoogle = () => {
   //구글 로그인 과정.
   //console.log('구글로그인');
-  emit('update:isLogin', false);
+  //emit('update:isLogin', false);
   googleSdkLoaded(google => {
     //구글 SDK 로드된 후 실행.
     google.accounts.oauth2
@@ -76,6 +85,7 @@ const LoginGoogle = () => {
         grant_type: 'authorization_code',
       }); //구글에서 액세스 토큰을 받아오기.
       const accessToken = response.data.access_token;
+      googleacAcessToken.value = accessToken;
       console.log('구글에서 액세스 토큰 : ', accessToken);
 
       // Fetch user details using the access token
@@ -95,7 +105,6 @@ const LoginGoogle = () => {
         //console.log('userResponse.data', userResponse.data);
         // Set the userDetails data property to the userResponse object
         userDetails = userResponse.data; //가져온 사용자 정보를 저장한다.
-
         console.log('사용자 정보를 저장한거 userDetails !!!', userDetails);
         const userData = {
           //백엔드에 보내기 위한 사용자 데이터 객체.
@@ -123,22 +132,9 @@ const LoginGoogle = () => {
                 });
             } else if (!registered) {
               //동록되지 않은 경우
-              signUpVisible = true;
-              // const userData2 = {
-              //   accessToken: accessToken,
-              //   nickname: 'test123',
-              // };
-              // userApi
-              //   .post('/api/user/auth/google/sign-up', userData2)
-              //   .then(response => {
-              //     const userStore = useUserAuthStore();
-              //     userStore.setAuthData(response.data);
-              //     console.log('회원가입 성공:', response.data);
-              //     emit('update:isLogin', false);
-              //   })
-              //   .catch(error => {
-              //     console.log('회원가입 실패:', error);
-              //   });
+              console.log('nickname', signUpVisible);
+
+              signUpVisible.value = true;
             }
           })
           .catch(error => {
@@ -163,6 +159,24 @@ const LoginGoogle = () => {
     // his Google account from the popup
     console.log('Handle the response', response);
   };
+};
+const signUpGoogle = () => {
+  console.log('nickname setting', signUpVisible);
+  const userData2 = {
+    accessToken: googleacAcessToken.value,
+    nickname: nickname.value,
+  };
+  userApi
+    .post('/api/user/auth/google/sign-up', userData2)
+    .then(response => {
+      const userStore = useUserAuthStore();
+      userStore.setAuthData(response.data);
+      console.log('회원가입 성공:', response.data);
+      emit('update:isLogin', false);
+    })
+    .catch(error => {
+      console.log('회원가입 실패:', error);
+    });
 };
 </script>
 
