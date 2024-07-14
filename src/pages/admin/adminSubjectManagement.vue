@@ -241,8 +241,11 @@ const submitEditDetailSubject = async () => {
 //과목 삭제 기능
 const deleteSubject = ref('');
 const submitDeleteSubject = async () => {
+  // 요청 본문에 포함될 데이터 객체
   const subjectDeleteData = {
-    subject: deleteSubject.value,
+    data: {
+      subject: deleteSubject.value,
+    },
   };
   try {
     console.log(subjectDeleteData);
@@ -259,8 +262,10 @@ const atSubject3 = ref('');
 const DeleteDetailSubject = ref('');
 const submitDeleteDetailSubject = async () => {
   const subjectDeleteData = {
-    subject: atSubject3.value,
-    detailSubject: DeleteDetailSubject.value,
+    data: {
+      subject: atSubject3.value,
+      detailSubject: DeleteDetailSubject.value,
+    },
   };
   try {
     console.log(subjectDeleteData);
