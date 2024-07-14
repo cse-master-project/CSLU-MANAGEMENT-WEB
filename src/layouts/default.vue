@@ -34,6 +34,7 @@
           label="문제 만들기"
           to="/create"
           class="toolbar-item"
+          v-if="isUserLoggedIn"
           :class="{ active: isActive('/create') }"
         />
         <q-btn
@@ -42,6 +43,7 @@
           label="문제 관리"
           to="/management"
           class="toolbar-item"
+          v-if="isUserLoggedIn"
           :class="{ active: isActive('/management') }"
         />
 

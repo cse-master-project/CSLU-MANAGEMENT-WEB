@@ -101,8 +101,8 @@ const LoginGoogle = () => {
               userApi
                 .post('/api/user/auth/google/login', userData.accessToken)
                 .then(response => {
-                  const adminStore = useUserAuthStore();
-                  adminStore.setAuthData(response.data);
+                  const userStore = useUserAuthStore();
+                  userStore.setAuthData(response.data);
                   console.log('로그인 성공:', response.data);
                 })
                 .catch(error => {
@@ -117,8 +117,8 @@ const LoginGoogle = () => {
               userApi
                 .post('/api/user/auth/google/sign-up', userData2)
                 .then(response => {
-                  const adminStore = useUserAuthStore();
-                  adminStore.setAuthData(response.data);
+                  const userStore = useUserAuthStore();
+                  userStore.setAuthData(response.data);
                   console.log('회원가입 성공:', response.data);
                 })
                 .catch(error => {
