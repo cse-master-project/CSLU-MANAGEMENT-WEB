@@ -1,7 +1,11 @@
 <template>
   <q-page>
-    <p>나의 정보</p>
-    <q-btn @click="deactivate">탈퇴하기</q-btn>
+    <q-card class="text-center" flat>
+      <div class="container">
+        <q-title class="title">나의 정보</q-title><br />
+        <q-btn class="quiz-type-btn" @click="deactivate"> 탈퇴하기 </q-btn>
+      </div>
+    </q-card>
   </q-page>
 </template>
 
