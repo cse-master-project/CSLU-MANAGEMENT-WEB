@@ -8,6 +8,17 @@
       <q-card-actions align="right">
         <q-btn flat color="primary" label="구글로그인" @click="LoginGoogle" />
       </q-card-actions>
+      <q-card-actions align="right" v-if="signUpVisible">
+        <q-card-section class="q-pt-none">
+          <q-input
+            v-model="id"
+            type="text"
+            outlined
+            placeholder="닉네임"
+            class="q-mb-md"
+          />
+        </q-card-section>
+      </q-card-actions>
     </q-card>
 
     <GoogleLogin :callback="callback" />
@@ -28,10 +39,10 @@ const props = defineProps({
   isLogin: Boolean,
 });
 const visible = ref(props.isLogin); //다이얼로그의 가시성(부모로부터 isLogin받음.)
+const signUpVisible = false;
 const emit = defineEmits(['update:isLogin']);
 
 let userDetails = {}; //사용자 정보 저장.
-
 const LoginGoogle = () => {
   //구글 로그인 과정.
   //console.log('구글로그인');
@@ -104,26 +115,30 @@ const LoginGoogle = () => {
                   const userStore = useUserAuthStore();
                   userStore.setAuthData(response.data);
                   console.log('로그인 성공:', response.data);
+                  emit('update:isLogin', false);
                 })
                 .catch(error => {
                   console.log('로그인 실패:', error);
+                  emit('update:isLogin', false);
                 });
             } else if (!registered) {
               //동록되지 않은 경우
-              const userData2 = {
-                accessToken: accessToken,
-                nickname: '쥉',
-              };
-              userApi
-                .post('/api/user/auth/google/sign-up', userData2)
-                .then(response => {
-                  const userStore = useUserAuthStore();
-                  userStore.setAuthData(response.data);
-                  console.log('회원가입 성공:', response.data);
-                })
-                .catch(error => {
-                  console.log('회원가입 실패:', error);
-                });
+              signUpVisible = true;
+              // const userData2 = {
+              //   accessToken: accessToken,
+              //   nickname: 'test123',
+              // };
+              // userApi
+              //   .post('/api/user/auth/google/sign-up', userData2)
+              //   .then(response => {
+              //     const userStore = useUserAuthStore();
+              //     userStore.setAuthData(response.data);
+              //     console.log('회원가입 성공:', response.data);
+              //     emit('update:isLogin', false);
+              //   })
+              //   .catch(error => {
+              //     console.log('회원가입 실패:', error);
+              //   });
             }
           })
           .catch(error => {
