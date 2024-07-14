@@ -46,6 +46,15 @@
           v-if="isUserLoggedIn"
           :class="{ active: isActive('/management') }"
         />
+        <q-btn
+          stretch
+          flat
+          label="마이 페이지"
+          to="/mypage"
+          class="toolbar-item"
+          v-if="isUserLoggedIn"
+          :class="{ active: isActive('/mypage') }"
+        />
 
         <q-btn
           v-if="!isUserLoggedIn"

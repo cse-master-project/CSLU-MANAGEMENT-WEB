@@ -6,9 +6,13 @@
 </template>
 
 <script setup>
+import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상태관리
+
 import { userApi } from 'src/boot/userAxios'; // userAxios 파일에서 userApi를 가져옴
 
+const userStore = useUserAuthStore();
 const deactivate = async () => {
+  console.log(userStore.accessToken);
   try {
     const response = await userApi.post('/api/user/deactivate');
     console.log('탈퇴 요청 성공:', response.data);
