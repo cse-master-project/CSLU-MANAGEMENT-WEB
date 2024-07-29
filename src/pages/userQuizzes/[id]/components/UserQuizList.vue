@@ -1,53 +1,55 @@
 <template>
   <q-page padding>
-    <!-- Filters -->
-    <div class="row q-col-gutter-md q-py-md">
-      <div class="col-12 col-md-3 q-my-md">
-        <q-select
-          v-model="subject"
-          :options="subjectOptions"
-          label="과목"
-          outlined
-          dense
-          @update:model-value="updateDetailSubjectOptions"
-        />
+    <!-- Filters card -->
+    <q-card class="q-mb-md q-gutter-md q-pa-md">
+      <div class="row q-col-gutter-md q-py-md">
+        <div class="col-12 col-md-3 q-my-md">
+          <q-select
+            v-model="subject"
+            :options="subjectOptions"
+            label="과목"
+            outlined
+            dense
+            @update:model-value="updateDetailSubjectOptions"
+          />
+        </div>
+        <div class="col-12 col-md-3 q-my-md">
+          <q-select
+            v-model="detailSubject"
+            :options="filteredDetailSubjectOptions"
+            label="챕터"
+            outlined
+            dense
+          />
+        </div>
+        <div class="col-12 col-md-3 q-my-md">
+          <q-select
+            v-model="permssionStatus"
+            :options="approvalStatuses"
+            label="승인 여부"
+            outlined
+            dense
+          />
+        </div>
+        <div class="col-12 col-md-3 q-my-md">
+          <q-select
+            v-model="quizType"
+            :options="questionTypes"
+            label="문제 유형"
+            outlined
+            dense
+          />
+        </div>
       </div>
-      <div class="col-12 col-md-3 q-my-md">
-        <q-select
-          v-model="detailSubject"
-          :options="filteredDetailSubjectOptions"
-          label="챕터"
-          outlined
-          dense
-        />
+      <div class="row q-col-gutter-md q-pt-md">
+        <div class="col-12 col-md-6 q-my-md">
+          <q-btn label="초기화" class="full-width"></q-btn>
+        </div>
+        <div class="col-12 col-md-6 q-my-md">
+          <q-btn label="검색" class="full-width"></q-btn>
+        </div>
       </div>
-      <div class="col-12 col-md-3 q-my-md">
-        <q-select
-          v-model="permssionStatus"
-          :options="approvalStatuses"
-          label="승인 여부"
-          outlined
-          dense
-        />
-      </div>
-      <div class="col-12 col-md-3 q-my-md">
-        <q-select
-          v-model="quizType"
-          :options="questionTypes"
-          label="문제 유형"
-          outlined
-          dense
-        />
-      </div>
-    </div>
-    <div class="row q-col-gutter-md q-pt-md">
-      <div class="col-12 col-md-6 q-my-md">
-        <q-btn label="초기화" class="full-width"></q-btn>
-      </div>
-      <div class="col-12 col-md-6 q-my-md">
-        <q-btn label="검색" class="full-width"></q-btn>
-      </div>
-    </div>
+    </q-card>
 
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
