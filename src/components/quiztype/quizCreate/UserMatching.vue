@@ -12,6 +12,9 @@
           :options="subjectOptions"
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
         <!-- 소분류 선택 -->
         <q-label>챕터<span class="required">*</span></q-label>
@@ -19,6 +22,9 @@
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
           class="q-mb-md"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
         <!-- 문제 입력 -->
         <q-label>문제<span class="required">*</span></q-label>
@@ -30,7 +36,9 @@
           maxlength="100"
           class="q-mb-md"
           counter
-          :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
 
         <!-- 왼쪽 그룹 옵션 입력 -->
@@ -40,7 +48,9 @@
               <q-label>a-1</q-label>
               <q-input
                 v-model="leftOptions[0]"
-                :input-style="{ paddingLeft: '1em' }"
+                ref="inputRef"
+                outlined
+                :rules="inputRules"
                 class="q-mb-md"
               />
             </div>
@@ -49,7 +59,9 @@
               <q-label>a-2</q-label>
               <q-input
                 v-model="leftOptions[1]"
-                :input-style="{ paddingLeft: '1em' }"
+                ref="inputRef"
+                outlined
+                :rules="inputRules"
                 class="q-mb-md"
               />
             </div>
@@ -57,7 +69,9 @@
               <q-label>a-3</q-label>
               <q-input
                 v-model="leftOptions[2]"
-                :input-style="{ paddingLeft: '1em' }"
+                ref="inputRef"
+                outlined
+                :rules="inputRules"
                 class="q-mb-md"
               />
             </div>
@@ -68,7 +82,9 @@
               <q-label>b-1</q-label>
               <q-input
                 v-model="rightOptions[0]"
-                :input-style="{ paddingLeft: '1em' }"
+                ref="inputRef"
+                outlined
+                :rules="inputRules"
                 class="q-mb-md"
               />
             </div>
@@ -76,7 +92,9 @@
               <q-label>b-2</q-label>
               <q-input
                 v-model="rightOptions[1]"
-                :input-style="{ paddingLeft: '1em' }"
+                ref="inputRef"
+                outlined
+                :rules="inputRules"
                 class="q-mb-md"
               />
             </div>
@@ -84,7 +102,9 @@
               <q-label>b-3</q-label>
               <q-input
                 v-model="rightOptions[2]"
-                :input-style="{ paddingLeft: '1em' }"
+                ref="inputRef"
+                outlined
+                :rules="inputRules"
                 class="q-mb-md"
               />
             </div>
@@ -99,7 +119,9 @@
             type="text"
             placeholder="답을 입력해주세요. (예: 0는0)"
             class="q-mb-md"
-            :input-style="{ paddingLeft: '1em' }"
+            ref="inputRef"
+            outlined
+            :rules="inputRules"
           />
         </div>
 
@@ -111,7 +133,9 @@
           autogrow
           placeholder="해설을 입력해주세요."
           class="q-mb-md"
-          :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
       </q-card-section>
       <!-- 파일 첨부 섹션 -->
@@ -203,7 +227,9 @@ const answers = ref(['', '', '']);
 const leftOptions = ref(['', '', '']);
 const rightOptions = ref(['', '', '']);
 const commentary = ref('');
+const inputRef = ref(null);
 
+const inputRules = [val => !!val || '필수 입력 사항입니다.'];
 const filteredDetailSubjectOptions = ref([]);
 
 watch(subject, () => {

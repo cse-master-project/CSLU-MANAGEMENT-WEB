@@ -11,18 +11,26 @@
           :options="subjectOptions"
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
         <q-label>챕터<span class="required">*</span></q-label>
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
           class="q-mb-md"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
         <q-label>문제<span class="required">*</span></q-label>
         <q-input
           v-model="quiz"
           type="textarea"
-          :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
           rows="3"
           maxlength="100"
           placeholder="문제를 입력해주세요."
@@ -35,7 +43,9 @@
           type="textarea"
           autogrow
           placeholder="정답을 입력해주세요."
-          :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
           class="q-mb-md"
           style="width: 30%"
         />
@@ -43,7 +53,9 @@
         <q-input
           v-model="commentary"
           type="textarea"
-          :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
           autogrow
           placeholder="해설을 입력해주세요."
           class="q-mb-md"
@@ -131,6 +143,9 @@ const detailSubject = ref('');
 const quiz = ref('');
 const answer = ref('');
 const commentary = ref('');
+const inputRef = ref(null);
+
+const inputRules = [val => !!val || '필수 입력 사항입니다.'];
 
 const filteredDetailSubjectOptions = ref([]);
 

@@ -13,6 +13,9 @@
           :options="subjectOptions"
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
         <!-- 소분류 선택 -->
         <q-label>챕터 <span class="required">*</span></q-label>
@@ -21,6 +24,9 @@
           :options="filteredDetailSubjectOptions"
           class="q-mb-md"
           :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
         <!-- 문제 입력 -->
         <q-label>문제 <span class="required">*</span></q-label>
@@ -32,7 +38,9 @@
           maxlength="100"
           counter
           class="q-mb-md"
-          :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
 
         <!-- 보기 입력 -->
@@ -49,7 +57,9 @@
             style="margin: 10px 0"
             placeholder="보기를 입력해주세요."
             class="q-mb-md"
-            :input-style="{ paddingLeft: '1em' }"
+            ref="inputRef"
+            outlined
+            :rules="inputRules"
           />
         </div>
 
@@ -64,7 +74,9 @@
           :max="4"
           style="width: 20%"
           class="q-mb-md"
-          :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
 
         <!-- 해설 입력 -->
@@ -74,7 +86,9 @@
           type="textarea"
           placeholder="해설을 입력해주세요."
           autogrow
-          :input-style="{ paddingLeft: '1em' }"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
           class="q-mb-md"
         />
       </q-card-section>
@@ -172,7 +186,9 @@ const option = ref([
 const answer = ref(null);
 const commentary = ref('');
 const filteredDetailSubjectOptions = ref([]);
+const inputRef = ref(null);
 
+const inputRules = [val => !!val || '필수 입력 사항입니다.'];
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(

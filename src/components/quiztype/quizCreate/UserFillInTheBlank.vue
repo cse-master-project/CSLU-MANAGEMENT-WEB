@@ -12,6 +12,9 @@
           :options="subjectOptions"
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
         <!-- 소분류 선택 -->
         <q-label>챕터<span class="required">*</span></q-label>
@@ -19,6 +22,9 @@
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
           class="q-mb-md"
+          ref="inputRef"
+          outlined
+          :rules="inputRules"
         />
         <!-- 문제 입력 -->
         <div>
@@ -30,8 +36,10 @@
             placeholder="문제를 입력해주세요."
             maxlength="100"
             counter
+            outlined
             class="q-mb-md"
-            :input-style="{ paddingLeft: '1em' }"
+            ref="inputRef"
+            :rules="inputRules"
           />
           <q-tooltip style="font-size: 1rem">
             '안녕하세요 저는 ( )입니다' 처럼 입력해주세요.
@@ -45,20 +53,24 @@
             v-model="answers[index]"
             type="text"
             class="q-mb-md"
-            :input-style="{ paddingLeft: '1em' }"
+            outlined
             placeholder="정답을 입력해주세요."
+            ref="inputRef"
+            :rules="inputRules"
           />
         </div>
 
         <!-- 해설 입력 -->
         <q-label>해설<span class="required">*</span></q-label>
         <q-input
+          ref="inputRef"
           v-model="commentary"
           type="textarea"
           placeholder="해설을 입력해주세요."
           autogrow
+          outlined
           class="q-mb-md"
-          :input-style="{ paddingLeft: '1em' }"
+          :rules="inputRules"
         />
       </q-card-section>
 
@@ -145,6 +157,9 @@ const quiz = ref('');
 const answers = ref(['']);
 const commentary = ref('');
 const filteredDetailSubjectOptions = ref([]);
+const inputRef = ref(null);
+
+const inputRules = [val => !!val || '필수 입력 사항입니다.'];
 
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
