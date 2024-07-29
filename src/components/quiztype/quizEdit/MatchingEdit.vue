@@ -1,6 +1,6 @@
 <template>
   <q-form class="q-pa-md">
-    <q-card>
+    <q-card class="q-pa-md form">
       <q-card-section>
         <div class="text-h6 q-mb-md">문제 유형: 선긋기형</div>
         <q-input v-model="localQuizContent.quiz" label="문제" />
@@ -37,7 +37,7 @@
         type="number"
         label="정답 (숫자 입력)"
         outlined
-        style="width: 20%"
+        style="width: 60%"
         class="q-mb-md"
       />
 
@@ -115,9 +115,13 @@ const submitQuiz = async () => {
 </script>
 
 <style scoped>
+.form > * {
+  margin: 1% 0;
+}
 .my-btn {
   border-radius: 10px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
   padding: 8px 16px;
+  width: 100%;
 }
 </style>

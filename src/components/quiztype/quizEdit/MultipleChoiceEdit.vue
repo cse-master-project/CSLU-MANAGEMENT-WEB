@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="form">
     <div class="text-h6 q-mb-md">문제 유형: 4지선다형</div>
     <q-input v-model="localQuizContent.quiz" label="문제" />
     <div v-for="(option, index) in localQuizContent.option" :key="index">
       <q-input
         v-model="localQuizContent.option[index]"
-        :label="`옵션 ${index + 1}`"
+        :label="`보기 ${index + 1}`"
       />
     </div>
 
@@ -92,3 +92,15 @@ const submitQuiz = async () => {
   }
 };
 </script>
+
+<style>
+.form > * {
+  margin: 1% 0;
+}
+.my-btn {
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 8px 16px;
+  width: 100%;
+}
+</style>

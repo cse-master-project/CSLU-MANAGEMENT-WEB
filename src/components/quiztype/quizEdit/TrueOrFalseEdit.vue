@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="q-mb-md form">
     <div class="text-h6 q-mb-md">문제 유형: o/x형</div>
     <q-input v-model="localQuizContent.quiz" label="문제" />
 
@@ -80,9 +80,13 @@ const submitQuiz = async () => {
 </script>
 
 <style scoped>
+.form > * {
+  margin: 1% 0;
+}
 .my-btn {
   border-radius: 10px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
   padding: 8px 16px;
+  width: 100%;
 }
 </style>
