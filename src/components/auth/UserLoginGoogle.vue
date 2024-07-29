@@ -1,12 +1,28 @@
 <template>
-  <q-dialog v-model="visible" persistent>
+  <q-dialog v-model="visible">
     <q-card>
       <q-card-section>
-        <div class="text-h6">구글로그인</div>
+        <div
+          class="text-h6"
+          style="
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          구글로그인
+        </div>
       </q-card-section>
 
-      <q-card-actions align="right">
-        <q-btn flat color="primary" label="구글로그인" @click="LoginGoogle" />
+      <q-card-actions align="right" class="googlelogin">
+        <q-btn flat color="primary" @click="LoginGoogle">
+          <img
+            src="/google.png"
+            alt="구글 로그인"
+            style="height: 30%; width: 50%"
+          />
+        </q-btn>
       </q-card-actions>
       <q-card-actions align="right" v-show="signUpVisible">
         <q-card-section class="q-pt-none">
@@ -27,7 +43,6 @@
         </q-card-section>
       </q-card-actions>
     </q-card>
-
     <GoogleLogin :callback="callback" />
   </q-dialog>
 </template>
