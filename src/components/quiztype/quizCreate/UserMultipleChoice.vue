@@ -11,7 +11,6 @@
         <q-select
           v-model="subject"
           :options="subjectOptions"
-          outlined
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
         />
@@ -20,20 +19,20 @@
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
-          outlined
           class="q-mb-md"
+          :input-style="{ paddingLeft: '1em' }"
         />
         <!-- 문제 입력 -->
         <q-label>문제 <span class="required">*</span></q-label>
         <q-input
           v-model="quiz"
           type="textarea"
-          outlined
           rows="3"
-          placeholder="문제를 입력해주세요"
+          placeholder="문제를 입력해주세요."
           maxlength="100"
           counter
           class="q-mb-md"
+          :input-style="{ paddingLeft: '1em' }"
         />
 
         <!-- 보기 입력 -->
@@ -46,10 +45,11 @@
           <q-input
             v-model="option[index - 1].label"
             type="textarea"
-            outlined
             autogrow
             style="margin: 10px 0"
+            placeholder="보기를 입력해주세요."
             class="q-mb-md"
+            :input-style="{ paddingLeft: '1em' }"
           />
         </div>
 
@@ -59,11 +59,12 @@
         <q-input
           v-model.number="answer"
           type="number"
-          outlined
+          placeholder="답을 입력해주세요."
           :min="1"
           :max="4"
           style="width: 20%"
           class="q-mb-md"
+          :input-style="{ paddingLeft: '1em' }"
         />
 
         <!-- 해설 입력 -->
@@ -71,21 +72,40 @@
         <q-input
           v-model="commentary"
           type="textarea"
-          outlined
+          placeholder="해설을 입력해주세요."
           autogrow
+          :input-style="{ paddingLeft: '1em' }"
           class="q-mb-md"
         />
       </q-card-section>
 
       <!-- 파일 첨부 섹션 -->
-      <q-card-section class="container">
-        <label for="file">
-          <div class="styled-file-input">
-            <div class="attachment-button">🔗 FILE UPLOAD</div>
-            <p v-if="fileName" class="attached-file">{{ fileName }}</p>
-          </div>
-        </label>
-        <input type="file" id="file" @change="fileInputHandler" />
+      <q-card-section style="width: 40%">
+        <!--첨부파일-->
+        <section class="container">
+          <label for="file">
+            <div
+              class="styled-file-input"
+              @click="triggerFileInput"
+              style="height: 60px; cursor: pointer"
+            >
+              <q-icon
+                name="attach_file"
+                size="23px"
+                :style="{ color: '#929dac' }"
+              />
+              <p v-if="fileName" class="attached-file">{{ fileName }}</p>
+            </div>
+          </label>
+          <input
+            type="file"
+            id="file"
+            ref="fileInput"
+            class="hidden"
+            accept=".jpg, .jpeg, .png"
+            @change="fileInputHandler"
+          />
+        </section>
       </q-card-section>
 
       <!-- 액션 버튼 섹션 -->
@@ -159,7 +179,11 @@ const updateDetailSubjectOptions = () => {
     subject.value,
   );
 };
-
+watch(answer, newVal => {
+  if (newVal < 1 || newVal > 4) {
+    answer.value = 1;
+  }
+});
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
   detailSubject.value = '';
@@ -211,5 +235,5 @@ const submitQuiz = () => {
 </script>
 
 <style scoped>
-@import '/src/css/QuizBtn.css';
+@import '/src/css/QuizForm.css';
 </style>

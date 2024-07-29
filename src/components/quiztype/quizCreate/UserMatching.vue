@@ -10,7 +10,6 @@
         <q-select
           v-model="subject"
           :options="subjectOptions"
-          outlined
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
         />
@@ -19,19 +18,19 @@
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
-          outlined
           class="q-mb-md"
         />
         <!-- 문제 입력 -->
         <q-label>문제<span class="required">*</span></q-label>
         <q-input
           v-model="quiz"
+          placeholder="문제를 입력해주세요."
           type="textarea"
-          outlined
           rows="3"
           maxlength="100"
           class="q-mb-md"
           counter
+          :input-style="{ paddingLeft: '1em' }"
         />
 
         <!-- 왼쪽 그룹 옵션 입력 -->
@@ -39,44 +38,68 @@
           <div class="left">
             <div>
               <q-label>a-1</q-label>
-              <q-input v-model="leftOptions[0]" outlined class="q-mb-md" />
+              <q-input
+                v-model="leftOptions[0]"
+                :input-style="{ paddingLeft: '1em' }"
+                class="q-mb-md"
+              />
             </div>
 
             <div>
               <q-label>a-2</q-label>
-              <q-input v-model="leftOptions[1]" outlined class="q-mb-md" />
+              <q-input
+                v-model="leftOptions[1]"
+                :input-style="{ paddingLeft: '1em' }"
+                class="q-mb-md"
+              />
             </div>
             <div>
               <q-label>a-3</q-label>
-              <q-input v-model="leftOptions[2]" outlined class="q-mb-md" />
+              <q-input
+                v-model="leftOptions[2]"
+                :input-style="{ paddingLeft: '1em' }"
+                class="q-mb-md"
+              />
             </div>
           </div>
           <!-- 오른쪽 그룹 옵션 입력 -->
           <div class="right">
             <div>
               <q-label>b-1</q-label>
-              <q-input v-model="rightOptions[0]" outlined class="q-mb-md" />
+              <q-input
+                v-model="rightOptions[0]"
+                :input-style="{ paddingLeft: '1em' }"
+                class="q-mb-md"
+              />
             </div>
             <div>
               <q-label>b-2</q-label>
-              <q-input v-model="rightOptions[1]" outlined class="q-mb-md" />
+              <q-input
+                v-model="rightOptions[1]"
+                :input-style="{ paddingLeft: '1em' }"
+                class="q-mb-md"
+              />
             </div>
             <div>
               <q-label>b-3</q-label>
-              <q-input v-model="rightOptions[2]" outlined class="q-mb-md" />
+              <q-input
+                v-model="rightOptions[2]"
+                :input-style="{ paddingLeft: '1em' }"
+                class="q-mb-md"
+              />
             </div>
           </div>
         </div>
 
         <!-- 정답 입력 -->
         <q-label>답안<span class="required">*</span></q-label>
-        <div v-for="(answer, index) in answers" :key="index" class="q-mb-md">
+        <div v-for="(answer, index) in answers" :key="index">
           <q-input
             v-model="answers[index]"
             type="text"
-            outlined
-            placeholder="답을 입력해주세요 (예: 0는0)"
+            placeholder="답을 입력해주세요. (예: 0는0)"
             class="q-mb-md"
+            :input-style="{ paddingLeft: '1em' }"
           />
         </div>
 
@@ -85,22 +108,39 @@
         <q-input
           v-model="commentary"
           type="textarea"
-          outlined
           autogrow
+          placeholder="해설을 입력해주세요."
           class="q-mb-md"
+          :input-style="{ paddingLeft: '1em' }"
         />
       </q-card-section>
       <!-- 파일 첨부 섹션 -->
 
-      <q-card-section>
+      <q-card-section style="width: 40%">
+        <!--첨부파일-->
         <section class="container">
           <label for="file">
-            <div class="styled-file-input">
-              <div class="attachment-button">🔗 FILE UPLOAD</div>
+            <div
+              class="styled-file-input"
+              @click="triggerFileInput"
+              style="height: 60px; cursor: pointer"
+            >
+              <q-icon
+                name="attach_file"
+                size="23px"
+                :style="{ color: '#929dac' }"
+              />
               <p v-if="fileName" class="attached-file">{{ fileName }}</p>
             </div>
           </label>
-          <input type="file" id="file" @change="fileInputHandler" />
+          <input
+            type="file"
+            id="file"
+            ref="fileInput"
+            class="hidden"
+            accept=".jpg, .jpeg, .png"
+            @change="fileInputHandler"
+          />
         </section>
       </q-card-section>
 
@@ -223,7 +263,7 @@ const submitQuiz = () => {
 </script>
 
 <style scoped lang="scss">
-@import '/src/css/QuizBtn.css';
+@import '/src/css/QuizForm.css';
 
 .option-container {
   display: flex;

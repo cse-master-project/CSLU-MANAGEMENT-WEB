@@ -10,7 +10,6 @@
         <q-select
           v-model="subject"
           :options="subjectOptions"
-          outlined
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
         />
@@ -19,7 +18,6 @@
         <q-select
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
-          outlined
           class="q-mb-md"
         />
         <!-- 문제 입력 -->
@@ -28,7 +26,7 @@
           v-model="quiz"
           type="textarea"
           rows="3"
-          outlined
+          :input-style="{ paddingLeft: '1em' }"
           placeholder="문제를 입력해주세요"
           maxlength="100"
           counter
@@ -39,7 +37,8 @@
         <q-option-group
           v-model="selectedAnswer"
           :options="options"
-          class="q-mb-md large-option-group"
+          class="q-mb-md"
+          style="margin-left: 0px"
         />
         <!-- 해설 입력 -->
         <q-label>해설<span class="required">*</span></q-label>
@@ -47,21 +46,37 @@
           v-model="commentary"
           type="textarea"
           placeholder="해설을 입력해주세요"
-          outlined
+          :input-style="{ paddingLeft: '1em' }"
           autogrow
           class="q-mb-md"
         />
       </q-card-section>
-      <q-card-section class="cs">
-        <!-- 파일 첨부 섹션 -->
+      <q-card-section style="width: 30%">
+        <!--첨부파일-->
         <section class="container">
           <label for="file">
-            <div class="styled-file-input">
-              <div class="attachment-button">🔗 FILE UPLOAD</div>
+            <div
+              class="styled-file-input"
+              @click="triggerFileInput"
+              style="height: 60px; cursor: pointer"
+            >
+              <q-icon
+                name="attach_file"
+                size="23px"
+                :style="{ color: '#929dac' }"
+              />
               <p v-if="fileName" class="attached-file">{{ fileName }}</p>
             </div>
           </label>
-          <input type="file" id="file" @change="fileInputHandler" />
+          <!--이미지만 업로드 가능-->
+          <input
+            type="file"
+            id="file"
+            ref="fileInput"
+            accept=".jpg, .jpeg, .png"
+            class="hidden"
+            @change="fileInputHandler"
+          />
         </section>
       </q-card-section>
       <!-- 액션 버튼 섹션 -->
@@ -176,5 +191,5 @@ const submitQuiz = () => {
 </script>
 
 <style scoped lang="scss">
-@import '/src/css/QuizBtn.css';
+@import '/src/css/QuizForm.css';
 </style>
