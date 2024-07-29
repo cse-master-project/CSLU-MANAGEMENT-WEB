@@ -44,7 +44,7 @@
           </q-item-section>
         </q-item>
       </div>
-      <q-card-actions align="right" class="q-px-md q-py-sm">
+      <q-card-actions align="center" class="q-px-sm q-py-sm buttons-container">
         <q-btn
           flat
           color="primary"
@@ -219,6 +219,17 @@ const isDelete = ref(false);
   border-radius: 10px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
   padding: 8px 16px;
+  width: 90%;
+}
+
+.buttons-container {
+  justify-content: center;
+  margin-top: 16px; /* 위로 띄우기 */
+  margin-bottom: 16px; /* 아래로 띄우기 */
+}
+
+.buttons-container .q-btn {
+  margin: 1% 0; /* 버튼 사이 간격 조정 */
 }
 </style>
 
