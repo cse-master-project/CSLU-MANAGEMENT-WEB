@@ -2,12 +2,24 @@
   <q-dialog v-model="visible" persistent>
     <q-card>
       <q-card-section>
-        <div class="text-h6">퀴즈를 승인하겠십니까 ?</div>
+        <div class="text-h6">퀴즈를 승인하겠습니까 ?</div>
       </q-card-section>
 
-      <q-card-actions align="right">
-        <q-btn flat color="primary" label="취소" @click="approveCancle" />
-        <q-btn flat color="red" label="승인" @click="quizApprove" />
+      <q-card-actions align="center" class="q-px-sm q-py-sm buttons-container">
+        <q-btn
+          flat
+          color="red"
+          label="취소"
+          @click="approveCancle"
+          style="border: 1px solid red"
+        />
+        <q-btn
+          flat
+          color="primary"
+          label="승인"
+          @click="quizApprove"
+          :style="`border: 1px solid var(--q-primary)`"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -52,4 +64,12 @@ const quizApprove = async () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.buttons-container {
+  justify-content: center;
+}
+
+.buttons-container .q-btn {
+  margin: 01% 0; /* 버튼 사이 간격 조정 */
+}
+</style>
