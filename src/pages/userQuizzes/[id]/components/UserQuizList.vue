@@ -43,10 +43,14 @@
       </div>
       <div class="row q-col-gutter-md q-pt-md">
         <div class="col-12 col-md-6 q-my-md">
-          <q-btn label="초기화" class="full-width"></q-btn>
+          <q-btn
+            label="초기화"
+            class="full-width"
+            @click="resetFilters"
+          ></q-btn>
         </div>
         <div class="col-12 col-md-6 q-my-md">
-          <q-btn label="검색" class="full-width"></q-btn>
+          <q-btn label="검색" class="full-width" @click="filterQuizzes"></q-btn>
         </div>
       </div>
     </q-card>
@@ -54,7 +58,7 @@
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
-        v-for="quiz in quizzes"
+        v-for="quiz in filteredQuizzes"
         :key="quiz.quizId"
         class="col-12 col-md-6 q-my-md"
       >
@@ -85,28 +89,44 @@
 <script setup>
 import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
 import { userApi } from 'src/boot/userAxios';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
+import userUseCategories from 'src/services/userUseCategories.js';
 
 const quizzes = ref([]);
+const filteredQuizzes = ref([]);
 const subject = ref('');
 const detailSubject = ref('');
+const permssionStatus = ref('');
 const quizType = ref('');
 
 onMounted(async () => {
   await fetchQuizzes();
+  fetchCategories();
+});
+
+const filteredDetailSubjectOptions = ref([]);
+const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
+  userUseCategories();
+
+const updateDetailSubjectOptions = () => {
+  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
+    subject.value,
+  );
+};
+
+watch(subject, () => {
+  detailSubject.value = '';
+  updateDetailSubjectOptions();
 });
 
 const fetchQuizzes = async () => {
   try {
     const response = await userApi.get('/api/quiz/my');
     quizzes.value = response.data;
-    // quizSubject.value = quizzes.value.map(quiz => quiz.subject);
-    // quizDetailSubject.value = quizzes.value.map(quiz => quiz.detailSubject);
+    filteredQuizzes.value = quizzes.value;
     console.log('퀴즈목록 : ', quizzes.value);
-    // console.log('과목목록 : ', quizSubject.value);
-    // console.log('챕터목록 : ', quizDetailSubject.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
@@ -118,9 +138,23 @@ const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 };
 
-function goToQuizDetail(quizId) {
+const goToQuizDetail = quizId => {
   router.push(`/userQuizzes/${quizId}`);
-}
+};
 
-//Todo 정렬
+const resetFilters = () => {
+  subject.value = '';
+  detailSubject.value = '';
+  permssionStatus.value = '';
+  quizType.value = '';
+  filteredQuizzes.value = quizzes.value;
+};
+
+const filterQuizzes = () => {
+  console.log(subject.value);
+  console.log(detailSubject.value);
+  filteredQuizzes.value = quizzes.value.filter(quiz => {
+    return quiz.subject === subject.value;
+  });
+};
 </script>
