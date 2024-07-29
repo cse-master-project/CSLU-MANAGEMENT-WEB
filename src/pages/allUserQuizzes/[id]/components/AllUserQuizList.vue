@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class="q-pa-md q-gutter-md">
       <q-select
         v-model="subject"
         :options="subjectOptions"
@@ -14,7 +14,7 @@
         label="챕터 선택"
         class="q-mb-md"
       ></q-select>
-      <q-btn @click="sortQuizzes">문제정렬</q-btn>
+      <q-btn @click="sortQuizzes" style="width: 100%">문제정렬</q-btn>
       <q-list bordered class="rounded-borders">
         <div v-for="quiz in quizzes" :key="quiz.quizId" class="q-mb-md">
           <q-card
@@ -22,6 +22,7 @@
             v-ripple
             @click="goToQuizDetail(quiz.quizId)"
             class="my-card"
+            style="width: 100%; margin: 2% auto; cursor: pointer"
           >
             <q-card-section class="card-content">
               <div class="row justify-between">
