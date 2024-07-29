@@ -1,18 +1,18 @@
 <template>
   <q-page class="q-pa-md flex flex-center" style="min-height: 700px">
-    <div class="row justify-center q-col-gutter-md" style="max-width: 1080px">
+    <div class="row justify-center q-col-gutter-md" style="max-width: 1280px">
       <div class="col-6 col-md-8">
         <q-card flat class="q-pa-md text-left">
           <q-card-section>
             <div class="text-h4" style="font-weight: bold">
               경상국립대 컴공 신입생의 첫걸음
             </div>
-            <div class="text-subtitle1" style="margin: 20px 0">
+            <div class="text-subtitle1" style="margin: 3% 0">
               복습에서부터 성공까지, 당신을 안내합니다.
             </div>
           </q-card-section>
           <q-separator />
-          <q-card-section class="q-pt-none" style="margin: 20px 0">
+          <q-card-section class="q-pt-none" style="margin: 3% 0">
             <p>
               신입생 여러분을 위한 최적의 복습 가이드를 제공합니다. 여러분의
               컴퓨터 공학 여정을 지원하며, 성공적인 학습 결과를 위한 모든 자료를
@@ -29,7 +29,7 @@
         </q-card>
       </div>
       <div class="col-6 col-md-4">
-        <img src="/gnu.jpeg" class="full-width" alt="경상국립대 이미지" />
+        <img src="/gnu.jpg" class="full-width" alt="경상국립대 이미지" />
       </div>
     </div>
   </q-page>
@@ -93,6 +93,23 @@ img {
   margin-left: 18px;
   flex-direction: column;
   width: 200px;
+}
+.btn {
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 3%;
+}
+.down {
+  font-size: 1rem;
+  width: 15%;
+  height: 50px;
+  border: 1px solid #0091da;
+  border-radius: 30px;
+  background-color: #fff;
+}
+.down:hover {
+  background-color: #0091da;
+  color: #fff;
 }
 /* 반응형 디자인을 위한 추가 스타일 */
 @media (max-width: 768px) {
