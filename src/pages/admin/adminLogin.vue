@@ -11,6 +11,7 @@
           outlined
           placeholder="아이디"
           class="q-mb-md"
+          @keyup.enter="submitLogin"
         />
         <q-input
           v-model="pw"
@@ -18,6 +19,7 @@
           outlined
           placeholder="비밀번호"
           class="textbox q-mb-md"
+          @keyup.enter="submitLogin"
         />
       </q-card-section>
       <q-card-actions align="center">
