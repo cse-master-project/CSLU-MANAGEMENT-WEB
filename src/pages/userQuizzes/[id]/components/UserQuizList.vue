@@ -10,7 +10,7 @@
             label="과목"
             outlined
             dense
-            @update:model-value="updateDetailSubjectOptions"
+            @update:model-value="filteredDetailSubjectOptions"
           />
         </div>
         <div class="col-12 col-md-3 q-my-md">
