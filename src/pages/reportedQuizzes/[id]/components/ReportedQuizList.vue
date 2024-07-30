@@ -1,37 +1,31 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
-      <q-list bordered class="rounded-borders">
-        <div
-          v-for="report in reports"
-          :key="report.quizReportId"
-          class="q-mb-md"
+    <!-- Quiz Cards -->
+    <div class="row q-col-gutter-md q-pt-md">
+      <div
+        v-for="report in reports"
+        :key="report.quizReportId"
+        class="col-12 col-md-6 q-my-md"
+      >
+        <q-card
+          class="my-card"
+          clickable
+          v-ripple
+          @click="goToQuizDetail(report.quizId)"
+          style="cursor: pointer"
         >
-          <q-card
-            clickable
-            v-ripple
-            @click="goToQuizDetail(report.quizId)"
-            class="my-card"
-          >
-            <q-card-section class="card-content">
-              <div class="row justify-between">
-                <div class="text-h6">퀴즈 ID: {{ report.quizId }}</div>
-                <div class="text-caption text-reportAt">
-                  신고일: {{ formatDate(report.reportAt) }}
-                </div>
-              </div>
-              <div class="row justify-between">
-                <div class="text-subtitle2">
-                  신고 이유 : {{ report.content }}
-                </div>
-              </div>
-              <div class="text-caption text-userId">
-                신고자 ID: {{ report.userId }}
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </q-list>
+          <q-card-section>
+            <div class="text-h6">퀴즈 ID: {{ report.quizId }}</div>
+            <div class="text-caption text-reportAt">
+              신고일: {{ formatDate(report.reportAt) }}
+            </div>
+            <div class="text-subtitle2">신고 이유 : {{ report.content }}</div>
+            <div class="text-caption text-userId">
+              신고자 : {{ report.userNickname }}
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
     </div>
   </q-page>
 </template>
@@ -67,43 +61,7 @@ function formatDate(dateStr) {
 }
 </script>
 
-<style scoped>
-.my-card {
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.my-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.text-subtitle2 {
-  font-weight: bold;
-  color: #ffa500; /* 주황색 */
-}
-
-.card-content {
-  padding: 10px;
-}
-
-.text-reportAt {
-  font-size: 0.75rem; /* 작은 글씨 */
-  color: #888888; /* 회색 */
-}
-
-.text-userId {
-  font-size: 0.75rem; /* 작은 글씨 */
-  color: #888888; /* 회색 */
-}
-
-.q-mb-md {
-  margin-bottom: 16px;
-}
-
-.rounded-borders {
-  border-radius: 8px;
-}
-</style>
+<style scoped></style>
 
 <route lang="yaml">
 meta:
