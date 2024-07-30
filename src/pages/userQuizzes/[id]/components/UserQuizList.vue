@@ -34,7 +34,7 @@
         <div class="col-12 col-md-3 q-my-md">
           <q-select
             v-model="quizType"
-            :options="questionTypes"
+            :options="quizTypeOptions"
             label="문제 유형"
             outlined
             dense
@@ -99,7 +99,25 @@ const filteredQuizzes = ref([]);
 const subject = ref('');
 const detailSubject = ref('');
 const permssionStatus = ref('');
+const approvalStatuses = [
+  { value: 0, label: '승인 대기중' },
+  {
+    value: 1,
+    label: '승인',
+  },
+  {
+    value: -1,
+    label: '반려',
+  },
+];
 const quizType = ref('');
+const quizTypeOptions = [
+  { value: 1, label: '4지선다형' },
+  { value: 2, label: '단답형' },
+  { value: 3, label: '선긋기형' },
+  { value: 4, label: 'O/X형' },
+  { value: 5, label: '빈칸 채우기형' },
+];
 
 onMounted(async () => {
   await fetchQuizzes();
@@ -142,6 +160,7 @@ const goToQuizDetail = quizId => {
   router.push(`/userQuizzes/${quizId}`);
 };
 
+// 필터링 초기화 기능
 const resetFilters = () => {
   subject.value = '';
   detailSubject.value = '';
@@ -150,11 +169,24 @@ const resetFilters = () => {
   filteredQuizzes.value = quizzes.value;
 };
 
+//필터링 기능
 const filterQuizzes = () => {
-  console.log(subject.value);
-  console.log(detailSubject.value);
   filteredQuizzes.value = quizzes.value.filter(quiz => {
-    return quiz.subject === subject.value;
+    const subjectMatch = !subject.value || quiz.subject === subject.value;
+    const detailSubjectMatch =
+      !detailSubject.value || quiz.detailSubject === detailSubject.value;
+    const permssionStatusMatch =
+      !permssionStatus.value ||
+      quiz.permissionStatus === permssionStatus.value.value;
+    const quizTypeMatch =
+      !quizType.value || quiz.quizType === quizType.value.value;
+
+    return (
+      subjectMatch &&
+      detailSubjectMatch &&
+      permssionStatusMatch &&
+      quizTypeMatch
+    );
   });
 };
 </script>
