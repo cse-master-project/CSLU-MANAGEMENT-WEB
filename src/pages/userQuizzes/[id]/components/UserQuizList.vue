@@ -72,6 +72,9 @@
           <q-card-section>
             <div class="text-h6">과목 : {{ quiz.subject }}</div>
             <div class="text-subtitle2">챕터 : {{ quiz.detailSubject }}</div>
+            <div class="text-body2">
+              문제 유형 : {{ formatQuizType(quiz.quizType) }}
+            </div>
             <div class="text-caption text-createAt">
               생성일 : {{ formatDate(quiz.createAt) }}
             </div>
@@ -152,12 +155,24 @@ const fetchQuizzes = async () => {
 
 const router = useRouter();
 
+const formatQuizType = quizType => {
+  switch (quizType) {
+    case 1:
+      return '4지선다형';
+    case 2:
+      return '단답형';
+    case 3:
+      return '선긋기형';
+    case 4:
+      return 'O/X형';
+    case 5:
+      return '빈칸 채우기형';
+    default:
+      return '알 수 없는 유형';
+  }
+};
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
-};
-
-const goToQuizDetail = quizId => {
-  router.push(`/userQuizzes/${quizId}`);
 };
 
 // 필터링 초기화 기능
@@ -188,5 +203,10 @@ const filterQuizzes = () => {
       quizTypeMatch
     );
   });
+};
+
+//페이지 상세조회
+const goToQuizDetail = quizId => {
+  router.push(`/userQuizzes/${quizId}`);
 };
 </script>
