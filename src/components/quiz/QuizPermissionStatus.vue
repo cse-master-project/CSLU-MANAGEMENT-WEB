@@ -7,14 +7,14 @@
     color="green"
     text-color="white"
   >
-    승인됨
+    승인
   </q-badge>
   <q-badge
     v-else-if="quiz.permissionStatus === -1"
     color="red"
     text-color="white"
   >
-    반려됨 {{ quiz.reason }}
+    반려 {{ quiz.reason }}
   </q-badge>
 </template>
 
