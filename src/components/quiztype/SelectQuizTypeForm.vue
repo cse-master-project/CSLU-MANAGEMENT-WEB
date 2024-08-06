@@ -1,19 +1,21 @@
 <template>
-  <q-page>
-    <q-card class="text-center" flat>
-      <div class="quiztype-container">
-        <q-title class="title">문제 유형을 고르세요.</q-title>
-        <q-btn
-          v-for="quizType in quizTypes"
-          :key="quizType.id"
-          :class="{ 'selected-btn': selectedQuizType === quizType.value }"
-          class="quiz-type-btn"
-          @click="selectQuizType(quizType.value)"
-        >
-          {{ quizType.name }}
-        </q-btn>
-      </div>
-    </q-card>
+  <q-page class="page">
+    <div class="center-container">
+      <q-title class="title">문제 유형 선택</q-title>
+      <q-card class="text-center" flat>
+        <div class="quiztype-container">
+          <q-btn
+            v-for="quizType in quizTypes"
+            :key="quizType.id"
+            :class="{ 'selected-btn': selectedQuizType === quizType.value }"
+            class="quiz-type-btn"
+            @click="selectQuizType(quizType.value)"
+          >
+            {{ quizType.name }}
+          </q-btn>
+        </div>
+      </q-card>
+    </div>
   </q-page>
 </template>
 
@@ -42,39 +44,54 @@ const emitQuizType = () => {
 </script>
 
 <style>
-.title {
-  font-size: 25px;
-  font-weight: bold;
-  margin: 5% 0;
-}
-.quiztype-container {
+.page {
+  height: 80vh; /* 페이지 전체 높이 설정 */
   display: flex;
-  flex-direction: column; /* 이 부분을 추가하여 세로 나열 */
+  justify-content: center;
+}
+
+.center-container {
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  flex-direction: column;
+  height: 100%; /* 부모 컨테이너의 전체 높이 사용 */
+  width: 70%; /* 부모 컨테이너의 전체 너비 사용 */
+}
+
+.title {
+  font-size: 2rem;
+  font-family: 'NotoB', sans-serif;
+  margin-right: auto;
+}
+
+.quiztype-container {
+  flex-direction: column; /* 세로 나열 */
   align-items: center; /* 가운데 정렬 */
   padding: 0 16px;
-  max-width: 800px;
-  margin: auto;
+  width: 100%;
 }
 
 .q-card.text-center {
   margin: 20px auto;
   padding: 20px;
-  border: 0px solid #e0e0e0;
+  border: 1px solid #e0e0e0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
+  width: 100%;
 }
 
 .quiz-type-btn {
   padding: 12px 24px;
   background-color: #ffffff;
+  border-radius: 20px;
   border: none;
   color: black;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 70%;
-  margin-top: 20px;
+  width: 80%;
+  margin: 3%;
 }
 
 .createbtn:hover,
@@ -82,9 +99,10 @@ const emitQuizType = () => {
   background-color: #0091da;
   color: white;
 }
-
-/* 추가된 스타일 */
-.quiz-type-btn {
-  margin: 10px; /* 버튼 간격 조절 */
+@font-face {
+  font-family: 'NotoB';
+  src: url('/NotoSansKR-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 </style>
