@@ -22,7 +22,7 @@
         />
       </q-card-section>
 
-      <q-card-actions align="right" class="q-px-md q-py-sm">
+      <q-card-actions align="center" class="q-px-sm q-py-sm buttons-container">
         <q-btn
           flat
           color="red"
@@ -150,14 +150,19 @@ const isApprove = ref(false);
   font-size: 0.75rem; /* 작은 글씨 */
   color: #888888; /* 회색 */
 }
+
 .my-btn {
   border-radius: 10px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
   padding: 8px 16px;
+  width: 90%;
+}
+
+.buttons-container {
+  justify-content: center;
+}
+
+.buttons-container .q-btn {
+  margin: 01% 0; /* 버튼 사이 간격 조정 */
 }
 </style>
-
-<route lang="yaml">
-meta:
-  layout: admin
-</route>
