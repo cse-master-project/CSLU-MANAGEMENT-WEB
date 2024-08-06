@@ -1,1 +1,23 @@
 // app global css in SCSS form
+/* src/css/app.scss */
+
+//토스폰트
+@import url('https://static.toss.im/tps/main.css');
+
+//GNU폰트 레귤러
+@font-face {
+  font-family: 'Noto';
+  src: url('/NotoSansKR-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+//GNU폰트 볼드
+@font-face {
+  font-family: 'NotoB';
+  src: url('/NotoSansKR-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+body {
+  font-family: 'Noto', sans-serif;
+}
