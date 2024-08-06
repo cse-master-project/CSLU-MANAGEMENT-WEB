@@ -128,7 +128,7 @@ const isActive = path => route.path === path;
   justify-content: center;
 }
 .toolbar {
-  width: 70%; /* 툴바 너비 조정 */
+  width: 80%; /* 툴바 너비 조정 */
   display: flex;
   justify-content: space-between;
   align-items: center; /* 툴바 내부 요소 중앙 정렬 */
