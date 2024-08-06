@@ -41,7 +41,9 @@
             ref="inputRef"
             :rules="inputRules"
           />
-          <q-tooltip style="font-size: 1rem">
+          <q-tooltip
+            style="font-size: 1rem; opacity: 0.7; background-color: black"
+          >
             '안녕하세요 저는 ( )입니다' 처럼 입력해주세요.
           </q-tooltip>
         </div>
