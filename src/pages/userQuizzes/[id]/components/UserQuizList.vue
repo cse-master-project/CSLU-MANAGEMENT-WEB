@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding style="max-width: 1080px; margin: 0 auto">
     <!-- Filters card -->
     <q-card class="q-mb-md q-gutter-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
@@ -45,12 +45,18 @@
         <div class="col-12 col-md-6 q-my-md">
           <q-btn
             label="초기화"
-            class="full-width"
+            icon="refresh"
+            class="full-width resetbtn"
             @click="resetFilters"
           ></q-btn>
         </div>
         <div class="col-12 col-md-6 q-my-md">
-          <q-btn label="검색" class="full-width" @click="filterQuizzes"></q-btn>
+          <q-btn
+            label="검색"
+            icon="search"
+            class="full-width searchbtn"
+            @click="filterQuizzes"
+          ></q-btn>
         </div>
       </div>
     </q-card>
@@ -210,3 +216,13 @@ const goToQuizDetail = quizId => {
   router.push(`/userQuizzes/${quizId}`);
 };
 </script>
+<style>
+.searchbtn {
+  color: green;
+  border-radius: 20px;
+}
+.resetbtn {
+  color: red;
+  border-radius: 20px;
+}
+</style>
