@@ -23,7 +23,7 @@
         <q-btn
           stretch
           flat
-          label="서비스 소개"
+          label="서비스"
           to="/about"
           class="toolbar-item"
           :class="{ active: isActive('/about') }"
@@ -90,11 +90,10 @@
         <q-btn
           v-if="!isUserLoggedIn"
           rounded
-          label="로그인"
-          color="light-blue-13"
+          label="LOG IN"
           @click="isLogin = true"
           @update:isLogin="false"
-          class="toolbar-item"
+          class="loginbtn"
         />
         <q-btn
           v-if="isUserLoggedIn"
@@ -208,7 +207,7 @@ const getQuizComponent = quizType => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
 .q-header {
   height: 8%;
   display: flex;
@@ -232,6 +231,10 @@ const getQuizComponent = quizType => {
   align-items: center;
 }
 
+.title {
+  font-size: 1.8rem;
+  font-family: 'NotoB', sans-serif;
+}
 .toolbar-item {
   margin-left: 16px;
   margin-right: 16px;
@@ -242,31 +245,45 @@ const getQuizComponent = quizType => {
 .toolbar-item.active::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: -3px;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 1px;
   background-color: currentColor;
-}
-
-.title {
-  font-size: 1.8rem;
-  font-weight: bold;
 }
 .q-menu {
   padding: 0;
+  opacity: 0.9;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .q-menu .q-list {
   min-width: 200px;
+  color: black;
+  border-radius: 20px;
+  font-family: 'Toss Product Sans';
 }
 .custom-menu {
-  background-color: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  min-width: 200px;
+  border-radius: 20px;
 }
 .selected-btn {
-  background-color: #e0e0e0;
-  color: red;
+  background: linear-gradient(0.25turn, #730286, #be99bb);
+  color: #fff;
+}
+.loginbtn {
+  background-color: rgba(33, 44, 60, 0.8);
+  font-family: 'Toss Product Sans';
+  font-weight: 600;
+  color: white;
+  font-size: 1rem;
+  border-radius: 40px;
+  padding: 0 20px;
 }
 </style>
