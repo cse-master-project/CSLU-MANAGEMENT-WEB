@@ -2,7 +2,7 @@
   <!-- 퀴즈 등록 폼 -->
   <q-form class="q-pa-md">
     <div class="title-container">
-      <q-title class="title">4지선다형</q-title>
+      <q-title class="title" style="font-size: 1.8rem">4지선다형</q-title>
     </div>
     <q-card>
       <q-card-section>
@@ -69,14 +69,14 @@
         <q-input
           v-model.number="answer"
           type="number"
-          placeholder="답을 입력해주세요."
+          placeholder="정답"
           :min="1"
           :max="4"
           style="width: 20%"
           class="q-mb-md"
-          ref="inputRef"
+          ref="inputNumRef"
           outlined
-          :rules="inputRules"
+          :rules="inputNumRules"
         />
 
         <!-- 해설 입력 -->
@@ -186,20 +186,23 @@ const option = ref([
 const answer = ref(null);
 const commentary = ref('');
 const filteredDetailSubjectOptions = ref([]);
+
 const inputRef = ref(null);
+const inputNumRef = ref(null);
 
 const inputRules = [val => !!val || '필수 입력 사항입니다.'];
+const inputNumRules = [
+  val => !!val || '필수 입력 사항입니다.',
+  val => (val > 0 && val < 5) || '1에서 4까지 입력 가능합니다.',
+];
+
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
     subject.value,
   );
 };
-watch(answer, newVal => {
-  if (newVal < 1 || newVal > 4) {
-    answer.value = 1;
-  }
-});
+
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
   detailSubject.value = '';
@@ -250,6 +253,6 @@ const submitQuiz = () => {
 };
 </script>
 
-<style scoped>
+<style>
 @import '/src/css/QuizForm.css';
 </style>
