@@ -1,30 +1,36 @@
 <template>
   <q-dialog v-model="visible">
-    <q-card>
-      <q-card-section>
-        <div
-          class="text-h6"
-          style="
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          "
-        >
-          구글로그인
+    <q-card class="my-card"
+      ><q-btn
+        flat
+        round
+        dense
+        icon="close"
+        @click="visible = false"
+        class="close-button"
+        style="
+          margin-left: auto;
+          margin-top: 3%;
+          margin-right: 3%;
+          color: #929dac;
+        "
+        ><q-tooltip style="background-color: black"> 닫기 </q-tooltip></q-btn
+      >
+      <q-card-section align="right" class="card-header">
+        <div class="text-h4" style="font-family: 'NotoB', sans-serif">
+          CSLU로고
         </div>
+        <div class="text-h6">로그인</div>
       </q-card-section>
+      <q-separator class="separator" />
 
-      <q-card-actions align="right" class="googlelogin">
+      <q-card-actions class="google-login">
         <q-btn flat color="primary" @click="LoginGoogle">
-          <img
-            src="/google.png"
-            alt="구글 로그인"
-            style="height: 30%; width: 50%"
-          />
+          <img src="/google.png" alt="구글 로그인" class="google-img" />
         </q-btn>
       </q-card-actions>
-      <q-card-actions align="right" v-show="signUpVisible">
+
+      <q-card-actions align="right" v-show="false">
         <q-card-section class="q-pt-none">
           <q-input
             v-model="nickname"
@@ -32,14 +38,21 @@
             outlined
             placeholder="닉네임"
             class="q-mb-md"
-          />
-          <q-btn
-            rounded
-            label="회원가입"
-            color="light-blue-13"
-            @click="signUpGoogle"
-            class="toolbar-item"
-          />
+            maxlength="20"
+            ><q-tooltip
+              anchor="top middle"
+              style="background-color: black; transform: translateY(-20px)"
+              >20자까지 입력 가능합니다.</q-tooltip
+            ></q-input
+          >
+
+          <q-btn rounded @click="signUpGoogle" class="signupbtn">
+            <img
+              src="public\signup.png"
+              alt="adduser"
+              style="height: 16px; width: auto; filter: invert(1)"
+            />SIGN UP
+          </q-btn>
         </q-card-section>
       </q-card-actions>
     </q-card>
@@ -195,4 +208,54 @@ const signUpGoogle = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 카드 스타일링 */
+.my-card {
+  height: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+}
+
+/* 카드 헤더 스타일링 */
+.card-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  flex-direction: column; /* 수직 정렬 */
+  margin-bottom: auto; /* 카드의 위쪽에 배치 */
+}
+
+/* 구글 로그인 버튼 스타일링 */
+.google-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
+}
+
+.google-img {
+  height: auto;
+  width: 75%; /* 이미지 비율 유지 */
+}
+.q-input {
+  width: 100%;
+  margin: 0 auto;
+}
+/* 회원가입 버튼 스타일링 */
+.signupbtn {
+  background-color: rgba(0, 12, 30, 0.8);
+  width: 100%;
+  margin: 4% auto;
+  font-family: 'Toss Product Sans';
+  font-weight: 600;
+  color: white;
+  font-size: 1rem;
+}
+.separator {
+  width: 80%;
+}
+</style>
