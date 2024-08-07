@@ -1,3 +1,5 @@
+//사용자용
+
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
 import { useUserAuthStore } from 'src/stores/userAuth'; // 사용자 인증 스토어 불러오기
