@@ -3,16 +3,25 @@
     <div class="center-container">
       <q-title class="title">문제 유형 선택</q-title>
       <q-card class="text-center" flat>
+        <!--사진 + 텍스트 조합-->
         <div class="quiztype-container">
-          <q-btn
+          <div
             v-for="quizType in quizTypes"
             :key="quizType.id"
             :class="{ 'selected-btn': selectedQuizType === quizType.value }"
             class="quiz-type-btn"
             @click="selectQuizType(quizType.value)"
           >
-            {{ quizType.name }}
-          </q-btn>
+            <div class="quiz-type-image-container">
+              <img
+                :src="quizType.image"
+                alt="Quiz Type Image"
+                class="quiz-type-image"
+              />
+            </div>
+            <hr class="line" />
+            <div class="quiz-type-text">{{ quizType.name }}</div>
+          </div>
         </div>
       </q-card>
     </div>
@@ -26,11 +35,36 @@ const selectedQuizType = ref('');
 const emits = defineEmits(['quiz-type-selected']);
 
 const quizTypes = ref([
-  { id: 1, value: 'MultipleChoice', name: '4지선다형' },
-  { id: 2, value: 'ShortAnswer', name: '단답형' },
-  { id: 3, value: 'Matching', name: '선긋기형' },
-  { id: 4, value: 'TrueOrFalse', name: 'o/x형' },
-  { id: 5, value: 'FillInTheBlank', name: '빈칸 채우기형' },
+  {
+    id: 1,
+    value: 'MultipleChoice',
+    name: '4지선다형',
+    image: '/m_c.png',
+  },
+  {
+    id: 2,
+    value: 'ShortAnswer',
+    name: '단답형',
+    image: '/s_a.png',
+  },
+  {
+    id: 3,
+    value: 'Matching',
+    name: '선긋기형',
+    image: '/mat.png',
+  },
+  {
+    id: 4,
+    value: 'TrueOrFalse',
+    name: 'o/x형',
+    image: '/t_f.png',
+  },
+  {
+    id: 5,
+    value: 'FillInTheBlank',
+    name: '빈칸 채우기형',
+    image: '/f_b.png',
+  },
 ]);
 
 const selectQuizType = value => {
@@ -45,18 +79,18 @@ const emitQuizType = () => {
 
 <style>
 .page {
-  height: 80vh; /* 페이지 전체 높이 설정 */
+  height: 80vh;
   display: flex;
   justify-content: center;
 }
 
 .center-container {
   display: flex;
-  justify-content: center; /* 가로 중앙 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
-  height: 100%; /* 부모 컨테이너의 전체 높이 사용 */
-  width: 70%; /* 부모 컨테이너의 전체 너비 사용 */
+  height: 100%;
+  width: 90%;
 }
 
 .title {
@@ -66,8 +100,9 @@ const emitQuizType = () => {
 }
 
 .quiztype-container {
-  flex-direction: column; /* 세로 나열 */
-  align-items: center; /* 가운데 정렬 */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   padding: 0 16px;
   width: 100%;
 }
@@ -81,28 +116,51 @@ const emitQuizType = () => {
 }
 
 .quiz-type-btn {
-  padding: 12px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 150px;
+  height: 150px;
   background-color: #ffffff;
   border-radius: 20px;
-  border: none;
+  border: 1px solid #e0e0e0;
   color: black;
-  font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 80%;
-  margin: 3%;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 10% auto;
 }
 
-.createbtn:hover,
 .quiz-type-btn:hover {
-  background-color: #0091da;
-  color: white;
+  transform: scale(1.05);
 }
-@font-face {
-  font-family: 'NotoB';
-  src: url('/NotoSansKR-Bold.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+
+.quiz-type-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.quiz-type-image {
+  max-width: 80px;
+  max-height: 80px;
+}
+
+.quiz-type-text {
+  height: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.line {
+  width: 80%;
+  border: 0;
+  border-top: 1px solid #ccc;
 }
 </style>
