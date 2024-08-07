@@ -1,4 +1,4 @@
-//관리자용 ?
+//관리자용
 
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
