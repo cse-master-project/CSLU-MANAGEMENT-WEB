@@ -74,13 +74,13 @@
     <q-page-container style="max-width: 1080px; margin: 0 auto">
       <router-view />
     </q-page-container>
-    <LogoutForm v-model="showLogout" @logout="handleLogout" />
+    <AdminLogout v-model="showLogout" @logout="handleLogout" />
   </q-layout>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
-import LogoutForm from 'src/components/auth/LogoutForm.vue';
+import AdminLogout from 'src/components/auth/AdminLogout.vue';
 import { useRoute } from 'vue-router';
 import { useAdminAuthStore } from 'src/stores/adminAuth';
 
