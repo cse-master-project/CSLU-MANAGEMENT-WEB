@@ -31,10 +31,11 @@ const logout = async () => {
     const accessToken = adminStore.accessToken; // accessToken을 스토어에서 가져옵니다.
     await adminAuth.logout(accessToken); // accessToken을 인자로 넘깁니다.
     adminStore.logout();
-    console.log('로그아웃 성공');
+    //console.log('로그아웃 성공');
     // 로그아웃 성공 후 로그인 페이지로 리디렉션
     router.push('/admin/adminLogin');
   } catch (error) {
+    alert('로그아웃 실패.');
     console.error('로그아웃 실패:', error);
   }
 };

@@ -47,11 +47,12 @@ const logout = async () => {
 
     // 사용자 상태 초기화
     userStore.logout();
-    console.log('로그아웃 성공');
+    //console.log('로그아웃 성공');
 
     // 로그아웃 성공 후 홈 페이지로 리디렉션
     router.push('/home');
   } catch (error) {
+    alert('로그아웃 실패.');
     console.error('로그아웃 실패:', error);
   }
 };
