@@ -13,6 +13,7 @@
           @click="approveCancle"
           style="border: 1px solid red"
         />
+
         <q-btn
           flat
           color="primary"
@@ -26,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 
@@ -59,7 +60,7 @@ const quizApprove = async () => {
     emit('update:isApprove', false);
   } catch (error) {
     console.error('퀴즈 승인에 실패했습니다.', error);
-    alert('문제 폐기 중 예상치 못한 오류가 발생했습니다.');
+    alert('문제 승인 중 예상치 못한 오류가 발생했습니다.');
   }
 };
 </script>

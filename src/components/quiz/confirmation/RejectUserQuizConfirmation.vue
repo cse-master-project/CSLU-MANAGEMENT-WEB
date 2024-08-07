@@ -4,6 +4,7 @@
       <q-card-section>
         <div class="text-h6">퀴즈 반려하시겠습니까 ?</div>
       </q-card-section>
+
       <q-card-section>
         <q-input
           v-model="reason"
@@ -15,6 +16,7 @@
           class="q-mb-md"
         />
       </q-card-section>
+
       <q-card-actions align="right">
         <q-btn
           flat
@@ -23,6 +25,7 @@
           @click="rejectCancle"
           class="rejectCancle-button"
         />
+
         <q-btn
           flat
           color="red"
@@ -36,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 
@@ -72,7 +75,7 @@ const quizReject = async () => {
     emit('update:isReject', false);
   } catch (error) {
     console.error('퀴즈 삭제에 실패했습니다.', error);
-    alert('문제 폐기 중 예상치 못한 오류가 발생했습니다.');
+    alert('문제 반려 중 예상치 못한 오류가 발생했습니다.');
   }
 };
 </script>

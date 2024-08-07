@@ -13,6 +13,7 @@
           @click="deleteCancle"
           class="deleteCancle-button"
         />
+
         <q-btn
           flat
           color="red"
@@ -26,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 
