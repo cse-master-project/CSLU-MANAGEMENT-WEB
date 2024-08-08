@@ -67,14 +67,18 @@
           rounded
           label="로그아웃"
           color="orange"
-          @click="openLogoutDialog()"
+          @click="isLogout = true"
         />
       </q-toolbar>
     </q-header>
     <q-page-container style="max-width: 1080px; margin: 0 auto">
       <router-view />
     </q-page-container>
-    <AdminLogout v-model="showLogout" @logout="handleLogout" />
+    <AdminLogout
+      v-if="isLogout"
+      :is-logout="isLogout"
+      @update:isLogout="isLogout = $event"
+    />
   </q-layout>
 </template>
 
@@ -93,19 +97,8 @@ const authStore = useAdminAuthStore();
 const isLoggedIn = computed(() => authStore.isAuthenticated);
 
 // 로그아웃 상태
-const showLogout = ref(false);
+const isLogout = ref(false);
 
-// 로그아웃 다이얼로그 열기
-const openLogoutDialog = () => {
-  showLogout.value = true;
-};
-
-// 로그아웃 핸들러
-const handleLogout = () => {
-  // 로그아웃 로직 실행
-  isLoggedIn.value = false; // 로그아웃 시 isLoggedIn을 false로 설정
-  showLogout.value = false;
-};
 // 현재 경로와 비교하여 활성화된 버튼을 감지하는 함수
 const isActive = path => route.path === path;
 </script>
