@@ -12,56 +12,62 @@
           </q-toolbar-title>
         </q-btn>
 
+        <!-- 로그인 상태에 따라 버튼 표시 -->
         <q-btn
+          v-if="isLoggedIn"
           stretch
           flat
           label="챕터 관리"
           to="/admin/adminSubjectManagement"
           class="toolbar-item"
-          :class="{ active: isActive('/') }"
+          :class="{ active: isActive('/admin/adminSubjectManagement') }"
         />
-
         <q-btn
+          v-if="isLoggedIn"
           stretch
           flat
           label="기본 문제 추가"
           to="/admin/adminCreate"
           class="toolbar-item"
-          :class="{ active: isActive('/') }"
+          :class="{ active: isActive('/admin/adminCreate') }"
         />
         <q-btn
+          v-if="isLoggedIn"
           stretch
           flat
           label="기본 문제 관리"
           to="/admin/adminManagement"
           class="toolbar-item"
-          :class="{ active: isActive('/') }"
+          :class="{ active: isActive('/admin/adminManagement') }"
         />
         <q-btn
+          v-if="isLoggedIn"
           stretch
           flat
           label="사용자 문제 관리"
           to="/admin/adminUserManagement"
           class="toolbar-item"
-          :class="{ active: isActive('/') }"
+          :class="{ active: isActive('/admin/adminUserManagement') }"
         />
         <q-btn
+          v-if="isLoggedIn"
           stretch
           flat
           label="미승인 문제 관리"
           to="/admin/adminNotApproved"
           class="toolbar-item"
-          :class="{ active: isActive('/') }"
+          :class="{ active: isActive('/admin/adminNotApproved') }"
         />
         <q-btn
+          v-if="isLoggedIn"
           stretch
           flat
           label="신고 문제 관리"
           to="/admin/adminReported"
           class="toolbar-item"
-          :class="{ active: isActive('/') }"
+          :class="{ active: isActive('/admin/adminReported') }"
         />
-
+        <!-- 로그인 상태에 따라 로그아웃 버튼 표시 -->
         <q-btn
           v-if="isLoggedIn"
           rounded
@@ -71,9 +77,18 @@
         />
       </q-toolbar>
     </q-header>
-    <q-page-container style="max-width: 1080px; margin: 0 auto">
+
+    <!-- 페이지 컨테이너 스타일 조정 -->
+    <q-page-container class="page-container">
       <router-view />
     </q-page-container>
+
+    <!--Footer-->
+    <q-footer>
+      <footerbar>CSLU © 2024 . All Rights Reserved. </footerbar></q-footer
+    >
+
+    <!-- AdminLogout 모달 표시 -->
     <AdminLogout
       v-if="isLogout"
       :is-logout="isLogout"
@@ -105,7 +120,7 @@ const isActive = path => route.path === path;
 
 <style lang="scss" scoped>
 .q-header {
-  height: 8%; /* 헤더 높이 조정 */
+  height: 70px; /* 헤더 높이 조정 */
   display: flex;
   align-items: center; /* 헤더 내부 요소 중앙 정렬 */
   justify-content: center; /* 헤더 내부 요소 중앙 정렬 */
@@ -120,17 +135,17 @@ const isActive = path => route.path === path;
   align-items: center;
   justify-content: center;
 }
+
 .toolbar {
-  width: 80%; /* 툴바 너비 조정 */
+  width: 100%; /* 툴바 너비 조정 */
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around; /* 아이템 사이 공간을 균등하게 분배 */
   align-items: center; /* 툴바 내부 요소 중앙 정렬 */
 }
 
 .toolbar-item {
-  margin-left: 16px; /* 필요에 따라 조정 */
-  margin-right: 16px; /* 필요에 따라 조정 */
-  font-size: 1.1rem; /* 글씨 크기 조정 */
+  margin: 0 8px; /* 버튼 사이 간격 조정 */
+  font-size: 1rem; /* 글씨 크기 조정 */
   position: relative;
 }
 
@@ -145,7 +160,13 @@ const isActive = path => route.path === path;
 }
 
 .title {
-  font-size: 1.8rem; /* 제목 글씨 크기 조정 */
+  font-size: 1.5rem; /* 제목 글씨 크기 조정 */
   font-weight: bold;
+}
+
+.page-container {
+  max-width: 1080px;
+  margin: 20px auto; /* 페이지 중앙 정렬 및 여백 설정 */
+  padding: 20px; /* 페이지 내용 여백 설정 */
 }
 </style>

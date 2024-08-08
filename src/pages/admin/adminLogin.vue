@@ -1,6 +1,7 @@
 <template>
   <q-page class="q-pa-md flex flex-center">
     <q-card class="my-card">
+      <q-img src="/public/BS-18_보더라인.jpg" class="card-image" contain />
       <q-card-section class="text-h6 text-center q-py-lg">
         환영합니다 관리자님 ^_^
       </q-card-section>
@@ -10,7 +11,7 @@
           type="text"
           outlined
           placeholder="아이디"
-          class="q-mb-md"
+          class="q-mb-md input-field"
           @keyup.enter="submitLogin"
         />
         <q-input
@@ -18,7 +19,7 @@
           type="password"
           outlined
           placeholder="비밀번호"
-          class="textbox q-mb-md"
+          class="q-mb-md input-field"
           @keyup.enter="submitLogin"
         />
       </q-card-section>
@@ -26,9 +27,10 @@
         <q-btn
           label="로그인"
           @click="submitLogin"
-          class="q-pa-md"
+          class="q-pa-md btn-login"
           color="primary"
           rounded
+          size="lg"
         />
       </q-card-actions>
     </q-card>
@@ -65,17 +67,31 @@ const submitLogin = async () => {
 };
 </script>
 
-<style>
+<style scoped>
 .my-card {
-  width: 90%;
-  max-width: 400px;
+  width: 100%; /* 카드의 너비를 100%로 설정하여 페이지에 맞게 확장 */
+  max-width: 500px; /* 최대 너비를 설정하여 너무 넓어지지 않도록 함 */
+  min-height: 400px; /* 최소 높이 설정 */
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px; /* 카드 내부 여백 조정 */
 }
 
-.textbox input {
-  font-size: 16px !important;
+.card-image {
+  height: 200px; /* 이미지 높이 조정 (사용 시) */
 }
 
-.q-btn {
-  width: 80%;
+.input-field .q-input__control {
+  border-radius: 8px;
+}
+
+.input-field .q-input__control input {
+  font-size: 16px;
+}
+
+.btn-login {
+  width: 100%;
+  font-size: 16px;
 }
 </style>
