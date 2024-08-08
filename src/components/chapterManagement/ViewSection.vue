@@ -1,16 +1,16 @@
 <template>
-  <q-card>
+  <q-card class="custom-card">
     <q-card-section class="q-pa-none">
       <div class="flex-container">
         <!-- 대분류 선택 리스트 -->
         <div class="list-container">
-          <q-item-label>과목</q-item-label>
-          <q-list bordered class="q-mb-md">
+          <q-item-label class="list-title">과목</q-item-label>
+          <q-list bordered class="custom-list">
             <q-item
               v-for="option in subjectOptions"
               :key="option.value"
               clickable
-              :active="subject === option"
+              :class="{ 'active-item': subject === option }"
               @click="selectSubject(option)"
             >
               <q-item-section>{{ option }}</q-item-section>
@@ -20,13 +20,12 @@
 
         <!-- 소분류 선택 리스트 -->
         <div class="list-container">
-          <q-item-label>챕터</q-item-label>
-          <q-list bordered class="q-mb-md">
+          <q-item-label class="list-title">챕터</q-item-label>
+          <q-list bordered class="custom-list">
             <q-item
               v-for="option in filteredDetailSubjectOptions"
               :key="option.value"
               clickable
-              :active="detailSubject === option"
               @click="selectDetailSubject(option)"
             >
               <q-item-section>{{ option }}</q-item-section>
@@ -51,7 +50,6 @@ const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
 const filteredDetailSubjectOptions = ref([]);
 
 const updateDetailSubjectOptions = () => {
-  // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
   filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
     subject.value,
   );
@@ -76,17 +74,48 @@ onMounted(fetchCategories);
 </script>
 
 <style scoped>
+.custom-card {
+  max-width: 800px; /* 카드의 최대 너비를 설정 */
+  margin: auto; /* 카드의 좌우 여백을 자동으로 설정하여 중앙 정렬 */
+  border-radius: 8px; /* 카드 모서리의 둥글기를 설정 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 카드에 그림자 효과 추가 */
+  background: #f9f9f9; /* 카드 배경 색상 설정 (연한 회색) */
+}
+
 .flex-container {
   display: flex;
   justify-content: space-between;
+  gap: 20px; /* 리스트 간의 간격을 설정 */
 }
 
 .list-container {
   flex: 1;
-  margin: 0 10px;
+  padding: 10px; /* 리스트 컨테이너의 내부 여백 설정 */
+  border-radius: 8px; /* 컨테이너 모서리의 둥글기를 설정 */
+  background: #ffffff; /* 컨테이너 배경 색상 설정 (흰색) */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 컨테이너에 그림자 효과 추가 */
 }
 
-.q-item.active {
-  background-color: #e0e0e0;
+.list-title {
+  font-weight: bold;
+  margin-bottom: 8px; /* 리스트 제목과 항목 간의 간격 설정 */
+}
+
+.custom-list {
+  border: none; /* 리스트의 테두리 제거 */
+}
+
+.list-item {
+  transition: background-color 0.3s ease; /* 배경색 변화 애니메이션 추가 */
+}
+
+.list-item:hover {
+  background-color: #e0e0e0; /* 마우스를 올렸을 때 배경색 변경 */
+}
+
+/* 추가된 active-item 클래스 스타일 */
+.active-item {
+  background-color: #c6daee; /* 선택된 항목의 배경색 변경 */
+  font-weight: bold; /* 선택된 항목의 글자 두께를 굵게 설정 */
 }
 </style>
