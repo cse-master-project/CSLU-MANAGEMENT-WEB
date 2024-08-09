@@ -7,7 +7,7 @@
       <q-card-section class="cs">
         <!-- 과목과 챕터 수평 배치 -->
         <div class="horizontal-select">
-          <!-- 대분류 선택 -->
+          <!-- 과목 선택 -->
           <div class="select-container">
             <q-label>과목선택<span class="required"></span></q-label>
             <q-select
@@ -19,7 +19,7 @@
               @update:model-value="updateDetailSubjectOptions"
             />
           </div>
-          <!-- 소분류 선택 -->
+          <!-- 챕터 선택 -->
           <div class="select-container">
             <q-label>챕터선택<span class="required"></span></q-label>
             <q-select
@@ -31,8 +31,25 @@
             />
           </div>
         </div>
+        <q-card-section class="cs">
+          <!-- 파일 첨부 섹션 -->
+          <section class="container">
+            <label for="file" class="file-upload-label">
+              <div class="upload-button">+</div>
+            </label>
+            <input type="file" id="file" @change="fileInputHandler" />
+            <!-- 이미지 미리보기 -->
+            <div v-if="filePreview" class="file-preview">
+              <img
+                :src="filePreview"
+                alt="File Preview"
+                class="preview-image"
+              />
+            </div>
+          </section>
+        </q-card-section>
         <!-- 문제 입력 -->
-        <q-label>Q. <span class="required">*</span></q-label>
+        <q-label>Q. </q-label>
         <q-input
           v-model="quiz"
           type="textarea"
@@ -61,22 +78,7 @@
           class="q-mb-md"
         />
       </q-card-section>
-      <q-card-section class="cs">
-        <!-- 파일 첨부 섹션 -->
-        <section class="container">
-          <label for="file">
-            <div class="styled-file-input">
-              <div class="attachment-button">🔗 FILE UPLOAD</div>
-              <p v-if="fileName" class="attached-file">{{ fileName }}</p>
-            </div>
-          </label>
-          <input type="file" id="file" @change="fileInputHandler" />
-          <!-- 이미지 미리보기 -->
-          <div v-if="filePreview" class="file-preview">
-            <img :src="filePreview" alt="File Preview" class="preview-image" />
-          </div>
-        </section>
-      </q-card-section>
+
       <!-- 액션 버튼 섹션 -->
       <q-card-actions align="right" class="cs">
         <q-btn
@@ -235,20 +237,29 @@ const submitQuiz = () => {
   margin-bottom: 10px;
 }
 
-/* 파일 입력 스타일 - Flexbox로 정렬, 커서 포인터 */
-.styled-file-input {
+/* 파일 입력 숨기기 */
+input[type='file'] {
+  display: none;
+}
+
+/* 파일 업로드 버튼 스타일 - Flexbox로 정렬, 중앙 정렬, 커서 포인터 */
+.file-upload-label {
   display: flex;
+  justify-content: center;
   align-items: center;
   cursor: pointer;
 }
 
-/* 파일 업로드 버튼 스타일 - 배경색, 글자색, 패딩, 둥근 모서리, 오른쪽 여백 */
-.attachment-button {
+/* 파일 업로드 버튼 스타일 - 원형, 크기, 배경색, 글자색, 중앙 정렬 */
+.upload-button {
+  width: 50px;
+  height: 50px;
   background-color: #42a5f5;
   color: white;
-  padding: 10px;
-  border-radius: 5px;
-  margin-right: 10px;
+  font-size: 2rem;
+  text-align: center;
+  line-height: 50px;
+  border-radius: 50%;
 }
 
 /* 첨부된 파일 이름 스타일 - 왼쪽 여백 */
