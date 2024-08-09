@@ -43,7 +43,7 @@
           </div>
         </q-card-section>
         <!-- 문제 입력 -->
-        <q-crard-section class="quiz-container">
+        <q-card-section class="quiz-container">
           <q-label class="label-quiz">Q</q-label>
           <q-input
             v-model="quiz"
@@ -56,7 +56,7 @@
             counter
             class="input-quiz"
           />
-        </q-crard-section>
+        </q-card-section>
         <!-- o/x 고르기 -->
         <q-card-section class="option-container">
           <q-option-group
