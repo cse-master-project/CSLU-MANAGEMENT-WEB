@@ -27,19 +27,19 @@ const changeQuizType = mode => {
 // 동적컴포넌트 정의 (비동기적)
 const quizTypeCreateForm = {
   MultipleChoice: defineAsyncComponent(() =>
-    import('src/components/quiztype/quizCreate/MultipleChoice.vue'),
+    import('src/components/quiztype/quizCreate/AdminMultipleChoiceCreate.vue'),
   ),
   ShortAnswer: defineAsyncComponent(() =>
-    import('src/components/quiztype/quizCreate/ShortAnswer.vue'),
+    import('src/components/quiztype/quizCreate/AdminShortAnswerCreate.vue'),
   ),
   Matching: defineAsyncComponent(() =>
-    import('src/components/quiztype/quizCreate/Matching.vue'),
+    import('src/components/quiztype/quizCreate/AdminMatchingCreate.vue'),
   ),
   TrueOrFalse: defineAsyncComponent(() =>
-    import('src/components/quiztype/quizCreate/TrueOrFalse.vue'),
+    import('src/components/quiztype/quizCreate/AdminTrueOrFalseCreate.vue'),
   ),
   FillInTheBlank: defineAsyncComponent(() =>
-    import('src/components/quiztype/quizCreate/FillInTheBlank.vue'),
+    import('src/components/quiztype/quizCreate/AdminFillInTheBlankCreate.vue'),
   ),
 };
 </script>
