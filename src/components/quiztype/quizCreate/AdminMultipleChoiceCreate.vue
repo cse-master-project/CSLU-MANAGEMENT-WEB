@@ -39,35 +39,31 @@
           class="q-mb-md"
         />
 
-        <!-- 보기 입력 -->
+        <!-- 보기 입력 및 정답 선택 -->
         <div
-          v-for="index in 4"
+          v-for="(choice, index) in option"
           :key="`choice-${index}`"
           class="choice-container"
         >
-          <q-label>보기 {{ index }} <span class="required">*</span></q-label>
+          <q-label
+            >보기 {{ index + 1 }} <span class="required">*</span></q-label
+          >
           <q-input
-            v-model="option[index - 1].label"
+            v-model="choice.label"
             type="textarea"
             outlined
             dense
             autogrow
             class="q-mb-md"
           />
+          <q-radio
+            v-model="selectedAnswer"
+            :val="index"
+            name="answer"
+            class="q-mb-md"
+            label="정답으로 선택"
+          />
         </div>
-
-        <!-- 정답 입력 (숫자만 가능) -->
-        <q-label>정답 (Only Number) <span class="required">*</span></q-label>
-        <q-input
-          v-model.number="answer"
-          type="number"
-          outlined
-          dense
-          :min="1"
-          :max="4"
-          style="width: 20%"
-          class="q-mb-md"
-        />
 
         <!-- 해설 입력 -->
         <q-label>해설<span class="required">*</span></q-label>
@@ -156,7 +152,7 @@ const option = ref([
   { label: '', value: '3' },
   { label: '', value: '4' },
 ]);
-const answer = ref(null);
+const selectedAnswer = ref(null);
 const commentary = ref('');
 const filteredDetailSubjectOptions = ref([]);
 
@@ -184,7 +180,7 @@ const submitQuiz = () => {
     jsonContent: JSON.stringify({
       quiz: quiz.value,
       option: option.value.map(choice => choice.label),
-      answer: answer.value,
+      answer: selectedAnswer.value + 1, // 선택된 답의 인덱스를 +1 해서 서버에 보냄
       commentary: commentary.value,
     }),
     hasImage: false,
@@ -193,7 +189,8 @@ const submitQuiz = () => {
   api
     .post('/api/quiz/default', quizData)
     .then(response => {
-      // console.log('서버 응답:', response.data);
+      console.log('서버 응답:', response.data);
+      console.log(quizData);
       submitQuizSuccess.value = true;
     })
     .catch(error => {
