@@ -117,16 +117,37 @@ import useCategories from 'src/services/useCategories.js';
 
 const emits = defineEmits(['change-quiz-type']);
 
+//뒤로 가기 기능
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
+//이미지 기능
 const fileName = ref('');
+const filePreview = ref(null); // 이미지 미리보기 URL
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
-    fileName.value = event.target.files[0].name;
+    fileName.value = files[0].name;
+
+    // 파일 타입이 이미지인지 확인
+    if (files[0].type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        filePreview.value = e.target.result;
+      };
+      reader.readAsDataURL(files[0]);
+    } else {
+      alert('이미지 파일만 선택할 수 있습니다.');
+      filePreview.value = null; // 파일 미리보기 초기화
+    }
   }
+};
+
+const cancelFile = () => {
+  filePreview.value = null;
+  fileName.value = ''; // 파일 이름 초기화
+  document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
