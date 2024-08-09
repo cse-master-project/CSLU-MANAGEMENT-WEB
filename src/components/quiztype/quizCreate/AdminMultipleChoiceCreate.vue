@@ -1,6 +1,6 @@
 <template>
   <!-- 퀴즈 등록 폼 -->
-  <q-form class="q-pa-md">
+  <q-form class="q-pa-md form-container">
     <div class="title-container">
       <q-title class="title">4지선다형</q-title>
     </div>
@@ -12,6 +12,7 @@
           v-model="subject"
           :options="subjectOptions"
           outlined
+          dense
           class="q-mb-md"
           @update:model-value="updateDetailSubjectOptions"
         />
@@ -21,6 +22,7 @@
           v-model="detailSubject"
           :options="filteredDetailSubjectOptions"
           outlined
+          dense
           class="q-mb-md"
         />
         <!-- 문제 입력 -->
@@ -29,6 +31,7 @@
           v-model="quiz"
           type="textarea"
           outlined
+          dense
           rows="3"
           placeholder="문제를 입력해주세요"
           maxlength="100"
@@ -47,19 +50,19 @@
             v-model="option[index - 1].label"
             type="textarea"
             outlined
+            dense
             autogrow
-            style="margin: 10px 0"
             class="q-mb-md"
           />
         </div>
 
         <!-- 정답 입력 (숫자만 가능) -->
-
         <q-label>정답 (Only Number) <span class="required">*</span></q-label>
         <q-input
           v-model.number="answer"
           type="number"
           outlined
+          dense
           :min="1"
           :max="4"
           style="width: 20%"
@@ -72,6 +75,7 @@
           v-model="commentary"
           type="textarea"
           outlined
+          dense
           autogrow
           class="q-mb-md"
         />
@@ -92,6 +96,8 @@
       <q-card-actions align="right">
         <q-btn
           class="backbtn"
+          color="secondary"
+          outline
           @click="goBack"
           style="width: 10%; margin: 3% 1%"
         >
@@ -99,6 +105,7 @@
         </q-btn>
         <q-btn
           class="registerbtn"
+          color="primary"
           @click="submitQuiz"
           style="width: 10%; margin: 3% 0"
         >
@@ -210,4 +217,55 @@ const submitQuiz = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.form-container {
+  max-width: 800px;
+  margin: auto;
+}
+
+.title-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: #2c3e50;
+}
+
+.q-label {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.required {
+  color: red;
+}
+
+.choice-container {
+  margin-bottom: 10px;
+}
+
+.styled-file-input {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.attachment-button {
+  background-color: #42a5f5;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.attached-file {
+  margin-left: 10px;
+}
+
+.backbtn,
+.registerbtn {
+  font-weight: bold;
+}
+</style>
