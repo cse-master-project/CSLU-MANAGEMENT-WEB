@@ -60,26 +60,32 @@
 
         <!-- 왼쪽 그룹 옵션 입력 -->
         <q-card-section>
-          <q-btn class="btn-reset" @click="resetColors">색상 초기화</q-btn>
           <div class="options-container">
             <div class="option-left">
-              <div v-for="(option, index) in leftOptions" :key="index">
-                <q-label :for="'a-' + (index + 1)">{{
-                  'a-' + (index + 1)
-                }}</q-label>
+              <div>
+                <q-btn class="btn-reset" @click="resetColors">초기화</q-btn>
+              </div>
+              <div
+                class="btn-select"
+                v-for="(option, index) in leftOptions"
+                :key="index"
+              >
                 <q-btn
+                  class="btn-select"
                   :style="{ backgroundColor: 'yellow' }"
                   :disabled="isColorDisabled('yellow', index)"
                   @click="selectOption('yellow', index)"
                   >1</q-btn
                 >
                 <q-btn
+                  class="btn-select"
                   :style="{ backgroundColor: 'yellowgreen' }"
                   :disabled="isColorDisabled('yellowgreen', index)"
                   @click="selectOption('yellowgreen', index)"
                   >2</q-btn
                 >
                 <q-btn
+                  class="btn-select"
                   :style="{ backgroundColor: 'orange' }"
                   :disabled="isColorDisabled('orange', index)"
                   @click="selectOption('orange', index)"
@@ -88,7 +94,7 @@
                 <q-input
                   v-model="leftOptions[index]"
                   outlined
-                  class="q-mb-md"
+                  class="input-left"
                   :style="{ backgroundColor: leftOptionsBgColor[index] }"
                 />
               </div>
@@ -99,14 +105,11 @@
                 v-for="(color, index) in ['yellow', 'yellowgreen', 'orange']"
                 :key="index"
               >
-                <q-label :for="'b-' + (index + 1)">{{
-                  'b-' + (index + 1)
-                }}</q-label>
                 <q-input
                   v-model="rightOptions[index]"
                   outlined
                   :style="{ backgroundColor: color }"
-                  class="q-mb-md"
+                  class="input-right"
                 />
               </div>
             </div>
@@ -431,7 +434,19 @@ input[type='file'] {
 .options-container {
   display: flex;
   justify-content: space-evenly; /* 중앙 정렬 */
-  align-items: baseline; /* 수직 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+}
+.btn-reset {
+  width: 80px;
+  align-items: center;
+  margin-bottom: 10px;
+  background-color: #42a5f5;
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+}
+.btn-select {
+  margin-bottom: 10px;
 }
 //왼쪽 입력 스타일
 .option-left {
@@ -442,6 +457,15 @@ input[type='file'] {
 .option-right {
   display: flex;
   flex-direction: column;
+}
+.input-left {
+  width: 200px;
+  display: flex;
+}
+.input-right {
+  width: 200px;
+  display: flex;
+  margin-top: 80px;
 }
 
 //답안 입력 스타일
