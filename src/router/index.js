@@ -23,7 +23,13 @@ export default route(function (/* { store, ssrContext } */) {
     extendRoutes: routes => {
       return setupLayouts(
         routes.map(route => {
-          if (route.path.includes('admin')) {
+          if (
+            route.path.includes('admin') |
+            route.path.includes('quizzes') |
+            route.path.includes('allUserQuizzes') |
+            route.path.includes('notApprovedQuizzes') |
+            route.path.includes('reportedQuizzes')
+          ) {
             route = {
               ...route,
               meta: {
