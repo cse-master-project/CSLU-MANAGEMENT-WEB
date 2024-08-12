@@ -60,11 +60,18 @@
 
         <!-- 왼쪽 그룹 옵션 입력 -->
         <q-card-section>
+          <div v-if="showHelp" class="help">
+            -> 왼쪽지문 입력, 오른쪽 지문 입력 후 색에 맞게 매칭 시켜주세요.
+            (순서 중요)
+          </div>
           <div class="options-container">
             <div class="option-left">
               <div>
                 <q-btn class="btn-reset" @click="resetColors">초기화</q-btn>
+                <q-btn class="btn-help" @click="toggleHelp">help</q-btn>
+                <!-- 도움말 텍스트 -->
               </div>
+
               <div
                 class="btn-select"
                 v-for="(option, index) in leftOptions"
@@ -213,6 +220,12 @@ const updateDetailSubjectOptions = () => {
   filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
     subject.value,
   );
+};
+
+const showHelp = ref(false);
+
+const toggleHelp = () => {
+  showHelp.value = !showHelp.value;
 };
 
 const selectOption = (color, index) => {
@@ -439,11 +452,28 @@ input[type='file'] {
 .btn-reset {
   width: 80px;
   align-items: center;
+
   margin-bottom: 10px;
   background-color: #42a5f5;
   color: white;
   font-size: 1rem;
   text-align: center;
+}
+.btn-help {
+  width: 80px;
+  align-items: center;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  background-color: #42a5f5;
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+}
+.help {
+  font-size: 1.1rem;
+  color: #ff0000;
+  margin-left: 110px;
+  margin-bottom: 20px;
 }
 .btn-select {
   margin-bottom: 10px;
