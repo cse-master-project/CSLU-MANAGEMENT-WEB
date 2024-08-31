@@ -108,7 +108,7 @@ const LoginGoogle = () => {
         code,
         client_id:
           '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
-        client_secret: '',
+        client_secret: process.env.VUE_APP_GOOGLE_SECRET_CODE,
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
       }); //구글에서 액세스 토큰을 받아오기.
