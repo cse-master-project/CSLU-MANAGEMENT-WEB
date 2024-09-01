@@ -1,127 +1,107 @@
 <template>
-  <q-form class="q-pa-md">
+  <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title">빈칸채우기형</q-title>
+      <q-title class="title">빈칸 채우기형</q-title>
     </div>
-    <q-card>
-      <q-card-section>
-        <!-- 대분류 선택 -->
-        <q-label>과목<span class="required">*</span></q-label>
-        <q-select
-          v-model="subject"
-          :options="subjectOptions"
-          class="q-mb-md"
-          @update:model-value="updateDetailSubjectOptions"
-          ref="inputRef"
-          outlined
-          :rules="inputRules"
-        />
-        <!-- 소분류 선택 -->
-        <q-label>챕터<span class="required">*</span></q-label>
-        <q-select
-          v-model="detailSubject"
-          :options="filteredDetailSubjectOptions"
-          class="q-mb-md"
-          ref="inputRef"
-          outlined
-          :rules="inputRules"
-        />
+    <div>
+      <q-card>
+        <!-- 과목과 챕터 선택 -->
+        <q-card-section class="select-container">
+          <div class="select-subject">
+            <q-label class="label-subject">과목 선택</q-label>
+            <q-select
+              class="select-box"
+              v-model="subject"
+              :options="subjectOptions"
+              outlined
+              dense
+              autogrow
+              @update:model-value="updateDetailSubjectOptions"
+              style="width: 200px"
+            />
+          </div>
+          <div class="select-chapter">
+            <q-label class="label-chapter">챕터 선택</q-label>
+            <q-select
+              class="select-box"
+              v-model="detailSubject"
+              :options="filteredDetailSubjectOptions"
+              outlined
+              dense
+              style="width: 200px"
+            />
+          </div>
+        </q-card-section>
+        <!-- 이미지 업로드 -->
+        <q-card-section class="imageUpload-container">
+          <div>
+            <label for="file">
+              <div class="upload-button">+</div>
+            </label>
+            <input type="file" id="file" @change="fileInputHandler" />
+          </div>
+          <div v-if="filePreview" class="previewImage-container">
+            <img :src="filePreview" alt="File Preview" class="preview-image" />
+            <q-icon name="close" class="cancel-button" @click="cancelFile" />
+          </div>
+        </q-card-section>
         <!-- 문제 입력 -->
-        <div>
-          <q-label>문제<span class="required">*</span></q-label>
+        <q-card-section class="quiz-container">
+          <q-label class="label-quiz">문제</q-label>
           <q-input
             v-model="quiz"
             type="textarea"
-            rows="3"
-            placeholder="문제를 입력해주세요."
+            rows="1"
+            outlined
+            dense
+            placeholder="문제를 입력해주세요 (괄호를 넣어줍니다 예 : 안녕하세요 ()입니다. ()살입니다.)"
             maxlength="100"
             counter
-            outlined
-            class="q-mb-md"
-            ref="inputRef"
-            :rules="inputRules"
+            class="input-quiz"
           />
-          <q-tooltip
-            style="font-size: 1rem; opacity: 0.7; background-color: black"
+        </q-card-section>
+        <!-- 답 입력 -->
+        <q-card-section class="answer-container">
+          <q-label class="label-answer">답안</q-label>
+          <div
+            v-for="(answer, index) in answers"
+            :key="index"
+            class="q-mb-md input-answer"
           >
-            '안녕하세요 저는 ( )입니다' 처럼 입력해주세요.
-          </q-tooltip>
-        </div>
-
-        <!-- 답변 입력 -->
-        <q-label>정답<span class="required">*</span></q-label>
-        <div v-for="(answer, index) in answers" :key="index">
-          <q-input
-            v-model="answers[index]"
-            type="text"
-            class="q-mb-md"
-            outlined
-            placeholder="정답을 입력해주세요."
-            ref="inputRef"
-            :rules="inputRules"
-          />
-        </div>
-
+            <q-input
+              v-model="answers[index]"
+              type="textarea"
+              rows="1"
+              outlined
+              dense
+              placeholder="답안 입력해주세요 (다수일 경우 , 로 구분) "
+              maxlength="100"
+              counter
+            />
+          </div>
+        </q-card-section>
         <!-- 해설 입력 -->
-        <q-label>해설<span class="required">*</span></q-label>
-        <q-input
-          ref="inputRef"
-          v-model="commentary"
-          type="textarea"
-          placeholder="해설을 입력해주세요."
-          autogrow
-          outlined
-          class="q-mb-md"
-          :rules="inputRules"
-        />
-      </q-card-section>
-
-      <q-card-section style="width: 40%">
-        <!--첨부파일-->
-        <section class="container">
-          <label for="file">
-            <div
-              class="styled-file-input"
-              @click="triggerFileInput"
-              style="height: 60px; cursor: pointer"
-            >
-              <q-icon
-                name="attach_file"
-                size="23px"
-                :style="{ color: '#929dac' }"
-              />
-              <p v-if="fileName" class="attached-file">{{ fileName }}</p>
-            </div>
-          </label>
-          <input
-            type="file"
-            id="file"
-            accept=".jpg, .jpeg, .png"
-            ref="fileInput"
-            class="hidden"
-            @change="fileInputHandler"
-          />
-        </section>
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn
-          class="backbtn"
-          @click="goBack"
-          style="width: 10%; margin: 3% 1%"
-        >
-          뒤로가기
-        </q-btn>
-        <q-btn
-          class="registerbtn"
-          @click="submitQuiz"
-          style="width: 10%; margin: 3% 0"
-        >
-          문제 등록
-        </q-btn>
-      </q-card-actions>
-    </q-card>
+        <q-card-section class="comment-container">
+          <q-label class="label-quiz">해설 </q-label>
+          <q-input
+            v-model="commentary"
+            type="textarea"
+            rows="3"
+            outlined
+            placeholder="해설을 입력하세요"
+            dense
+            maxlength="100"
+            counter
+            class="input-commentary"
+        /></q-card-section>
+        <q-card-section class="btn-container">
+          <q-btn class="btn-back" @click="goBack"> 뒤로가기 </q-btn>
+          <q-btn class="btn-submit" @click="submitQuiz"> 문제 등록 </q-btn>
+        </q-card-section>
+      </q-card>
+    </div>
   </q-form>
+  <!-- 문제 생성 성공 컴포넌트 -->
   <UserSubmitQuizSuccess
     v-if="submitQuizSuccess"
     :submit-quiz-success="submitQuizSuccess"
@@ -141,11 +121,31 @@ const goBack = () => {
 };
 
 const fileName = ref('');
+const filePreview = ref(null); // 이미지 미리보기 URL
+
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
-    fileName.value = event.target.files[0].name;
+    fileName.value = files[0].name;
+
+    // 파일 타입이 이미지인지 확인
+    if (files[0].type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        filePreview.value = e.target.result;
+      };
+      reader.readAsDataURL(files[0]);
+    } else {
+      alert('이미지 파일만 선택할 수 있습니다.');
+      filePreview.value = null; // 파일 미리보기 초기화
+    }
   }
+};
+
+const cancelFile = () => {
+  filePreview.value = null;
+  fileName.value = ''; // 파일 이름 초기화
+  document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
@@ -159,9 +159,6 @@ const quiz = ref('');
 const answers = ref(['']);
 const commentary = ref('');
 const filteredDetailSubjectOptions = ref([]);
-const inputRef = ref(null);
-
-const inputRules = [val => !!val || '필수 입력 사항입니다.'];
 
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
@@ -198,7 +195,7 @@ const submitQuiz = () => {
     .catch(error => {
       if (error.response.status === 400) {
         alert(
-          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
+          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요.',
         );
       } else if (error.response.status === 500) {
         alert(
@@ -212,5 +209,193 @@ const submitQuiz = () => {
 </script>
 
 <style scoped lang="scss">
-@import '/src/css/QuizForm.css';
+// 폼 컨테이너 스타일
+.form-container {
+  max-width: 1080px;
+  margin: 3% auto;
+}
+
+// 카드 스타일 - 둥근 모서리, 그림자
+.q-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+// 퀴즈유형 타이틀 스타일
+.title-container {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+.title {
+  font-size: 2rem;
+  color: #0080ff;
+}
+
+// 과목 챕터 선택 스타일
+.select-container {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  justify-content: space-evenly;
+  align-items: baseline; /* 수직 중앙 정렬 */
+  margin-bottom: 5px;
+}
+.select-subject {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  margin-right: 10px;
+}
+.select-chapter {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  margin-left: 10px;
+}
+.label-subject,
+.label-chapter {
+  font-size: 1rem;
+  color: #000000;
+  margin-right: 15px;
+  font-weight: bold;
+}
+.select-box {
+  max-width: 400px;
+}
+
+//이미지 업로드 스타일
+.imageUpload-container {
+  display: flex;
+  justify-content: space-evenly; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  margin-bottom: 10px;
+}
+input[type='file'] {
+  /* 파일 입력 숨기기 */
+  display: none;
+}
+/* 파일 업로드 버튼 스타일 - Flexbox로 정렬, 중앙 정렬, 커서 포인터 */
+.file-upload-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+/* 파일 업로드 버튼 스타일 - 원형, 크기, 배경색, 글자색, 중앙 정렬 */
+.upload-button {
+  width: 50px;
+  height: 50px;
+  background-color: #42a5f5;
+  color: white;
+  font-size: 2rem;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.5s ease-in-out;
+}
+//회전 애니메이션
+.upload-button:hover {
+  transform: rotate(360deg);
+}
+
+/* 파일 미리보기 스타일 */
+.previewImage-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center; /* 가운데 정렬 */
+}
+/* 미리보기 이미지 스타일 */
+.preview-image {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-right: 10px; /* 취소 버튼과의 간격 */
+}
+/* 취소 버튼 스타일 */
+.cancel-button {
+  width: 50px;
+  height: 50px;
+  background-color: #ff002f;
+  color: white;
+  font-size: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+// 문제 입력 스타일
+.quiz-container {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  align-items: baseline; /* 수직 중앙 정렬 */
+}
+.label-quiz {
+  font-size: 1rem;
+  color: #000000;
+  margin-right: 15px;
+  font-weight: bold;
+}
+.input-quiz {
+  width: 70%;
+}
+
+// 답안 입력 스타일
+.answer-container {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  align-items: baseline; /* 수직 중앙 정렬 */
+}
+.label-answer {
+  font-size: 1rem;
+  color: #000000;
+  margin-right: 15px;
+  font-weight: bold;
+}
+.input-answer {
+  width: 70%;
+}
+
+// 해설 입력 스타일
+.comment-container {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  align-items: baseline; /* 수직 중앙 정렬 */
+}
+.input-commentary {
+  width: 70%;
+}
+
+// 버튼 스타일
+.btn-container {
+  display: flex;
+  justify-content: end; /* 중앙 정렬 */
+  justify-content: space-evenly; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+}
+.btn-back {
+  background-color: rgb(213, 213, 213);
+  color: black;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.71429;
+  height: 40px;
+  font-family: 'Toss Product Sans';
+  box-shadow: rgba(39, 40, 40, 0.24) 0px 8px 16px 0px;
+}
+.btn-submit {
+  background-color: rgb(0, 154, 233);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.71429;
+  height: 40px;
+  font-family: 'Toss Product Sans';
+  box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
+}
 </style>
