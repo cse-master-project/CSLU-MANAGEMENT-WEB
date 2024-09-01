@@ -53,73 +53,29 @@
           class="input-commentary"
       /></q-card-section>
       <q-card-section class="btn-container">
-        <q-btn class="btn-back" @click="editCancle"> 수정 취소 </q-btn>
-        <q-btn class="btn-submit" @click="submitQuiz"> 수정 완료 </q-btn>
+        <q-btn class="btn-back" @click="editCancle"> 뒤로가기 </q-btn>
+        <q-btn class="btn-submit" @click="submitQuiz"> 문제 등록 </q-btn>
       </q-card-section>
     </q-card>
   </q-form>
 </template>
 
-<script setup>
-import { ref, defineProps, defineEmits } from 'vue';
-import { api } from 'src/boot/axios';
-
-// 데이터 받기.(다른 컴포넌트 -> 현재 컴포넌트)
-const props = defineProps({
-  quizcontent: Object,
-  quizzes: Object,
-});
-
-// 이벤트 보내기.(현재 컴포넌트 -> 다른 컴포넌트)
-const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
-
-const localQuizContent = ref({ ...props.quizcontent });
-
-// 수정 취소 기능
-const editCancle = () => {
-  emit('update:isEditing', 'false');
-};
-
-// 수정 완료 기능.
-const submitQuiz = async () => {
-  const quizData = {
-    quiz: localQuizContent.value.quiz,
-    answer: localQuizContent.value.answer,
-    commentary: localQuizContent.value.commentary,
-  };
-
-  try {
-    const response = await api.patch(
-      `/api/management/quiz/${props.quizzes.quizId}`,
-      quizData,
-    );
-    console.log('응답:', response.data); // 서버 응답 확인
-    alert('수정이 완료되었습니다 ^_^');
-
-    emit('update:quizcontent', localQuizContent.value);
-    emit('update:isEditing');
-  } catch (error) {
-    if (error.response && error.response.status === 400) {
-      alert('바뀐게 없습니다 .. ㅜㅠ');
-    } else {
-      console.error('수정 오류:', error);
-      alert('문제 수정 중 오류가 발생했습니다.');
-    }
-  }
-};
-</script>
+<script setup></script>
 
 <style lang="scss" scoped>
+// 폼 컨테이너 스타일
 .form-container {
   max-width: 800px;
   margin-bottom: 20px;
 }
 
+// 카드 스타일 - 둥근 모서리, 그림자
 .q-card {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+// 퀴즈유형 타이틀 스타일
 .title-container {
   text-align: center;
   margin-top: 10px;
@@ -130,6 +86,7 @@ const submitQuiz = async () => {
   color: #0080ff;
 }
 
+// 문제 입력 스타일
 .quiz-container {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
@@ -145,6 +102,7 @@ const submitQuiz = async () => {
   width: 70%;
 }
 
+// 답안 입력 스타일
 .answer-container {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
@@ -160,6 +118,7 @@ const submitQuiz = async () => {
   width: 70%;
 }
 
+// 해설 입력 스타일
 .comment-container {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
@@ -169,6 +128,7 @@ const submitQuiz = async () => {
   width: 70%;
 }
 
+// 버튼 스타일
 .btn-container {
   display: flex;
   justify-content: end; /* 중앙 정렬 */
