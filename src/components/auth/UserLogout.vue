@@ -1,12 +1,34 @@
 <template>
-  <q-dialog v-model="visible">
-    <q-card>
-      <q-card-section class="row items-center justify-end">
-        <div>로그아웃 하시겠습니까?</div>
+  <q-dialog v-model="visible" persistent>
+    <q-card
+      style="
+        width: 20%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      "
+    >
+      <q-btn
+        flat
+        dense
+        icon="close"
+        @click="close"
+        class="close-button"
+        style="
+          margin-left: auto;
+          margin-top: 3%;
+          margin-right: 3%;
+          color: #929dac;
+        "
+      ></q-btn>
+      <q-card-section>
+        <div style="font-size: 1.4rem; margin: 10px auto; padding: 0">
+          로그아웃 하시겠습니까?
+        </div>
       </q-card-section>
-      <q-card-actions align="right">
-        <q-btn flat label="취소" color="primary" @click="close" />
-        <q-btn flat label="로그아웃" color="primary" @click="logout" />
+      <q-card-actions align="center">
+        <q-btn class="logoutbtn" @click="logout">YES.</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -60,9 +82,19 @@ const logout = async () => {
 // 다이얼로그 닫기
 const close = () => {
   emit('update:isLogout', false);
+  visible.value = false;
 };
 </script>
 
 <style scoped>
-/* 필요한 스타일 추가 */
+.logoutbtn {
+  background-color: rgba(0, 12, 30, 0.8);
+  width: 100%;
+  margin: 3% auto;
+  font-family: 'Toss Product Sans';
+  font-weight: 600;
+  color: white;
+  font-size: 1rem;
+  padding: 10px 90px;
+}
 </style>
