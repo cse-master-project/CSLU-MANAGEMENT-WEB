@@ -3,7 +3,7 @@
     <!-- Filters card -->
     <div
       class="q-card q-pa-md q-mb-md"
-      style="display: flex; flex-direction: column"
+      style="display: flex; flex-direction: column; border-radius: 10px"
     >
       <div style="display: flex" class="filter-container">
         <!-- 과목 -->
@@ -132,14 +132,16 @@
         class="col-12 col-md-6 q-my-md q-gutter-md"
       >
         <q-card
-          class="my-card"
+          class="my-card-list"
           clickable
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
           style="cursor: pointer"
         >
           <q-card-section>
-            <div class="text-h6">과목 : {{ quiz.subject }}</div>
+            <div class="text-h6" style="font-weight: bold">
+              과목 : {{ quiz.subject }}
+            </div>
             <div class="text-subtitle2">챕터 : {{ quiz.detailSubject }}</div>
             <div class="text-body2">
               문제 유형 : {{ formatQuizType(quiz.quizType) }}
@@ -148,6 +150,8 @@
               생성일 : {{ formatDate(quiz.createAt) }}
             </div>
           </q-card-section>
+
+          <q-separator inset /><!--선-->
 
           <q-card-section>
             <QuizPermssionStatus :quiz="quiz" />
@@ -271,7 +275,8 @@ const filterQuizzes = () => {
     const detailSubjectMatch =
       !detailSubject.value || quiz.detailSubject === detailSubject.value;
     const permssionStatusMatch =
-      !permssionStatus.value || quiz.permissionStatus === permssionStatus.value;
+      permssionStatus.value === '' ||
+      quiz.permissionStatus === Number(permssionStatus.value);
     const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
 
     return (
@@ -437,12 +442,19 @@ const getDotClass = value => {
 }
 
 .dot-approved {
-  background-color: rgb(72, 223, 72);
+  background-color: #4caf50;
 }
 
 .dot-rejected {
   background-color: rgb(255, 0, 0);
 }
+.my-card-list {
+  border-radius: 10px;
+}
+.my-card-list:hover {
+  border: 2px solid #99c6ec;
+}
+
 /* 반응형 (모바일 사이즈) */
 @media (max-width: 500px) {
   .filter-container {
