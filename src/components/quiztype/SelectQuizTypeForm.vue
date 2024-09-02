@@ -20,7 +20,9 @@
               />
             </div>
             <hr class="line" />
-            <div class="quiz-type-text">{{ quizType.name }}</div>
+            <div class="quiz-type-text">
+              {{ quizType.name }}
+            </div>
           </div>
         </div>
       </q-card>
@@ -39,31 +41,31 @@ const quizTypes = ref([
     id: 1,
     value: 'MultipleChoice',
     name: '4지선다형',
-    image: '/m_c.png',
+    image: '/quizimg/m_c.png',
   },
   {
     id: 2,
     value: 'ShortAnswer',
     name: '단답형',
-    image: '/s_a.png',
+    image: '/quizimg/s_a.png',
   },
   {
     id: 3,
     value: 'Matching',
     name: '선긋기형',
-    image: '/mat.png',
+    image: '/quizimg/mat.png',
   },
   {
     id: 4,
     value: 'TrueOrFalse',
     name: 'o/x형',
-    image: '/t_f.png',
+    image: '/quizimg/t_f.png',
   },
   {
     id: 5,
     value: 'FillInTheBlank',
     name: '빈칸 채우기형',
-    image: '/f_b.png',
+    image: '/quizimg/f_b.png',
   },
 ]);
 
@@ -140,7 +142,7 @@ const emitQuizType = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 70%;
+  height: 66%;
   width: 100%;
   overflow: hidden;
 }
@@ -151,7 +153,7 @@ const emitQuizType = () => {
 }
 
 .quiz-type-text {
-  height: 30%;
+  height: 33%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -160,7 +162,7 @@ const emitQuizType = () => {
 
 .line {
   width: 80%;
-  border: 0;
+  padding: 0;
   border-top: 1px solid #ccc;
 }
 </style>
