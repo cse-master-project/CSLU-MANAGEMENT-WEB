@@ -184,7 +184,7 @@ const submitQuiz = () => {
   };
   console.log('서버에 제출될 데이터:', quizData);
   userApi
-    .post('/api/quiz/default', quizData)
+    .post('/api/quiz/user', quizData)
     .then(response => {
       // console.log('서버 응답:', response.data);
       submitQuizSuccess.value = true;
