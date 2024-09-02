@@ -220,16 +220,15 @@ const signUpGoogle = () => {
 <style scoped>
 .logoimg {
   margin: 0 auto;
-  width: 150px; /* 로고 이미지의 너비를 고정 */
-  height: auto; /* 높이는 자동으로 조정 */
+  width: 150px;
+  height: auto;
 }
 
 .responsive-logo {
-  max-width: 100%; /* 부모 요소의 너비에 맞게 조정 */
-  height: auto; /* 높이는 자동으로 조정 */
+  max-width: 100%;
+  height: auto;
 }
 
-/* 추가적인 스타일 */
 .my-card {
   height: 60%;
   display: flex;
