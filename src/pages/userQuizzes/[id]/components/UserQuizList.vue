@@ -140,14 +140,14 @@
         >
           <q-card-section>
             <div class="text-h6" style="font-weight: bold">
-              과목 : {{ quiz.subject }}
+              {{ quiz.subject }}
             </div>
-            <div class="text-subtitle2">챕터 : {{ quiz.detailSubject }}</div>
+            <div class="text-subtitle2">{{ quiz.detailSubject }}</div>
             <div class="text-body2">
-              문제 유형 : {{ formatQuizType(quiz.quizType) }}
+              {{ formatQuizType(quiz.quizType) }}
             </div>
             <div class="text-caption text-createAt">
-              생성일 : {{ formatDate(quiz.createAt) }}
+              {{ formatDate(quiz.createAt) }}
             </div>
           </q-card-section>
 
