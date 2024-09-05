@@ -51,10 +51,10 @@
           <q-input
             v-model="quiz"
             type="textarea"
-            rows="1"
+            rows="3"
             outlined
             dense
-            placeholder="문제를 입력해주세요 (괄호를 넣어줍니다 예 : 안녕하세요 ()입니다. ()살입니다.)"
+            placeholder="문제를 입력해주세요. (괄호를 넣어줍니다 예 : 안녕하세요 ()입니다. ()살입니다.)"
             maxlength="100"
             counter
             class="input-quiz"
@@ -74,7 +74,7 @@
               rows="1"
               outlined
               dense
-              placeholder="답안 입력해주세요 (다수일 경우 , 로 구분) "
+              placeholder="답안 입력해주세요. (다수일 경우 , 로 구분) "
               maxlength="100"
               counter
             />
@@ -86,9 +86,9 @@
           <q-input
             v-model="commentary"
             type="textarea"
-            rows="3"
+            rows="2"
             outlined
-            placeholder="해설을 입력하세요"
+            placeholder="해설을 입력하세요."
             dense
             maxlength="100"
             counter
@@ -153,8 +153,8 @@ const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
 
 onMounted(fetchCategories);
 
-const subject = ref('');
-const detailSubject = ref('');
+const subject = ref('선택');
+const detailSubject = ref('선택');
 const quiz = ref('');
 const answers = ref(['']);
 const commentary = ref('');
@@ -169,7 +169,7 @@ const updateDetailSubjectOptions = () => {
 
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '';
+  detailSubject.value = '선택';
   updateDetailSubjectOptions();
 });
 

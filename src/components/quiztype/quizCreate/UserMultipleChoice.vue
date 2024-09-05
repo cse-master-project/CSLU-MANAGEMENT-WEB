@@ -48,10 +48,10 @@
           <q-input
             v-model="quiz"
             type="textarea"
-            rows="1"
+            rows="3"
             outlined
             dense
-            placeholder="문제를 입력하세요"
+            placeholder="문제를 입력하세요."
             maxlength="100"
             counter
             class="input-quiz"
@@ -76,8 +76,9 @@
               outlined
               dense
               autogrow
+              maxlength="100"
               class="q-mb-md input-choices"
-              placeholder="지문을 입력하세요"
+              placeholder="지문을 입력하세요."
             />
           </div>
         </q-card-section>
@@ -87,9 +88,9 @@
           <q-input
             v-model="commentary"
             type="textarea"
-            rows="3"
+            rows="2"
             outlined
-            placeholder="해설을 입력하세요"
+            placeholder="해설을 입력하세요."
             dense
             maxlength="100"
             counter

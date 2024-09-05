@@ -50,10 +50,10 @@
           <q-input
             v-model="quiz"
             type="textarea"
-            rows="1"
+            rows="3"
             outlined
             dense
-            placeholder="문제를 입력하세요"
+            placeholder="문제를 입력하세요."
             maxlength="100"
             counter
             class="input-quiz"
@@ -73,9 +73,9 @@
           <q-input
             v-model="commentary"
             type="textarea"
-            rows="3"
+            rows="2"
             outlined
-            placeholder="해설을 입력하세요"
+            placeholder="해설을 입력하세요."
             dense
             maxlength="100"
             counter
