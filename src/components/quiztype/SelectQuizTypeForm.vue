@@ -135,7 +135,8 @@ const emitQuizType = () => {
 }
 
 .quiz-type-btn:hover {
-  transform: scale(1.05);
+  transform: scale(1.075);
+  border: 2px solid #99c6ec;
 }
 
 .quiz-type-image-container {
