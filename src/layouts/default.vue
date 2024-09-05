@@ -1,12 +1,20 @@
 <template>
   <q-layout view="lHh Lpr lff">
     <q-header bordered class="bg-info">
-      <!-- 툴바 & 제목 -->
       <q-toolbar class="toolbar">
-        <q-btn flat dense to="/" class="toolbar-item">
-          <q-toolbar-title class="title">
-            <q-avatar>
-              <img src="/gnu2.jpg" />
+        <q-btn
+          flat
+          dense
+          to="/"
+          class="toolbar-item"
+          style="display: flex; align-items: center"
+        >
+          <q-toolbar-title
+            class="title"
+            style="display: flex; align-items: center"
+          >
+            <q-avatar style="margin-right: 10px">
+              <img src="/logo.jpg" />
             </q-avatar>
             CSLU
           </q-toolbar-title>
@@ -15,20 +23,11 @@
         <q-btn
           stretch
           flat
-          label="홈"
-          to="/"
-          class="toolbar-item"
-          :class="{ active: isActive('/') }"
-        />
-        <q-btn
-          stretch
-          flat
-          label="서비스"
+          label="소개"
           to="/about"
           class="toolbar-item"
           :class="{ active: isActive('/about') }"
         />
-
         <div>
           <q-btn
             stretch
@@ -98,26 +97,21 @@
         <q-btn
           v-if="isUserLoggedIn"
           rounded
-          label="로그아웃"
-          color="orange"
+          label="LOG OUT"
+          class="loginbtn"
           @click="isLogout = true"
         />
       </q-toolbar>
     </q-header>
 
-    <!--뷰-->
     <q-page-container :style="pageContainerStyles">
-      <!-- selectedQuizType이 없을 때만 router-view를 렌더링 -->
       <router-view v-if="!selectedQuizType" />
-
-      <!-- selectedQuizType이 있을 때만 문제 유형 컴포넌트를 렌더링 -->
       <component v-else :is="getQuizComponent(selectedQuizType)" />
     </q-page-container>
 
-    <!--Footer-->
     <q-footer>
-      <footerbar>CSLU © 2024 . All Rights Reserved. </footerbar></q-footer
-    >
+      <footerbar>CSLU © 2024 . All Rights Reserved. </footerbar>
+    </q-footer>
     <UserLoginGoogle
       v-if="isLogin"
       :is-login="isLogin"
@@ -225,10 +219,12 @@ const getQuizComponent = quizType => {
   justify-content: center;
 }
 .toolbar {
+  font-family: 'Toss Product Sans';
   width: 70%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .title {
@@ -236,20 +232,34 @@ const getQuizComponent = quizType => {
   font-family: 'NotoB', sans-serif;
 }
 .toolbar-item {
-  margin-left: 16px;
-  margin-right: 16px;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   position: relative;
+  padding: 10px 20px;
+  transition: color 0.3s ease;
 }
 
-.toolbar-item.active::after {
+.toolbar-item.active::after,
+.toolbar-item:hover::after {
   content: '';
   position: absolute;
-  bottom: -3px;
+  bottom: 0;
   left: 0;
-  right: 0;
-  height: 1px;
+  width: 100%;
+  height: 2px;
   background-color: currentColor;
+  transform: scaleX(1);
+  transition: transform 0.3s ease;
+}
+.toolbar-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 .q-menu {
   padding: 0;
@@ -259,24 +269,24 @@ const getQuizComponent = quizType => {
 .menu-item {
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 1rem;
+  padding: 6px 10px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .q-menu .q-list {
-  min-width: 200px;
+  min-width: 150px;
   color: black;
   border-radius: 20px;
   font-family: 'Toss Product Sans';
 }
 .custom-menu {
-  min-width: 200px;
+  min-width: 150px;
   border-radius: 20px;
+  position: relative;
+  padding: 10px 6px;
 }
-.selected-btn {
-  background: linear-gradient(0.25turn, #730286, #be99bb);
-  color: #fff;
-}
+
 .loginbtn {
   background-color: rgba(33, 44, 60, 0.8);
   font-family: 'Toss Product Sans';
