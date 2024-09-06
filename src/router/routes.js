@@ -10,7 +10,7 @@ const routes = [
   },
   {
     path: '/admin',
-    component: () => import('layouts/AdminLayout.vue'), // 관리자용 레이아웃
+    component: () => import('layouts/admin.vue'), // 관리자용 레이아웃
     children: [
       { path: '', component: () => import('pages/admin/index.vue') },
       {
@@ -38,7 +38,7 @@ const routes = [
   },
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
+    component: () => import('pages/[...path].vue'),
   },
 ];
 
