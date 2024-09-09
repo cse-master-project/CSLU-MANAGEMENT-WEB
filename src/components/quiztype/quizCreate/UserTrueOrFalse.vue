@@ -24,7 +24,7 @@
             <q-select
               class="select-box"
               v-model="detailSubject"
-              :options="filteredDetailSubjectOptions"
+              :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
               style="width: 200px"
@@ -50,11 +50,11 @@
           <q-input
             v-model="quiz"
             type="textarea"
-            rows="3"
+            autogrow
             outlined
             dense
             placeholder="문제를 입력하세요."
-            maxlength="100"
+            maxlength="300"
             counter
             class="input-quiz"
           />
@@ -73,7 +73,7 @@
           <q-input
             v-model="commentary"
             type="textarea"
-            rows="2"
+            autogrow
             outlined
             placeholder="해설을 입력하세요."
             dense

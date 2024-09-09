@@ -44,7 +44,7 @@
             style="max-height: 300px; overflow-y: auto"
           >
             <li
-              v-for="option in filteredDetailSubjectOptions"
+              v-for="option in filteredDetailSubjectOptions.slice().reverse()"
               :key="option"
               @click="selectDetailSubject(option)"
             >
