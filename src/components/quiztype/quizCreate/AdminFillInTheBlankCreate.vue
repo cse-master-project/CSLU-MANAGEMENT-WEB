@@ -76,7 +76,7 @@
               outlined
               dense
               placeholder="답안 입력해주세요. "
-              maxlength="100"
+              maxlength="300"
               counter
             />
           </div>
@@ -96,7 +96,7 @@
             outlined
             placeholder="해설을 입력하세요"
             dense
-            maxlength="100"
+            maxlength="300"
             counter
             class="input-commentary"
           />
