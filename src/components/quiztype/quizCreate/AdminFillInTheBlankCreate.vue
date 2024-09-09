@@ -44,18 +44,22 @@
         </q-card-section>
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">Q</q-label>
+          <q-label class="label-quiz">질문</q-label>
           <q-input
             v-model="quiz"
             type="textarea"
             rows="1"
             outlined
             dense
-            placeholder="문제를 입력해주세요 (괄호를 넣어줍니다 예 : 안녕하세요 ()입니다. ()살입니다.)"
+            placeholder="문제를 입력해주세요."
             maxlength="100"
             counter
             class="input-quiz"
-          />
+          /><q-icon name="help" class="help-icon">
+            <q-tooltip style="background-color: black; font-size: medium"
+              >"안녕하세요.저는 ()입니다." 같이 작성 바랍니다.</q-tooltip
+            >
+          </q-icon>
         </q-card-section>
         <!-- 답 입력 -->
         <q-card-section class="answer-container">
@@ -71,11 +75,16 @@
               rows="1"
               outlined
               dense
-              placeholder="답안 입력해주세요 (다수일 경우 , 로 구분) "
+              placeholder="답안 입력해주세요. "
               maxlength="100"
               counter
             />
           </div>
+          <q-icon name="help" class="help-icon">
+            <q-tooltip style="background-color: black; font-size: medium"
+              >답이 여러개 시 ,로 구분하여 작성 바랍니다.</q-tooltip
+            >
+          </q-icon>
         </q-card-section>
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
@@ -90,7 +99,9 @@
             maxlength="100"
             counter
             class="input-commentary"
-        /></q-card-section>
+          />
+          <q-icon class="help-icon"></q-icon>
+        </q-card-section>
         <q-card-section class="btn-container">
           <q-btn class="btn-back" @click="goBack"> 뒤로가기 </q-btn>
           <q-btn class="btn-submit" @click="submitQuiz"> 문제 등록 </q-btn>
@@ -371,5 +382,15 @@ input[type='file'] {
 }
 .btn-submit {
   background-color: primary;
+}
+.help-icon {
+  margin: 8px 8px;
+  font-size: 20px;
+  color: #999;
+  display: block;
+}
+.tooltip {
+  background-color: #000000;
+  font-size: 1.3rem;
 }
 </style>
