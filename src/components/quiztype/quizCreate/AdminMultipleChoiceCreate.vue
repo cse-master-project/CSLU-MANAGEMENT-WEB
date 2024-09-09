@@ -75,6 +75,7 @@
               type="textarea"
               outlined
               dense
+              maxlength="100"
               autogrow
               class="q-mb-md input-choices"
               placeholder="지문을 입력하세요"
