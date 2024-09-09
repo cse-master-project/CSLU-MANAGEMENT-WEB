@@ -42,6 +42,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAdminAuthStore } from 'src/stores/adminAuth';
 import { adminAuth } from 'src/services/adminAuth';
+import { Notify } from 'quasar';
 
 // 아이디와 패스워드 상태 관리
 const id = ref('');
@@ -63,6 +64,7 @@ const submitLogin = async () => {
     router.push('/admin');
   } catch (error) {
     console.error('로그인 실패:', error);
+    alert('로그인에 실패했습니다. \n아이디 또는 비밀번호를 확인해주세요.');
   }
 };
 </script>
