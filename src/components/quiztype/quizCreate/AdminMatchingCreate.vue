@@ -244,9 +244,7 @@ const selectOption = (color, index) => {
 const updateMatchingOptions = (index, color) => {
   const colorIndex = ['yellow', 'yellowgreen', 'orange'].indexOf(color);
   if (colorIndex >= 0) {
-    answers.value[
-      index
-    ] = `${leftOptions.value[index]}t${rightOptions.value[colorIndex]}`;
+    answers.value[index] = `${index}t${colorIndex}`;
     console.log(answers.value);
   }
 };
@@ -310,24 +308,24 @@ const submitQuiz = () => {
   };
 
   console.log('서버에 제출될 데이터:', quizData);
-  // api
-  //   .post('/api/quiz/default', quizData)
-  //   .then(response => {
-  //     submitQuizSuccess.value = true;
-  //     console.log('문제 등록 성공:', response.data);
-  //   })
-  //   .catch(error => {
-  //     console.error('문제 등록 오류:', error);
-  //     if (error.response && error.response.status === 400) {
-  //       alert('문제 등록에 실패했습니다. 입력값을 확인해 주세요.');
-  //     } else if (error.response.status === 500) {
-  //       alert(
-  //         '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-  //       );
-  //     } else {
-  //       alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
-  //     }
-  //   });
+  api
+    .post('/api/quiz/default', quizData)
+    .then(response => {
+      submitQuizSuccess.value = true;
+      console.log('문제 등록 성공:', response.data);
+    })
+    .catch(error => {
+      console.error('문제 등록 오류:', error);
+      if (error.response && error.response.status === 400) {
+        alert('문제 등록에 실패했습니다. 입력값을 확인해 주세요.');
+      } else if (error.response.status === 500) {
+        alert(
+          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        );
+      } else {
+        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+      }
+    });
 };
 </script>
 
