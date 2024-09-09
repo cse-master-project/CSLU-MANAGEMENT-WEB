@@ -217,11 +217,13 @@ watch(subject, () => {
 });
 
 const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
+  const detailSubjects = getDetailSubjectsBySubject(subject.value);
+  if (detailSubjects.length === 0) {
+    filteredDetailSubjectOptions.value = ['공백'];
+  } else {
+    filteredDetailSubjectOptions.value = detailSubjects;
+  }
 };
-
 const showHelp = ref(false);
 
 const toggleHelp = () => {

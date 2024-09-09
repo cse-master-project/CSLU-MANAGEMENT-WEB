@@ -154,10 +154,14 @@ const filteredDetailSubjectOptions = ref([]);
 
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
+  const detailSubjects = getDetailSubjectsBySubject(subject.value);
+  if (detailSubjects.length === 0) {
+    filteredDetailSubjectOptions.value = ['공백'];
+  } else {
+    filteredDetailSubjectOptions.value = detailSubjects;
+  }
 };
+
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
   detailSubject.value = '챕터를 선택 해주세요.';
