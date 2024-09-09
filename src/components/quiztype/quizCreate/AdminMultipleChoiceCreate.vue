@@ -23,7 +23,7 @@
             <q-select
               class="select-box"
               v-model="detailSubject"
-              :options="filteredDetailSubjectOptions"
+              :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
             />
@@ -155,8 +155,8 @@ const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
 
 onMounted(fetchCategories);
 
-const subject = ref('');
-const detailSubject = ref('');
+const subject = ref('과목을 선택 해주세요.');
+const detailSubject = ref('챕터를 선택 해주세요.');
 const quiz = ref('');
 const option = ref([
   { label: '', value: '1' },
@@ -177,7 +177,7 @@ const updateDetailSubjectOptions = () => {
 
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '';
+  detailSubject.value = '챕터를 선택 해주세요.';
   updateDetailSubjectOptions();
 });
 
@@ -278,7 +278,7 @@ const submitQuiz = () => {
   font-weight: bold;
 }
 .select-box {
-  max-width: 400px;
+  width: 200px;
 }
 
 //이미지 업로드 스타일
