@@ -48,7 +48,7 @@
           <q-input
             v-model="quiz"
             type="textarea"
-            rows="1"
+            autogrow
             outlined
             dense
             placeholder="문제를 입력하세요"
@@ -71,7 +71,7 @@
           <q-input
             v-model="commentary"
             type="textarea"
-            rows="3"
+            autogrow
             outlined
             placeholder="해설을 입력하세요"
             dense
@@ -201,8 +201,8 @@ const submitQuiz = () => {
 <style scoped lang="scss">
 // 폼 컨테이너 스타일
 .form-container {
-  max-width: 800px;
-  margin-bottom: 20px;
+  max-width: 1080px;
+  margin: 3% auto;
 }
 
 // 카드 스타일 - 둥근 모서리, 그림자
