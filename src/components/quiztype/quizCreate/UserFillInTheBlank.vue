@@ -54,12 +54,18 @@
             rows="3"
             outlined
             dense
-            placeholder="문제를 입력해주세요. (괄호를 넣어줍니다 예 : 안녕하세요 ()입니다. ()살입니다.)"
+            placeholder="문제를 입력해주세요."
             maxlength="100"
             counter
             class="input-quiz"
           />
+          <q-icon name="help" class="help-icon">
+            <q-tooltip style="background-color: black; font-size: medium"
+              >"안녕하세요.저는 ()입니다." 같이 작성 바랍니다.</q-tooltip
+            >
+          </q-icon>
         </q-card-section>
+
         <!-- 답 입력 -->
         <q-card-section class="answer-container">
           <q-label class="label-answer">답안</q-label>
@@ -74,12 +80,18 @@
               rows="1"
               outlined
               dense
-              placeholder="답안 입력해주세요. (다수일 경우 , 로 구분) "
+              placeholder="답안 입력해주세요. "
               maxlength="100"
               counter
             />
           </div>
+          <q-icon name="help" class="help-icon">
+            <q-tooltip style="background-color: black; font-size: medium"
+              >답이 여러개 시 ,로 구분하여 작성 바랍니다.</q-tooltip
+            >
+          </q-icon>
         </q-card-section>
+
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
           <q-label class="label-quiz">해설 </q-label>
@@ -93,7 +105,9 @@
             maxlength="100"
             counter
             class="input-commentary"
-        /></q-card-section>
+          />
+          <q-icon class="help-icon"></q-icon>
+        </q-card-section>
         <q-card-section class="btn-container">
           <q-btn class="btn-back" @click="goBack"> 뒤로가기 </q-btn>
           <q-btn class="btn-submit" @click="submitQuiz"> 문제 등록 </q-btn>
@@ -293,27 +307,26 @@ input[type='file'] {
   cursor: pointer;
   transition: transform 0.5s ease-in-out;
 }
-//회전 애니메이션
+//회전회오리 애니메이션
 .upload-button:hover {
   transform: rotate(360deg);
 }
 
-/* 파일 미리보기 스타일 */
 .previewImage-container {
   margin-top: 10px;
   display: flex;
-  align-items: center; /* 수직 중앙 정렬 */
-  justify-content: center; /* 가운데 정렬 */
+  align-items: center;
+  justify-content: center;
 }
-/* 미리보기 이미지 스타일 */
+//미리보기
 .preview-image {
   max-width: 100%;
   max-height: 200px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-right: 10px; /* 취소 버튼과의 간격 */
+  margin-right: 10px;
 }
-/* 취소 버튼 스타일 */
+//취소
 .cancel-button {
   width: 50px;
   height: 50px;
@@ -397,5 +410,15 @@ input[type='file'] {
   height: 40px;
   font-family: 'Toss Product Sans';
   box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
+}
+.help-icon {
+  margin: 8px 8px;
+  font-size: 20px;
+  color: #999;
+  display: block;
+}
+.tooltip {
+  background-color: #000000;
+  font-size: 1.3rem;
 }
 </style>
