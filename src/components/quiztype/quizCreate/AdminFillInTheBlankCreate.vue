@@ -345,7 +345,6 @@ input[type='file'] {
 }
 .input-quiz {
   width: 70%;
-  overflow-y: auto;
 }
 
 // 답안 입력 스타일
