@@ -65,6 +65,7 @@
           style="cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1)"
         >
           <q-card-section>
+            <div>퀴즈ID : {{ quiz.quizId }}</div>
             <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
             <div class="text-subtitle2 text-secondary">
               챕터: {{ quiz.detailSubject }}
@@ -75,6 +76,7 @@
             <div class="text-caption text-grey">
               생성일: {{ formatDate(quiz.createAt) }}
             </div>
+
             <!-- 퀴즈 내용 파싱 및 표시 -->
             <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
               <div class="text-h6">
@@ -159,6 +161,7 @@ const fetchQuizzes = async () => {
       },
     });
     quizzes.value = response.data.content;
+    console.log('퀴즈목록', quizzes.value);
     quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt)); // 날짜 기준 내림차순 정렬
     filterQuizzes(); // 초기 필터링 및 페이지네이션 적용
     totalElements.value = quizzes.value.length; // 전체 퀴즈 수 업데이트
