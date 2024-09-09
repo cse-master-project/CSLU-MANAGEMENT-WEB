@@ -1,90 +1,157 @@
 <template>
-  <q-page padding style="max-width: 1080px; margin: 0 auto">
+  <q-page padding style="width: 90%; margin: 0 auto">
     <!-- Filters card -->
-    <q-card class="q-mb-md q-gutter-md q-pa-md">
-      <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-3 q-my-md">
-          <q-select
-            v-model="subject"
-            :options="subjectOptions"
-            label="과목"
-            outlined
-            dense
-            @update:model-value="filteredDetailSubjectOptions"
-          />
+    <div
+      class="q-card q-pa-md q-mb-md"
+      style="display: flex; flex-direction: column; border-radius: 10px"
+    >
+      <div style="display: flex" class="filter-container">
+        <!-- 과목 -->
+        <div style="flex: 1; position: relative">
+          <label for="subject">과목</label>
+          <button class="custom-select" @click="toggleDropdown('subject')">
+            {{ subjectLabel }}
+          </button>
+          <ul
+            v-if="dropdowns.subject"
+            class="listbox"
+            style="max-height: 300px; overflow-y: auto"
+          >
+            <li
+              v-for="option in subjectOptions"
+              :key="option.value"
+              @click="selectSubject(option)"
+            >
+              <button class="list">
+                {{ option.label }}
+              </button>
+            </li>
+          </ul>
         </div>
-        <div class="col-12 col-md-3 q-my-md">
-          <q-select
-            v-model="detailSubject"
-            :options="filteredDetailSubjectOptions"
-            label="챕터"
-            outlined
-            dense
-          />
+
+        <!-- 챕터 -->
+        <div style="flex: 1; position: relative">
+          <label for="detailSubject">챕터</label>
+          <button
+            class="custom-select"
+            @click="toggleDropdown('detailSubject')"
+          >
+            {{ detailSubjectLabel }}
+          </button>
+          <ul
+            v-if="dropdowns.detailSubject"
+            class="listbox"
+            style="max-height: 300px; overflow-y: auto"
+          >
+            <li
+              v-for="option in filteredDetailSubjectOptions"
+              :key="option"
+              @click="selectDetailSubject(option)"
+            >
+              <button class="list">
+                {{ option }}
+              </button>
+            </li>
+          </ul>
         </div>
-        <div class="col-12 col-md-3 q-my-md">
-          <q-select
-            v-model="permssionStatus"
-            :options="approvalStatuses"
-            label="승인 여부"
-            outlined
-            dense
-          />
+
+        <!-- 승인 여부 -->
+        <div style="flex: 1; position: relative">
+          <label for="permssionStatus">승인 여부</label>
+          <button
+            class="custom-select"
+            @click="toggleDropdown('permssionStatus')"
+          >
+            {{ permssionStatusLabel }}
+          </button>
+          <ul v-if="dropdowns.permssionStatus" class="listbox">
+            <li
+              v-for="option in approvalStatuses"
+              :key="option.value"
+              @click="selectPermssionStatus(option)"
+            >
+              <button class="list">
+                <span
+                  :class="getDotClass(option.value)"
+                  class="status-dot"
+                ></span>
+                {{ option.label }}
+              </button>
+            </li>
+          </ul>
         </div>
-        <div class="col-12 col-md-3 q-my-md">
-          <q-select
-            v-model="quizType"
-            :options="quizTypeOptions"
-            label="문제 유형"
-            outlined
-            dense
-          />
+
+        <!-- 문제 유형 -->
+        <div style="flex: 1; position: relative">
+          <label for="quizType">문제 유형</label>
+          <button class="custom-select" @click="toggleDropdown('quizType')">
+            {{ quizTypeLabel }}
+          </button>
+          <ul v-if="dropdowns.quizType" class="listbox">
+            <li
+              v-for="option in quizTypeOptions"
+              :key="option.value"
+              @click="selectQuizType(option)"
+            >
+              <button class="list">
+                {{ option.label }}
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
-      <div class="row q-col-gutter-md q-pt-md">
-        <div class="col-12 col-md-6 q-my-md">
+
+      <!-- 초기화 & 검색 버튼 -->
+      <div style="display: flex" class="btn-container">
+        <div style="flex: 1">
           <q-btn
-            label="초기화"
-            icon="refresh"
-            class="full-width resetbtn"
+            class="resetbtn"
             @click="resetFilters"
-          ></q-btn>
+            style="font-size: 16px; width: 100%"
+          >
+            초기화
+          </q-btn>
         </div>
-        <div class="col-12 col-md-6 q-my-md">
+        <div style="flex: 1">
           <q-btn
-            label="검색"
-            icon="search"
-            class="full-width searchbtn"
+            class="searchbtn"
             @click="filterQuizzes"
-          ></q-btn>
+            style="font-size: 16px; width: 100%"
+          >
+            검색
+          </q-btn>
         </div>
       </div>
-    </q-card>
+    </div>
 
     <!-- Quiz Cards -->
-    <div class="row q-col-gutter-md q-pt-md">
+    <div class="row q-pt-md justify-between">
       <div
         v-for="quiz in filteredQuizzes"
         :key="quiz.quizId"
-        class="col-12 col-md-6 q-my-md"
+        class="col-12 col-md-6 q-my-md q-gutter-md"
       >
         <q-card
-          class="my-card"
+          class="my-card-list"
           clickable
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
           style="cursor: pointer"
         >
           <q-card-section>
-            <div class="text-h6">과목 : {{ quiz.subject }}</div>
-            <div class="text-subtitle2">챕터 : {{ quiz.detailSubject }}</div>
+            <div class="text-h6" style="font-weight: bold">
+              {{ quiz.subject }}
+            </div>
+            <div class="text-subtitle2">{{ quiz.detailSubject }}</div>
             <div class="text-body2">
-              문제 유형 : {{ formatQuizType(quiz.quizType) }}
+              {{ formatQuizType(quiz.quizType) }}
             </div>
             <div class="text-caption text-createAt">
-              생성일 : {{ formatDate(quiz.createAt) }}
+              {{ formatDate(quiz.createAt) }}
             </div>
           </q-card-section>
+
+          <q-separator inset /><!--선-->
 
           <q-card-section>
             <QuizPermssionStatus :quiz="quiz" />
@@ -101,25 +168,25 @@ import { userApi } from 'src/boot/userAxios';
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
-import userUseCategories from 'src/services/userUseCategories.js';
+import userQuizlistCategories from 'src/services/userQuizlistCategoris';
 
 const quizzes = ref([]);
 const filteredQuizzes = ref([]);
 const subject = ref('');
 const detailSubject = ref('');
 const permssionStatus = ref('');
+const quizType = ref('');
+const dropdowns = ref({
+  subject: false,
+  detailSubject: false,
+  permssionStatus: false,
+  quizType: false,
+});
 const approvalStatuses = [
   { value: 0, label: '승인 대기중' },
-  {
-    value: 1,
-    label: '승인',
-  },
-  {
-    value: -1,
-    label: '반려',
-  },
+  { value: 1, label: '승인' },
+  { value: -1, label: '반려' },
 ];
-const quizType = ref('');
 const quizTypeOptions = [
   { value: 1, label: '4지선다형' },
   { value: 2, label: '단답형' },
@@ -128,14 +195,20 @@ const quizTypeOptions = [
   { value: 5, label: '빈칸 채우기형' },
 ];
 
+const subjectLabel = ref('선택해주세요');
+const detailSubjectLabel = ref('선택해주세요');
+const permssionStatusLabel = ref('선택해주세요');
+const quizTypeLabel = ref('선택해주세요');
+const filteredDetailSubjectOptions = ref([]);
+
 onMounted(async () => {
   await fetchQuizzes();
   fetchCategories();
+  document.addEventListener('click', handleClickOutside);
 });
 
-const filteredDetailSubjectOptions = ref([]);
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  userUseCategories();
+  userQuizlistCategories();
 
 const updateDetailSubjectOptions = () => {
   filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
@@ -145,6 +218,7 @@ const updateDetailSubjectOptions = () => {
 
 watch(subject, () => {
   detailSubject.value = '';
+  detailSubjectLabel.value = '선택해주세요';
   updateDetailSubjectOptions();
 });
 
@@ -187,20 +261,23 @@ const resetFilters = () => {
   detailSubject.value = '';
   permssionStatus.value = '';
   quizType.value = '';
+  subjectLabel.value = '선택해주세요';
+  detailSubjectLabel.value = '선택해주세요';
+  permssionStatusLabel.value = '선택해주세요';
+  quizTypeLabel.value = '선택해주세요';
   filteredQuizzes.value = quizzes.value;
 };
 
-//필터링 기능
+// 필터링 기능
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
     const detailSubjectMatch =
       !detailSubject.value || quiz.detailSubject === detailSubject.value;
     const permssionStatusMatch =
-      !permssionStatus.value ||
-      quiz.permissionStatus === permssionStatus.value.value;
-    const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value;
+      permssionStatus.value === '' ||
+      quiz.permissionStatus === Number(permssionStatus.value);
+    const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
 
     return (
       subjectMatch &&
@@ -211,18 +288,181 @@ const filterQuizzes = () => {
   });
 };
 
-//페이지 상세조회
+// 페이지 상세조회
 const goToQuizDetail = quizId => {
   router.push(`/userQuizzes/${quizId}`);
 };
+
+// 드롭다운 토글
+const toggleDropdown = dropdown => {
+  dropdowns.value[dropdown] = !dropdowns.value[dropdown];
+  Object.keys(dropdowns.value).forEach(key => {
+    if (key !== dropdown) dropdowns.value[key] = false;
+  });
+};
+
+// 과목 선택
+const selectSubject = option => {
+  subject.value = option.value;
+  subjectLabel.value = option.label;
+  toggleDropdown('subject');
+  updateDetailSubjectOptions();
+};
+
+// 챕터 선택
+const selectDetailSubject = option => {
+  detailSubject.value = option;
+  detailSubjectLabel.value = option;
+  toggleDropdown('detailSubject');
+};
+
+// 승인 여부 선택
+const selectPermssionStatus = option => {
+  permssionStatus.value = option.value;
+  permssionStatusLabel.value = option.label;
+  toggleDropdown('permssionStatus');
+};
+
+// 문제 유형 선택
+const selectQuizType = option => {
+  quizType.value = option.value;
+  quizTypeLabel.value = option.label;
+  toggleDropdown('quizType');
+};
+
+// 리스트 밖 누르면 닫히기
+const handleClickOutside = event => {
+  const dropdownElements = document.querySelectorAll(
+    '.listbox, .custom-select',
+  );
+  let isClickInside = false;
+  dropdownElements.forEach(element => {
+    if (element.contains(event.target)) {
+      isClickInside = true;
+    }
+  });
+
+  if (!isClickInside) {
+    Object.keys(dropdowns.value).forEach(key => {
+      dropdowns.value[key] = false;
+    });
+  }
+};
+
+// 승인여부 원
+const getDotClass = value => {
+  switch (value) {
+    case 0:
+      return 'dot-pending';
+    case 1:
+      return 'dot-approved';
+    case -1:
+      return 'dot-rejected';
+    default:
+      return '';
+  }
+};
 </script>
+
 <style>
+.filter-container > * {
+  margin: 1% 1%;
+}
+.btn-container > * {
+  margin: 1% 1%;
+}
 .searchbtn {
-  color: green;
-  border-radius: 20px;
+  border-radius: 10px;
+  padding: 7px 11px;
 }
 .resetbtn {
-  color: red;
-  border-radius: 20px;
+  border-radius: 10px;
+  padding: 7px 11px;
+}
+.custom-select {
+  width: 100%;
+  border: 1px solid #c4c4c4;
+  box-sizing: border-box;
+  border-radius: 10px;
+  padding: 12px 13px;
+  font-size: 14px;
+  line-height: 16px;
+  background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M480-360%20280-560h400L480-360Z%22/%3E%3C/svg%3E')
+    93% no-repeat; /*화살표 이미지 삽입*/
+  appearance: none;
+  text-align: left;
+}
+.custom-select:focus {
+  box-sizing: border-box;
+  border-radius: 10px;
+  outline: 2px solid #b1dbf0;
+  border-radius: 10px;
+}
+.listbox {
+  width: 100%;
+  padding: 0 3%;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid #c4c4c4;
+  box-sizing: border-box;
+  box-shadow: 4px 4px 14px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  margin-top: 9px;
+  position: absolute;
+  z-index: 1;
+}
+
+.list {
+  border: none;
+  background-color: #ffffff;
+  font-size: 14px;
+  line-height: 16px;
+  padding: 7px 3%;
+  margin: 5px auto;
+  box-sizing: border-box;
+  width: 100%;
+  text-align: left;
+}
+
+.list:focus {
+  background: #99c6ec;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+.status-dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.dot-pending {
+  background-color: orange;
+}
+
+.dot-approved {
+  background-color: #4caf50;
+}
+
+.dot-rejected {
+  background-color: rgb(255, 0, 0);
+}
+.my-card-list {
+  border-radius: 10px;
+}
+.my-card-list:hover {
+  border: 2px solid #99c6ec;
+}
+
+/* 반응형 (모바일 사이즈) */
+@media (max-width: 500px) {
+  .filter-container {
+    flex-direction: column;
+  }
+  .btn-container {
+    flex-direction: column;
+    margin-top: 5%;
+  }
 }
 </style>

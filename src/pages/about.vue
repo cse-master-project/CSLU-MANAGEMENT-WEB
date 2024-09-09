@@ -2,29 +2,85 @@
   <q-page class="q-pa-md" style="font-family: 'Toss Product Sans'">
     <div class="container" style="width: 90%">
       <section
-        v-for="(section, index) in sections"
-        :key="index"
-        :ref="'section' + index"
+        v-for="(section, sectionIndex) in sections"
+        :key="sectionIndex"
+        :ref="'section' + sectionIndex"
         class="section"
       >
-        <!--타이틀-->
+        <!-- 타이틀 -->
         <q-card flat class="q-pa-md text-left" style="border: none">
           <q-card-section>
             <div class="section-title">
               {{ section.title }}
             </div>
           </q-card-section>
-          <!--사진 및 내용-->
-          <q-card-section class="q-pt-none" style="margin: 3% 0">
-            <p style="line-height: 1.7; font-weight: 600; font-size: 23px">
-              {{ section.content }}
-            </p>
-            <div v-if="section.image">
-              <img
-                :src="section.image"
-                :alt="section.title"
-                class="full-width"
-              />
+          <q-card-section
+            style="font-size: 30px; font-weight: 700; white-space: pre-line"
+          >
+            {{ section.content }}
+          </q-card-section>
+
+          <!-- 사진 및 내용 -->
+          <q-card-section class="q-pt-none" style="margin: 3% 0; width: 100%">
+            <div v-if="section.image" class="content-wrapper">
+              <div v-if="sectionIndex === 0">
+                <q-carousel
+                  v-model="currentImageIndex"
+                  animated
+                  swipeable
+                  infinite
+                  class="slider"
+                  height="700px"
+                  style="width: 100%"
+                >
+                  <q-carousel-slide
+                    v-for="(img, imgIndex) in section.image"
+                    :key="imgIndex"
+                    :name="imgIndex"
+                    class="slides"
+                    style="width: 840px"
+                  >
+                    <div class="image-text" style="color: black">
+                      {{ img.text }}
+                    </div>
+                    <img
+                      :src="img.src"
+                      class="screenimage"
+                      alt="Section Image"
+                      style="width: 370px; height: 600px"
+                    />
+                  </q-carousel-slide>
+                </q-carousel>
+                <div class="button-container">
+                  <q-btn
+                    @click="prevImage"
+                    icon="keyboard_arrow_left"
+                    round
+                    class="btn"
+                  />
+                  <div style="font-size: 1.3rem; color: black">
+                    {{ currentImageIndex + 1 }} / {{ sections[0].image.length }}
+                  </div>
+                  <q-btn
+                    @click="nextImage"
+                    icon="keyboard_arrow_right"
+                    round
+                    class="btn"
+                  />
+                </div>
+              </div>
+              <div
+                v-else
+                class="image-text-wrapper"
+                v-for="(img, imgIndex) in section.image"
+                :key="imgIndex"
+                :class="{ 'is-visible': imgIndex <= currentImageIndex }"
+                :style="{ '--i': imgIndex }"
+                style="max-width: 1200px"
+              >
+                <img :src="img.src" class="image" alt="Section Image" />
+                <div class="image-text">{{ img.text }}</div>
+              </div>
             </div>
           </q-card-section>
         </q-card>
@@ -34,38 +90,48 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'; // Vue 컴포넌트에서 필요한 함수들을 가져옵니다.
+import { ref, onMounted, onUnmounted } from 'vue';
+import { QCarousel, QCarouselSlide, QBtn } from 'quasar';
 
 // 섹션 내용
-// sections 변수는 각 섹션의 제목, 내용, 이미지 URL을 포함하는 객체 배열입니다.
 const sections = ref([
   {
     title: '문제 유형 선택',
     content:
-      '원하는 문제 유형을 선택하여 시작해 보세요! 아래와 같은 문제 유형이 있습니다.',
-    image: 'https://via.placeholder.com/800x400.png?text=First+Section+Image',
+      '원하는 문제 유형을 선택하여 시작해 보세요!\n 아래와 같은 문제 유형이 있습니다.',
+    image: [
+      {
+        src: '/quizimg/screen.png',
+        text: '4지선다형',
+      },
+      { src: '/quizimg/screen.png', text: '단답형' },
+      { src: '/quizimg/screen.png', text: '선긋기형' },
+      { src: '/quizimg/screen.png', text: 'O/X형' },
+      { src: '/quizimg/screen.png', text: '빈칸 채우기형' },
+    ],
   },
   {
     title: '과목 및 챕터 선택',
     content:
       '문제 유형을 선택하셨다면, 다음으로는 과목과 해당 과목의 챕터를 선택하세요.',
-    image: 'https://via.placeholder.com/800x400.png?text=Second+Section+Image',
+    image: [{ src: '/quizimg/lang.jpg', text: '' }],
   },
   {
     title: '문제 입력',
-    content:
-      '이제 선택한 유형과 과목에 맞게 문제를 작성해 보세요. 문제의 난이도와 형식을 고려하여 작성해 주세요.',
-    image: 'https://via.placeholder.com/800x400.png?text=Third+Section+Image',
+    content: `이제 선택한 유형과 과목에 맞게 문제를 작성해 보세요.
+      문제의 난이도와 형식을 고려하여 작성해 주세요.`,
+    image: [],
   },
   {
     title: '정답 및 해설 입력',
     content:
-      '마지막으로, 작성한 문제에 대한 정답과 해설을 입력해 주세요. 명확한 해설은 학습자의 이해를 도울 수 있습니다.',
-    image: 'https://via.placeholder.com/800x400.png?text=Fourth+Section+Image',
+      '마지막으로, 작성한 문제에 대한 정답과 해설을 입력해 주세요. \n명확한 해설은 학습자의 이해를 도울 수 있습니다.',
+    image: [],
   },
 ]);
 
 const observer = ref(null);
+const currentImageIndex = ref(0);
 
 // handleIntersection 함수는 섹션 요소가 뷰포트에 들어오고 나갈 때 호출됩니다.
 const handleIntersection = entries => {
@@ -85,12 +151,16 @@ onMounted(() => {
   });
 
   // 각 섹션 요소를 찾아서 observer에 등록합니다.
-  sections.value.forEach((section, index) => {
-    const element = document.querySelector(`.section:nth-child(${index + 1})`);
+  sections.value.forEach((section, sectionIndex) => {
+    const element = document.querySelector(
+      `.section:nth-child(${sectionIndex + 1})`,
+    );
     if (element) {
       observer.value.observe(element); // 섹션 요소를 observer에 등록
     }
   });
+
+  window.addEventListener('scroll', handleScroll);
 });
 
 // 컴포넌트가 언마운트될 때 실행되는 함수
@@ -98,7 +168,41 @@ onUnmounted(() => {
   if (observer.value) {
     observer.value.disconnect(); // observer의 모든 관찰을 중지합니다.
   }
+  window.removeEventListener('scroll', handleScroll);
 });
+
+// 스크롤 이벤트 핸들러
+const handleScroll = () => {
+  const firstSection = document.querySelector('.section:nth-child(1)');
+  if (firstSection) {
+    const rect = firstSection.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      // 첫 번째 섹션이 뷰포트 내에 있을 때만 이미지 인덱스 증가
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const sectionHeight = firstSection.offsetHeight;
+      const relativeScroll = scrollPosition - firstSection.offsetTop;
+      const totalImages = sections.value[0].image.length;
+      const newIndex = Math.min(
+        totalImages - 1,
+        Math.floor((relativeScroll / sectionHeight) * totalImages),
+      );
+      currentImageIndex.value = newIndex;
+    }
+  }
+};
+
+// 이전 이미지로 이동
+const prevImage = () => {
+  currentImageIndex.value =
+    (currentImageIndex.value - 1 + sections.value[0].image.length) %
+    sections.value[0].image.length;
+};
+
+// 다음 이미지로 이동
+const nextImage = () => {
+  currentImageIndex.value =
+    (currentImageIndex.value + 1) % sections.value[0].image.length;
+};
 </script>
 
 <style>
@@ -116,7 +220,11 @@ onUnmounted(() => {
 .container {
   margin: 0 auto;
 }
-
+.slider {
+  display: flex;
+  flex-direction: column;
+  width: 1080px;
+}
 .section {
   margin-bottom: 50px;
   opacity: 0;
@@ -126,12 +234,35 @@ onUnmounted(() => {
 }
 
 .section.active {
-  animation: fadeInUp 1.3s ease-in-out forwards;
+  animation: fadeInUp 2s ease-in-out forwards;
 }
 
-.full-width {
-  width: 50%;
-  height: auto;
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.image-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.section.active .image-text-wrapper.is-visible {
+  opacity: 1;
+  transition-delay: calc(var(--i) * 0.1s);
+}
+
+.image-text {
+  margin-top: 10px;
+  font-size: 40px;
+  text-align: center;
+  font-weight: 700;
 }
 
 .q-mt-md {
@@ -144,5 +275,22 @@ onUnmounted(() => {
   font-size: 28px;
   color: #3182f6;
   font-weight: 700;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  width: 100%;
+  padding: 16px 16px;
+}
+.btn {
+  background-color: #ededed;
+}
+.slides {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

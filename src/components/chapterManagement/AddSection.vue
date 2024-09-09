@@ -9,6 +9,7 @@
         outlined
         placeholder="과목을 입력해주세요."
         class="textbox"
+        @keypress.enter.prevent="submitSubject"
       />
       <q-btn @click="submitSubject" class="submit-btn">과목 추가</q-btn>
     </q-card-section>
@@ -28,6 +29,7 @@
         outlined
         placeholder="챕터를 입력해주세요."
         class="textbox"
+        @keypress.enter.prevent="submitDetailSubject"
       />
       <q-btn @click="submitDetailSubject" class="submit-btn">챕터 추가</q-btn>
     </q-card-section>

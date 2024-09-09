@@ -1,12 +1,12 @@
 <template>
-  <q-dialog v-model="visible">
-    <q-card class="my-card"
-      ><q-btn
+  <q-dialog v-model="visible" transition-show="fade" transition-hide="fade">
+    <q-card class="my-card">
+      <q-btn
         flat
         round
         dense
         icon="close"
-        @click="visible = false"
+        @click="closeDialog"
         class="close-button"
         style="
           margin-left: auto;
@@ -14,23 +14,22 @@
           margin-right: 3%;
           color: #929dac;
         "
-        ><q-tooltip style="background-color: black"> 닫기 </q-tooltip></q-btn
       >
-      <q-card-section align="right" class="card-header">
-        <div class="text-h4" style="font-family: 'NotoB', sans-serif">
-          CSLU로고
+        <q-tooltip style="background-color: black"> 닫기 </q-tooltip>
+      </q-btn>
+      <q-card-section align="center" class="card-header">
+        <div class="logoimg">
+          <img src="/logo.jpg" class="responsive-logo" />
         </div>
         <div class="text-h6">로그인</div>
       </q-card-section>
       <q-separator class="separator" />
-
       <q-card-actions class="google-login">
         <q-btn flat color="primary" @click="LoginGoogle">
           <img src="/google.png" alt="구글 로그인" class="google-img" />
         </q-btn>
       </q-card-actions>
-
-      <q-card-actions align="right" v-show="false">
+      <q-card-actions align="right" v-show="signUpVisible">
         <q-card-section class="q-pt-none">
           <q-input
             v-model="nickname"
@@ -39,16 +38,17 @@
             placeholder="닉네임"
             class="q-mb-md"
             maxlength="20"
-            ><q-tooltip
+          >
+            <q-tooltip
               anchor="top middle"
               style="background-color: black; transform: translateY(-20px)"
-              >20자까지 입력 가능합니다.</q-tooltip
-            ></q-input
-          >
-
+            >
+              20자까지 입력 가능합니다.
+            </q-tooltip>
+          </q-input>
           <q-btn rounded @click="signUpGoogle" class="signupbtn">
             <img
-              src="public\signup.png"
+              src="public/signup.png"
               alt="adduser"
               style="height: 16px; width: auto; filter: invert(1)"
             />SIGN UP
@@ -63,7 +63,7 @@
 <script setup>
 import { googleSdkLoaded } from 'vue3-google-login';
 import axios from 'axios';
-import { ref, defineProps } from 'vue';
+import { ref, defineProps, watch } from 'vue';
 import { userApi } from 'src/boot/userAxios';
 import { useCookies } from 'vue3-cookies'; //쿠키 관리 라이브러리
 import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상태관리
@@ -79,16 +79,42 @@ const googleacAcessToken = ref(null);
 const nickname = ref(null);
 const emit = defineEmits(['update:isLogin']);
 
+watch(
+  () => props.isLogin,
+  newVal => {
+    visible.value = newVal;
+    if (!newVal) {
+      resetState();
+    }
+  },
+);
+
+watch(
+  () => visible.value,
+  newVal => {
+    if (!newVal) {
+      resetState();
+      emit('update:isLogin', false);
+    }
+  },
+);
+
+function resetState() {
+  signUpVisible.value = false;
+  googleacAcessToken.value = null;
+  nickname.value = null;
+}
+
+function closeDialog() {
+  visible.value = false;
+}
+
 let userDetails = {}; //사용자 정보 저장.
+
 const LoginGoogle = () => {
-  //구글 로그인 과정.
-  //console.log('구글로그인');
-  //emit('update:isLogin', false);
   googleSdkLoaded(google => {
-    //구글 SDK 로드된 후 실행.
     google.accounts.oauth2
       .initCodeClient({
-        //구글 OAuth 클라이언트 초기화하고 인증 코드를 요청.
         client_id:
           '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
         scope: 'email profile openid',
@@ -101,8 +127,8 @@ const LoginGoogle = () => {
       })
       .requestCode();
   });
+
   const sendCodeToBackend = async code => {
-    //인증코드를 백엔드로 보내고,
     try {
       const response = await axios.post('https://oauth2.googleapis.com/token', {
         code,
@@ -111,14 +137,12 @@ const LoginGoogle = () => {
         client_secret: process.env.VUE_APP_GOOGLE_SECRET_CODE,
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',
-      }); //구글에서 액세스 토큰을 받아오기.
+      });
+
       const accessToken = response.data.access_token;
       googleacAcessToken.value = accessToken;
-      console.log('구글에서 액세스 토큰 : ', accessToken);
 
-      // Fetch user details using the access token
       const userResponse = await axios.get(
-        //액세스 토큰을 사용해 사용자 정보를 가져온다.
         'https://www.googleapis.com/oauth2/v3/userinfo',
         {
           headers: {
@@ -127,41 +151,30 @@ const LoginGoogle = () => {
         },
       );
 
-      console.log('구글에서 정보 받은거 : ', userResponse);
       if (userResponse && userResponse.data) {
-        //console.log('1');
-        //console.log('userResponse.data', userResponse.data);
-        // Set the userDetails data property to the userResponse object
-        userDetails = userResponse.data; //가져온 사용자 정보를 저장한다.
-        console.log('사용자 정보를 저장한거 userDetails !!!', userDetails);
+        userDetails = userResponse.data;
+
         const userData = {
-          //백엔드에 보내기 위한 사용자 데이터 객체.
           accessToken: accessToken,
-          //nickname: userDetails.email,
         };
+
         userApi
-          .post('/api/user/auth/google/check', userData) //백엔드에 사용자 등록여부를 확인.
+          .post('/api/user/auth/google/check', userData)
           .then(response => {
-            console.log('registered(회원가입여부)', response.data.registered);
             const registered = response.data.registered;
             if (registered) {
-              //이미 등록된 경우
               userApi
                 .post('/api/user/auth/google/login', userData.accessToken)
                 .then(response => {
                   const userStore = useUserAuthStore();
                   userStore.setAuthData(response.data);
-                  console.log('로그인 성공:', response.data);
-                  emit('update:isLogin', false);
+                  closeDialog();
                 })
                 .catch(error => {
                   console.log('로그인 실패:', error);
-                  emit('update:isLogin', false);
+                  closeDialog();
                 });
             } else if (!registered) {
-              //동록되지 않은 경우
-              console.log('nickname', signUpVisible);
-
               signUpVisible.value = true;
             }
           })
@@ -173,34 +186,30 @@ const LoginGoogle = () => {
             }
           });
       } else {
-        //console.log('12');
-        // Handle the case where userResponse or userResponse.data is undefined
         console.error('Failed to fetch user details.');
       }
     } catch (error) {
-      //console.log('3');
       console.error('Token exchange failed:', error.response.data);
     }
   };
+
   const callback = response => {
-    // This callback will be triggered when the user selects or login to
-    // his Google account from the popup
     console.log('Handle the response', response);
   };
 };
+
 const signUpGoogle = () => {
-  console.log('nickname setting', signUpVisible);
   const userData2 = {
     accessToken: googleacAcessToken.value,
     nickname: nickname.value,
   };
+
   userApi
     .post('/api/user/auth/google/sign-up', userData2)
     .then(response => {
       const userStore = useUserAuthStore();
       userStore.setAuthData(response.data);
-      console.log('회원가입 성공:', response.data);
-      emit('update:isLogin', false);
+      closeDialog();
     })
     .catch(error => {
       console.log('회원가입 실패:', error);
@@ -209,7 +218,17 @@ const signUpGoogle = () => {
 </script>
 
 <style scoped>
-/* 카드 스타일링 */
+.logoimg {
+  margin: 0 auto;
+  width: 150px;
+  height: auto;
+}
+
+.responsive-logo {
+  max-width: 100%;
+  height: auto;
+}
+
 .my-card {
   height: 60%;
   display: flex;
@@ -219,33 +238,32 @@ const signUpGoogle = () => {
   width: 20%;
 }
 
-/* 카드 헤더 스타일링 */
 .card-header {
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  flex-direction: column; /* 수직 정렬 */
-  margin-bottom: auto; /* 카드의 위쪽에 배치 */
+  flex-direction: column;
+  margin-bottom: auto;
 }
 
-/* 구글 로그인 버튼 스타일링 */
 .google-login {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
+  flex-grow: 1;
 }
 
 .google-img {
   height: auto;
-  width: 75%; /* 이미지 비율 유지 */
+  width: 75%;
 }
+
 .q-input {
   width: 100%;
   margin: 0 auto;
 }
-/* 회원가입 버튼 스타일링 */
+
 .signupbtn {
   background-color: rgba(0, 12, 30, 0.8);
   width: 100%;
@@ -255,7 +273,12 @@ const signUpGoogle = () => {
   color: white;
   font-size: 1rem;
 }
+
 .separator {
   width: 80%;
+}
+
+.q-dialog--transition {
+  transition: opacity 0.3s;
 }
 </style>
