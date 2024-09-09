@@ -23,7 +23,7 @@
             <q-select
               class="select-box"
               v-model="detailSubject"
-              :options="filteredDetailSubjectOptions"
+              :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
             />
@@ -44,15 +44,15 @@
         </q-card-section>
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">Q</q-label>
+          <q-label class="label-quiz">질문</q-label>
           <q-input
             v-model="quiz"
             type="textarea"
-            rows="1"
+            autogrow
             outlined
             dense
             placeholder="문제를 입력하세요"
-            maxlength="100"
+            maxlength="300"
             counter
             class="input-quiz"
           />
@@ -62,7 +62,7 @@
           <q-input
             v-model="answer"
             type="textarea"
-            rows="1"
+            autogrow
             outlined
             dense
             placeholder="답안을 입력하세요"
@@ -77,7 +77,7 @@
           <q-input
             v-model="commentary"
             type="textarea"
-            rows="3"
+            autogrow
             outlined
             placeholder="해설을 입력하세요"
             dense
@@ -144,8 +144,8 @@ const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
 
 onMounted(fetchCategories);
 
-const subject = ref('');
-const detailSubject = ref('');
+const subject = ref('과목을 선택 해주세요.');
+const detailSubject = ref('챕터를 선택 해주세요.');
 const quiz = ref('');
 const answer = ref('');
 const commentary = ref('');
@@ -160,7 +160,7 @@ const updateDetailSubjectOptions = () => {
 };
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '';
+  detailSubject.value = '챕터를 선택 해주세요.';
   updateDetailSubjectOptions();
 });
 
@@ -210,8 +210,8 @@ const submitQuiz = () => {
 <style scoped lang="scss">
 // 폼 컨테이너 스타일
 .form-container {
-  max-width: 800px;
-  margin-bottom: 20px;
+  max-width: 1080px;
+  margin: 3% auto;
 }
 
 // 카드 스타일 - 둥근 모서리, 그림자
@@ -259,7 +259,7 @@ const submitQuiz = () => {
   font-weight: bold;
 }
 .select-box {
-  max-width: 400px;
+  width: 200px;
 }
 
 //이미지 업로드 스타일
