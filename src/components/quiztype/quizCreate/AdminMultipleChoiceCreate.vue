@@ -44,7 +44,7 @@
         </q-card-section>
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">Q</q-label>
+          <q-label class="label-quiz">질문</q-label>
           <q-input
             v-model="quiz"
             type="textarea"
@@ -52,7 +52,7 @@
             outlined
             dense
             placeholder="문제를 입력하세요"
-            maxlength="100"
+            maxlength="300"
             counter
             class="input-quiz"
           />

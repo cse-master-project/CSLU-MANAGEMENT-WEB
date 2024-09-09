@@ -52,7 +52,7 @@
             outlined
             dense
             placeholder="문제를 입력해주세요."
-            maxlength="100"
+            maxlength="300"
             counter
             class="input-quiz"
           /><q-icon name="help" class="help-icon">
