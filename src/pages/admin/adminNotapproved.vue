@@ -9,8 +9,3 @@ import NotApprovedQuizList from 'src/pages/notApprovedQuizzes/[id]/components/No
 </script>
 
 <style lang="scss" scoped></style>
-
-<route lang="yaml">
-meta:
-  layout: admin
-</route>
