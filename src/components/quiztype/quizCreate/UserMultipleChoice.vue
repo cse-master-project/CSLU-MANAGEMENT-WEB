@@ -23,7 +23,7 @@
             <q-select
               class="select-box"
               v-model="detailSubject"
-              :options="filteredDetailSubjectOptions.selice().reverse()"
+              :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
             />
