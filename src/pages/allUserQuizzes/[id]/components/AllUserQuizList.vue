@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <!-- Filters card -->
-    <q-card class="q-mb-md q-gutter-md q-pa-md">
+    <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
         <div class="col-12 col-md-4 q-my-md">
           <q-select

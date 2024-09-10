@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <!-- Filters card -->
-    <q-card class="q-mb-md q-gutter-md q-pa-md">
+    <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
         <div class="col-12 col-md-4 q-my-md">
           <q-select
@@ -47,11 +47,11 @@
     </q-card>
 
     <!-- Quiz Cards -->
-    <div class="row q-col-gutter-md q-pt-md">
+    <div class="row q-pt-md justify-between">
       <div
         v-for="quiz in paginatedQuizzes"
         :key="quiz.quizId"
-        class="col-12 col-md-6 q-my-md"
+        class="col-12 col-md-6 q-my-md q-gutter-md"
       >
         <q-card
           class="my-card"
@@ -119,11 +119,14 @@ const quizTypeOptions = [
 const filteredDetailSubjectOptions = ref([]);
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
+
+//과목의 챕터 분류
 const updateDetailSubjectOptions = () => {
   filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
     subject.value,
   );
 };
+//과목 고르면 챕터 초기화
 watch(subject, () => {
   detailSubject.value = '';
   updateDetailSubjectOptions();
