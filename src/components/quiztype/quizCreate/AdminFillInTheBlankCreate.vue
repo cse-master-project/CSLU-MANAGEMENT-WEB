@@ -76,7 +76,7 @@
               outlined
               dense
               placeholder="답안 입력해주세요. "
-              maxlength="100"
+              maxlength="300"
               counter
             />
           </div>
@@ -96,7 +96,7 @@
             outlined
             placeholder="해설을 입력하세요"
             dense
-            maxlength="100"
+            maxlength="300"
             counter
             class="input-commentary"
           />
@@ -184,16 +184,33 @@ watch(subject, () => {
   updateDetailSubjectOptions();
 });
 
+// 답안 정리 함수
+const normalizeAnswers = answers => {
+  return answers
+    .map(
+      answer =>
+        answer
+          .split(',')
+          .map(part => part.trim()) // 각 답안의 공백 제거
+          .filter(part => part) // 빈 값 제거
+          .join(', '), // 다시 공백으로 구분된 문자열로 조합
+    )
+    .filter(answer => answer); // 빈 값 제거
+};
+
 const submitQuizSuccess = ref(false);
 
 const submitQuiz = () => {
+  //답안 정리
+  const normalizedAnswers = normalizeAnswers(answers.value);
+
   const quizData = {
     subject: subject.value,
     detailSubject: detailSubject.value,
     quizType: '5',
     jsonContent: JSON.stringify({
       quiz: quiz.value,
-      answer: answers.value,
+      answer: normalizedAnswers,
       commentary: commentary.value,
     }),
   };

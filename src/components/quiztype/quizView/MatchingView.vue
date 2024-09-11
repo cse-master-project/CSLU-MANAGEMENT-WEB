@@ -12,7 +12,7 @@
             v-for="(option, index) in quizcontent.left_option"
             :key="'left-' + index"
             class="q-mb-md"
-            :style="{ backgroundColor: getColor(option, 'left') }"
+            :style="{ backgroundColor: getColor(index, 'left') }"
           >
             {{ index + 1 }}. {{ option }}
           </div>
@@ -23,7 +23,7 @@
             v-for="(option, index) in quizcontent.right_option"
             :key="'right-' + index"
             class="q-mb-md"
-            :style="{ backgroundColor: getColor(option, 'right') }"
+            :style="{ backgroundColor: getColor(index, 'right') }"
           >
             {{ index + 1 }}. {{ option }}
           </div>
@@ -31,7 +31,7 @@
       </div>
 
       <q-card-section>
-        <div>정답: {{ quizcontent.answer }}</div>
+        <div>정답: {{ quizcontent.answer.join(', ') }}</div>
       </q-card-section>
 
       <q-card-section>
@@ -49,22 +49,17 @@ const props = defineProps({
   },
 });
 
-const getColor = (option, side) => {
-  // 정답 배열에서 왼쪽과 오른쪽 인덱스를 구분
+const getColor = (index, side) => {
+  // 정답 배열에서 인덱스를 기반으로 색상을 반환
   const answers = props.quizcontent.answer.map(answer => answer.split('t'));
 
-  for (let i = 0; i < answers.length; i++) {
-    const [left, right] = answers[i];
+  // 왼쪽 또는 오른쪽 옵션의 색상 결정
+  const colorIndex = answers.findIndex(([left, right]) => {
+    if (side === 'left') return left == index;
+    if (side === 'right') return right == index;
+  });
 
-    if (side === 'left' && option === left) {
-      return getColorForIndex(i);
-    }
-    if (side === 'right' && option === right) {
-      return getColorForIndex(i);
-    }
-  }
-
-  return 'transparent'; // 정답이 아닌 경우 기본 투명 색상
+  return colorIndex >= 0 ? getColorForIndex(colorIndex) : 'transparent'; // 정답이 아닌 경우 기본 투명 색상
 };
 
 const getColorForIndex = index => {

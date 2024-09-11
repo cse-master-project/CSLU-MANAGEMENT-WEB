@@ -133,7 +133,7 @@
             outlined
             placeholder="해설을 입력하세요"
             dense
-            maxlength="100"
+            maxlength="300"
             counter
             class="input-commentary"
           />
@@ -242,27 +242,42 @@ const selectOption = (color, index) => {
   updateMatchingOptions(index, color); // 매칭된 색상 업데이트
 };
 
+// 왼쪽 옵션 및 색상 매칭 업데이트
 const updateMatchingOptions = (index, color) => {
-  // 색상 배열에서 색상 인덱스를 가져옵니다.
   const colorIndex = ['yellow', 'yellowgreen', 'orange'].indexOf(color);
   if (colorIndex >= 0) {
-    // 콘솔 로그로 왼쪽 및 오른쪽 옵션과 매칭 결과를 확인합니다.
-    // console.log('왼쪽답', leftOptions.value[index]);
-    // console.log('오른쪽답', rightOptions.value[colorIndex]);
-    // console.log(
-    //   `${leftOptions.value[index]}t${rightOptions.value[colorIndex]}`,
-    // );
-
-    // answers 배열에 매칭 결과를 추가합니다.
-    answers.value[
-      index
-    ] = `${leftOptions.value[index]}t${rightOptions.value[colorIndex]}`;
+    answers.value[index] = `${index}t${colorIndex}`;
     console.log(answers.value);
   }
 };
 
+// 왼쪽 옵션 변경 시 자동으로 매칭 업데이트
+watch(
+  leftOptions,
+  newLeftOptions => {
+    leftOptionsBgColor.value.forEach((color, index) => {
+      if (color) {
+        updateMatchingOptions(index, color);
+      }
+    });
+  },
+  { deep: true },
+);
+
+// 오른쪽 옵션 변경 시 자동으로 매칭 업데이트
+watch(
+  rightOptions,
+  newRightOptions => {
+    leftOptionsBgColor.value.forEach((color, index) => {
+      if (color) {
+        updateMatchingOptions(index, color);
+      }
+    });
+  },
+  { deep: true },
+);
+
 const isColorDisabled = (color, index) => {
-  // 이미 선택된 색상인지 확인
   return leftOptionsBgColor.value.some(
     (bgColor, i) => bgColor === color && i !== index,
   );
@@ -275,9 +290,7 @@ const resetColors = () => {
 const submitQuizSuccess = ref(false);
 
 const submitQuiz = () => {
-  // answers 배열을 'ㅇtㅇ' 형식으로 변환
   const formattedAnswers = answers.value.map(answer => {
-    // 여기에 필요한 변환 로직이 있을 경우 추가
     return answer;
   });
   console.log('answers', formattedAnswers);
@@ -290,7 +303,7 @@ const submitQuiz = () => {
       quiz: quiz.value,
       left_option: leftOptions.value,
       right_option: rightOptions.value,
-      answer: formattedAnswers, // 변환된 answers 배열 사용
+      answer: formattedAnswers,
       commentary: commentary.value,
     }),
     hasImage: false,

@@ -1,9 +1,9 @@
 <template>
   <q-page padding>
     <!-- Filters card -->
-    <q-card class="q-mb-md q-pa-md">
+    <q-card class="q-mb-md q-gutter-md q-pa-md" bordered>
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-4 q-my-md">
+        <div class="col-12 col-md-3 q-my-md">
           <q-select
             v-model="subject"
             :options="subjectOptions"
@@ -13,16 +13,16 @@
             @update:model-value="filteredDetailSubjectOptions"
           />
         </div>
-        <div class="col-12 col-md-4 q-my-md">
+        <div class="col-12 col-md-3 q-my-md">
           <q-select
             v-model="detailSubject"
-            :options="filteredDetailSubjectOptions.slice().reverse()"
+            :options="filteredDetailSubjectOptions"
             label="챕터"
             outlined
             dense
           />
         </div>
-        <div class="col-12 col-md-4 q-my-md">
+        <div class="col-12 col-md-3 q-my-md">
           <q-select
             v-model="quizType"
             :options="quizTypeOptions"
@@ -36,38 +36,59 @@
         <div class="col-12 col-md-6 q-my-md">
           <q-btn
             label="초기화"
-            class="full-width"
+            class="full-width bg-grey-2 text-primary"
             @click="resetFilters"
-          ></q-btn>
+          />
         </div>
         <div class="col-12 col-md-6 q-my-md">
-          <q-btn label="검색" class="full-width" @click="filterQuizzes"></q-btn>
+          <q-btn
+            label="검색"
+            class="full-width bg-primary text-white"
+            @click="filterQuizzes"
+          />
         </div>
       </div>
     </q-card>
 
     <!-- Quiz Cards -->
-    <div class="row q-pt-md justify-between">
+    <div class="row q-col-gutter-md q-pt-md">
       <div
         v-for="quiz in paginatedQuizzes"
         :key="quiz.quizId"
-        class="col-12 col-md-6 q-my-md q-gutter-md"
+        class="col-12 col-md-6 q-my-md"
       >
         <q-card
-          class="my-card"
+          class="my-card bg-white q-mb-md"
           clickable
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
-          style="cursor: pointer"
+          style="cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1)"
         >
           <q-card-section>
-            <div class="text-h6">과목 : {{ quiz.subject }}</div>
-            <div class="text-subtitle2">챕터 : {{ quiz.detailSubject }}</div>
-            <div class="text-body2">
-              문제 유형 : {{ formatQuizType(quiz.quizType) }}
+            <div>퀴즈ID : {{ quiz.quizId }}</div>
+            <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
+            <div class="text-subtitle2 text-secondary">
+              챕터: {{ quiz.detailSubject }}
             </div>
-            <div class="text-caption text-createAt">
-              생성일 : {{ formatDate(quiz.createAt) }}
+            <div class="text-body2 text-dark">
+              문제 유형: {{ formatQuizType(quiz.quizType) }}
+            </div>
+            <div class="text-caption text-grey">
+              생성일: {{ formatDate(quiz.createAt) }}
+            </div>
+
+            <!-- 퀴즈 내용 파싱 및 표시 -->
+            <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
+              <div class="text-h6">
+                문제: {{ parsedContent(quiz.jsonContent)?.quiz }}
+              </div>
+
+              <div class="text-body2">
+                정답: {{ parsedContent(quiz.jsonContent)?.answer }}
+              </div>
+              <div class="text-body2">
+                해설: {{ parsedContent(quiz.jsonContent)?.commentary }}
+              </div>
             </div>
           </q-card-section>
 
@@ -86,6 +107,7 @@
         max-pages="10"
         boundary-numbers
         @update:model-value="changePage"
+        class="bg-grey-2"
       />
     </div>
   </q-page>
@@ -119,14 +141,11 @@ const quizTypeOptions = [
 const filteredDetailSubjectOptions = ref([]);
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
-
-//과목의 챕터 분류
 const updateDetailSubjectOptions = () => {
   filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
     subject.value,
   );
 };
-//과목 고르면 챕터 초기화
 watch(subject, () => {
   detailSubject.value = '';
   updateDetailSubjectOptions();
@@ -142,6 +161,7 @@ const fetchQuizzes = async () => {
       },
     });
     quizzes.value = response.data.content;
+    console.log('퀴즈목록', quizzes.value);
     quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt)); // 날짜 기준 내림차순 정렬
     filterQuizzes(); // 초기 필터링 및 페이지네이션 적용
     totalElements.value = quizzes.value.length; // 전체 퀴즈 수 업데이트
@@ -216,10 +236,71 @@ const goToQuizDetail = quizId => {
   router.push(`/quizzes/${quizId}`);
 };
 
+// JSON 콘텐츠 파싱 함수
+const parsedContent = jsonContent => {
+  try {
+    return JSON.parse(jsonContent);
+  } catch (e) {
+    console.error('JSON 파싱 오류:', e);
+    return null;
+  }
+};
+
 onMounted(async () => {
   await fetchCategories();
   await fetchQuizzes();
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.my-card {
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 300px; /* 최소 높이 설정 */
+  /* 또는 높이를 고정하고 싶다면 */
+  height: 300px;
+}
+
+.q-card-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.q-btn {
+  border-radius: 5px;
+}
+
+.q-pagination {
+  border-radius: 5px;
+}
+
+.bg-primary {
+  background-color: #1976d2; /* Primary color */
+}
+
+.text-primary {
+  color: #1976d2; /* Primary color */
+}
+
+.bg-grey-2 {
+  background-color: #f5f5f5;
+}
+
+.text-secondary {
+  color: #757575;
+}
+
+.text-dark {
+  color: #333;
+}
+
+.text-grey {
+  color: #9e9e9e;
+}
+</style>
+
+<route lang="yaml">
+meta:
+  layout: admin
+</route>
