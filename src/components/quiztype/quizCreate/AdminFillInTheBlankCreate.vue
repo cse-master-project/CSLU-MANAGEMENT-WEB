@@ -117,7 +117,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
