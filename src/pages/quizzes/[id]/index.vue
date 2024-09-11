@@ -19,12 +19,6 @@
             :src="imageUrl"
             alt="문제 이미지"
             style="max-width: 100%; height: auto; border-radius: 8px"
-            <!--
-            이미지에
-            둥근
-            테두리
-            --
-          />
           />
         </div>
       </q-card-section>
