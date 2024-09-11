@@ -2,7 +2,7 @@
   <q-card class="custom-card">
     <q-card-section class="q-pa-none">
       <div class="flex-container">
-        <!-- 과목 선택 리스트 -->
+        <!-- 대분류 선택 리스트 -->
         <div class="list-container">
           <q-item-label class="list-title">과목</q-item-label>
           <q-list bordered class="custom-list">
@@ -18,30 +18,18 @@
           </q-list>
         </div>
 
-        <!-- 챕터 선택 리스트 -->
+        <!-- 소분류 선택 리스트 -->
         <div class="list-container">
           <q-item-label class="list-title">챕터</q-item-label>
           <q-list bordered class="custom-list">
-            <template v-if="error">
-              <q-item>
-                <q-item-section>{{ error }}</q-item-section>
-              </q-item>
-            </template>
-            <template v-else-if="filteredDetailSubjectOptions.length === 0">
-              <q-item>
-                <q-item-section>챕터가 없습니다. </q-item-section>
-              </q-item>
-            </template>
-            <template v-else>
-              <q-item
-                v-for="option in filteredDetailSubjectOptions.slice().reverse()"
-                :key="option.value"
-                clickable
-                @click="selectDetailSubject(option)"
-              >
-                <q-item-section>{{ option }}</q-item-section>
-              </q-item>
-            </template>
+            <q-item
+              v-for="option in filteredDetailSubjectOptions.slice().reverse()"
+              :key="option.value"
+              clickable
+              @click="selectDetailSubject(option)"
+            >
+              <q-item-section>{{ option }}</q-item-section>
+            </q-item>
           </q-list>
         </div>
       </div>
@@ -57,19 +45,16 @@ import useCategories from 'src/services/useCategories.js';
 // 카테고리 조회 기능
 const subject = ref('');
 const detailSubject = ref('');
-const error = ref(null);
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
 const filteredDetailSubjectOptions = ref([]);
 
 const updateDetailSubjectOptions = () => {
-  try {
-    filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-      subject.value,
-    );
-    error.value = null; // 오류 메시지 초기화
-  } catch (err) {
-    error.value = '챕터를 불러오는 중 오류가 발생했습니다'; // 오류 메시지 설정
+  const detailSubjects = getDetailSubjectsBySubject(subject.value);
+  if (detailSubjects.length === 0) {
+    filteredDetailSubjectOptions.value = ['챕터가 없습니다.'];
+  } else {
+    filteredDetailSubjectOptions.value = detailSubjects;
   }
 };
 
