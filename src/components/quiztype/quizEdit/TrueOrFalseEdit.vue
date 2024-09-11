@@ -1,11 +1,34 @@
 <template>
   <div class="q-mb-md form">
     <div class="text-h6 q-mb-md">문제 유형: o/x형</div>
-    <q-input v-model="localQuizContent.quiz" label="문제" />
+    <q-input
+      v-model="localQuizContent.quiz"
+      label="문제"
+      dense
+      outlined
+      autogrow
+      maxlength="300"
+      counter
+    />
 
-    <q-input v-model="localQuizContent.answer" label="정답" />
+    <q-input
+      v-model="localQuizContent.answer"
+      label="정답"
+      dense
+      outlined
+      autogrow
+      maxlength="300"
+    />
 
-    <q-input v-model="localQuizContent.commentary" label="해설" />
+    <q-input
+      v-model="localQuizContent.commentary"
+      dense
+      outlined
+      autogrow
+      counter
+      maxlength="300"
+      label="해설"
+    />
 
     <q-btn
       flat

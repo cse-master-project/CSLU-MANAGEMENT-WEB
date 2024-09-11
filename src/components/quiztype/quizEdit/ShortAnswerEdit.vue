@@ -1,11 +1,32 @@
 <template>
   <div class="q-mb-md form">
     <div class="text-h6 q-mb-md">문제 유형: 단답형</div>
-    <q-input v-model="localQuizContent.quiz" label="문제" />
+    <q-input
+      v-model="localQuizContent.quiz"
+      label="문제"
+      outlined
+      autogrow
+      dense
+      maxlength="300"
+    />
 
-    <q-input v-model="localQuizContent.answer" label="정답" />
+    <q-input
+      v-model="localQuizContent.answer"
+      label="정답"
+      outlined
+      dense
+      autogrow
+      maxlength="300"
+    />
 
-    <q-input v-model="localQuizContent.commentary" label="해설" />
+    <q-input
+      v-model="localQuizContent.commentary"
+      label="해설"
+      outlined
+      dense
+      autogrow
+      maxlength="300"
+    />
     <q-btn
       flat
       color="negative"

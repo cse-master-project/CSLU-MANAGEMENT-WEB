@@ -5,15 +5,15 @@
     </div>
     <q-card>
       <q-card-section class="quiz-container">
-        <q-label class="label-quiz">Q</q-label>
+        <q-label class="label-quiz">질문</q-label>
         <q-input
           v-model="localQuizContent.quiz"
           type="textarea"
-          rows="1"
+          autogrow
           outlined
           dense
-          placeholder="문제를 입력해주세요 (괄호를 넣어줍니다 예 : 안녕하세요 ()입니다. ()살입니다.)"
-          maxlength="100"
+          placeholder="문제를 입력해주세요."
+          maxlength="300"
           counter
           class="input-quiz"
         />
@@ -29,7 +29,7 @@
           <q-input
             v-model="localQuizContent.answer[index]"
             type="textarea"
-            rows="1"
+            autogrow
             outlined
             dense
             placeholder="답안 입력해주세요 (다수일 경우 , 로 구분) "
@@ -44,11 +44,11 @@
         <q-input
           v-model="localQuizContent.commentary"
           type="textarea"
-          rows="3"
+          autogrow
           outlined
           placeholder="해설을 입력하세요"
           dense
-          maxlength="100"
+          maxlength="300"
           counter
           class="input-commentary"
       /></q-card-section>
@@ -109,9 +109,9 @@ const submitQuiz = async () => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
 .form-container {
-  max-width: 800px;
+  max-width: 1000px;
   margin-bottom: 20px;
 }
 
@@ -142,7 +142,7 @@ const submitQuiz = async () => {
   font-weight: bold;
 }
 .input-quiz {
-  width: 70%;
+  width: 80%;
 }
 
 .answer-container {
@@ -157,7 +157,7 @@ const submitQuiz = async () => {
   font-weight: bold;
 }
 .input-answer {
-  width: 70%;
+  width: 80%;
 }
 
 .comment-container {
@@ -166,7 +166,7 @@ const submitQuiz = async () => {
   align-items: baseline; /* 수직 중앙 정렬 */
 }
 .input-commentary {
-  width: 70%;
+  width: 80%;
 }
 
 .btn-container {
