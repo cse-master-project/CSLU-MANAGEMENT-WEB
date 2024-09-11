@@ -237,25 +237,6 @@ const submitQuiz = async () => {
       alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
     }
   }
-
-  // api
-  //   .post('/api/quiz/default', quizData)
-  //   .then(response => {
-  //     submitQuizSuccess.value = true;
-  //   })
-  //   .catch(error => {
-  //     if (error.response.status === 400) {
-  //       alert(
-  //         '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
-  //       );
-  //     } else if (error.response.status === 500) {
-  //       alert(
-  //         '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-  //       );
-  //     } else {
-  //       alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
-  //     }
-  //   });
 };
 </script>
 
