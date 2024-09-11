@@ -59,17 +59,22 @@
         </q-card-section>
         <q-card-section class="answer-container">
           <q-label class="label-answer">답안</q-label>
-          <q-input
-            v-model="answer"
-            type="textarea"
-            autogrow
-            outlined
-            dense
-            placeholder="답안을 입력하세요"
-            maxlength="300"
-            counter
+          <div
+            v-for="(answer, index) in answers"
+            :key="index"
             class="q-mb-md input-answer"
-          />
+          >
+            <q-input
+              v-model="answers[index]"
+              type="textarea"
+              autogrow
+              outlined
+              dense
+              placeholder="답안 입력해주세요. "
+              maxlength="300"
+              counter
+            />
+          </div>
         </q-card-section>
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
@@ -147,7 +152,7 @@ onMounted(fetchCategories);
 const subject = ref('과목을 선택 해주세요.');
 const detailSubject = ref('챕터를 선택 해주세요.');
 const quiz = ref('');
-const answer = ref('');
+const answers = ref(['']);
 const commentary = ref('');
 
 const filteredDetailSubjectOptions = ref([]);
@@ -168,17 +173,34 @@ watch(subject, () => {
   updateDetailSubjectOptions();
 });
 
+// 답안 정리 함수
+const normalizeAnswers = answers => {
+  return answers
+    .map(
+      answer =>
+        answer
+          .split(',')
+          .map(part => part.trim()) // 각 답안의 공백 제거
+          .filter(part => part) // 빈 값 제거
+          .join(', '), // 다시 공백으로 구분된 문자열로 조합
+    )
+    .filter(answer => answer); // 빈 값 제거
+};
+
 const submitQuizSuccess = ref(false);
 
 // 서버에 문제 제출.
 const submitQuiz = () => {
+  //답안 정리
+  const normalizedAnswers = normalizeAnswers(answers.value);
+
   const quizData = {
     subject: subject.value,
     detailSubject: detailSubject.value,
     quizType: '2',
     jsonContent: JSON.stringify({
       quiz: quiz.value,
-      answer: answer.value,
+      answer: normalizedAnswers,
       commentary: commentary.value,
     }),
     hasImage: false,
