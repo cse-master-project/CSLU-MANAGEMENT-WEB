@@ -70,6 +70,9 @@ import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상�
 
 const { cookies } = useCookies(); //쿠키 사용.
 
+const userStore = useUserAuthStore();
+userStore.loadAuthDataFromCookies();
+
 const props = defineProps({
   isLogin: Boolean,
 });
