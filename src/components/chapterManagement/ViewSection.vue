@@ -52,7 +52,9 @@ const filteredDetailSubjectOptions = ref([]);
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects.length === 0) {
+
     filteredDetailSubjectOptions.value = ['챕터가 없습니다.'];
+
   } else {
     filteredDetailSubjectOptions.value = detailSubjects;
   }

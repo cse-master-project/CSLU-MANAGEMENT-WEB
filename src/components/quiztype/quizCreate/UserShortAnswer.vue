@@ -24,7 +24,7 @@
             <q-select
               class="select-box"
               v-model="detailSubject"
-              :options="filteredDetailSubjectOptions"
+              :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
               style="width: 200px"
@@ -50,7 +50,7 @@
           <q-input
             v-model="quiz"
             type="textarea"
-            rows="3"
+            autogrow
             outlined
             dense
             placeholder="문제를 입력하세요."
@@ -64,7 +64,7 @@
           <q-input
             v-model="answer"
             type="textarea"
-            rows="1"
+            autogrow
             outlined
             dense
             placeholder="답안을 입력하세요."
@@ -79,7 +79,7 @@
           <q-input
             v-model="commentary"
             type="textarea"
-            rows="2"
+            autogrow
             outlined
             placeholder="해설을 입력하세요."
             dense
@@ -156,11 +156,13 @@ const filteredDetailSubjectOptions = ref([]);
 
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
+  const detailSubjects = getDetailSubjectsBySubject(subject.value);
+  if (detailSubjects.length === 0) {
+    filteredDetailSubjectOptions.value = ['공백'];
+  } else {
+    filteredDetailSubjectOptions.value = detailSubjects;
+  }
 };
-
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
   detailSubject.value = '';

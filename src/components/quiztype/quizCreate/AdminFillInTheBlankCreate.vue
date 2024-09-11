@@ -170,9 +170,12 @@ const filteredDetailSubjectOptions = ref([]);
 
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
+  const detailSubjects = getDetailSubjectsBySubject(subject.value);
+  if (detailSubjects.length === 0) {
+    filteredDetailSubjectOptions.value = ['공백'];
+  } else {
+    filteredDetailSubjectOptions.value = detailSubjects;
+  }
 };
 
 watch(subject, () => {
@@ -359,7 +362,6 @@ input[type='file'] {
 }
 .input-quiz {
   width: 70%;
-  overflow-y: auto;
 }
 
 // 답안 입력 스타일

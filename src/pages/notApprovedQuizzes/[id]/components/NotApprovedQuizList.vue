@@ -1,9 +1,9 @@
 <template>
   <q-page padding>
     <!-- Filters card -->
-    <q-card class="q-mb-md q-gutter-md q-pa-md">
+    <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-4 q-my-md">
           <q-select
             v-model="subject"
             :options="subjectOptions"
@@ -13,16 +13,16 @@
             @update:model-value="filteredDetailSubjectOptions"
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-4 q-my-md">
           <q-select
             v-model="detailSubject"
-            :options="filteredDetailSubjectOptions"
+            :options="filteredDetailSubjectOptions.slice().reverse()"
             label="챕터"
             outlined
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-4 q-my-md">
           <q-select
             v-model="quizType"
             :options="quizTypeOptions"
@@ -47,11 +47,11 @@
     </q-card>
 
     <!-- Quiz Cards -->
-    <div class="row q-col-gutter-md q-pt-md">
+    <div class="row q-pt-md justify-between">
       <div
-        v-for="quiz in filteredQuizzes"
+        v-for="quiz in paginatedQuizzes"
         :key="quiz.quizId"
-        class="col-12 col-md-6 q-my-md"
+        class="col-12 col-md-6 q-my-md q-gutter-md"
       >
         <q-card
           class="my-card"
@@ -63,7 +63,6 @@
           <q-card-section>
             <div class="text-h6">과목 : {{ quiz.subject }}</div>
             <div class="text-subtitle2">챕터 : {{ quiz.detailSubject }}</div>
-            <div class="text-subtitle2">사용자명 : {{ quiz.userNickname }}</div>
             <div class="text-body2">
               문제 유형 : {{ formatQuizType(quiz.quizType) }}
             </div>
@@ -78,9 +77,19 @@
         </q-card>
       </div>
     </div>
+
+    <!-- Pagination -->
+    <div class="row q-col-gutter-md q-pt-md justify-center">
+      <q-pagination
+        v-model="currentPage"
+        :max="totalPages"
+        max-pages="10"
+        boundary-numbers
+        @update:model-value="changePage"
+      />
+    </div>
   </q-page>
 </template>
-
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
@@ -93,6 +102,7 @@ const filteredQuizzes = ref([]);
 const subject = ref('');
 const detailSubject = ref('');
 const quizType = ref('');
+
 const quizTypeOptions = [
   { value: 1, label: '4지선다형' },
   { value: 2, label: '단답형' },
@@ -181,7 +191,6 @@ function goToQuizDetail(quizId) {
   router.push(`/NotApprovedQuizzes/${quizId}`);
 }
 </script>
-
 <style scoped>
 .my-card {
   transition: transform 0.2s, box-shadow 0.2s;
@@ -206,8 +215,3 @@ function goToQuizDetail(quizId) {
   color: #888888; /* 회색 */
 }
 </style>
-
-<route lang="yaml">
-meta:
-  layout: admin
-</route>

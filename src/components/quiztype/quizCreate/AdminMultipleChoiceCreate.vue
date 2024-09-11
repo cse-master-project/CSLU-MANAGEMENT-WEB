@@ -75,6 +75,7 @@
               type="textarea"
               outlined
               dense
+              maxlength="100"
               autogrow
               class="q-mb-md input-choices"
               placeholder="지문을 입력하세요"
@@ -170,9 +171,12 @@ const filteredDetailSubjectOptions = ref([]);
 
 // 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
+  const detailSubjects = getDetailSubjectsBySubject(subject.value);
+  if (detailSubjects.length === 0) {
+    filteredDetailSubjectOptions.value = ['공백'];
+  } else {
+    filteredDetailSubjectOptions.value = detailSubjects;
+  }
 };
 
 watch(subject, () => {

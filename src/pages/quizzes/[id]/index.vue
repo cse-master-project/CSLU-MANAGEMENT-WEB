@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md flex flex-center">
-    <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 600px">
+    <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 800px">
       <!-- 과목, 챕터, 생성일 -->
       <q-card-section class="q-pa-md">
         <div class="text-h6 q-mb-xs text-orange">
@@ -31,14 +31,14 @@
           v-if="isEditing"
         />
       </q-card-section>
-
-      <q-card-actions align="right" class="q-px-md q-py-sm">
+      <q-card-section class="button-container">
         <q-btn
           flat
           color="primary"
           class="my-btn small-btn"
           icon="delete"
           @click="isDelete = true"
+          v-if="!isEditing"
         >
           폐기
         </q-btn>
@@ -52,7 +52,7 @@
         >
           수정
         </q-btn>
-      </q-card-actions>
+      </q-card-section>
     </q-card>
   </q-page>
   <DeleteQuizConfirmation
@@ -191,14 +191,19 @@ const isDelete = ref(false);
   font-size: 0.75rem; /* 작은 글씨 */
   color: #888888; /* 회색 */
 }
+
 .my-btn {
   border-radius: 10px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
   padding: 8px 16px;
+  width: 100%;
+  margin: 1% auto;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column; /* 버튼을 위아래로 정렬 */
+  align-items: center; /* 버튼을 가운데 정렬 */
+  padding: 0 32px; /* 양옆 마진을 카드와 동일하게 */
 }
 </style>
-
-<route lang="yaml">
-meta:
-  layout: admin
-</route>

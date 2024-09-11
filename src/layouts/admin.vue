@@ -127,7 +127,7 @@ const isActive = path => route.path === path;
 }
 .q-footer {
   height: 100px;
-  border: 1px solid #dddddd;
+  border-top: 1px solid #dddddd;
   background-color: white;
   color: black;
   font-size: 1rem;

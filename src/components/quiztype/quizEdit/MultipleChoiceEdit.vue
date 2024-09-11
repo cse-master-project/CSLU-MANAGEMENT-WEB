@@ -1,11 +1,23 @@
 <template>
   <div class="form">
     <div class="text-h6 q-mb-md">문제 유형: 4지선다형</div>
-    <q-input v-model="localQuizContent.quiz" label="문제" />
+    <q-input
+      v-model="localQuizContent.quiz"
+      label="문제"
+      outlined
+      autogrow
+      dense
+      maxlength="300"
+      counter
+    />
+
     <div v-for="(option, index) in localQuizContent.option" :key="index">
       <q-input
         v-model="localQuizContent.option[index]"
         :label="`보기 ${index + 1}`"
+        outlined
+        dense
+        maxlength="100"
       />
     </div>
 
@@ -14,11 +26,20 @@
       type="number"
       label="정답 (숫자 입력)"
       outlined
+      dense
       style="width: 20%"
       class="q-mb-md"
     />
 
-    <q-input v-model="localQuizContent.commentary" label="해설" />
+    <q-input
+      v-model="localQuizContent.commentary"
+      label="해설"
+      outlined
+      dense
+      autogrow
+      maxlength="300"
+      counter
+    />
     <q-btn
       flat
       color="negative"
