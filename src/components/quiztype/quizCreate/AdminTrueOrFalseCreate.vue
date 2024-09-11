@@ -169,6 +169,30 @@ watch(subject, () => {
 const submitQuizSuccess = ref(false);
 
 const submitQuiz = () => {
+  //입력값 검증
+  let hasError = false;
+  let errorMessage = '';
+  if (subject.value === '과목을 선택 해주세요.') {
+    errorMessage = '과목을 선택해 주세요.';
+    hasError = true;
+  } else if (detailSubject.value === '챕터를 선택 해주세요.') {
+    errorMessage = '챕터를 선택해 주세요.';
+    hasError = true;
+  } else if (quiz.value.trim() === '') {
+    errorMessage = '문제를 입력해 주세요.';
+    hasError = true;
+  } else if (selectedAnswer.value === null) {
+    errorMessage = '답을 골라 주세요.';
+    hasError = true;
+  } else if (commentary.value.trim() === '') {
+    errorMessage = '해설을 입력해 주세요.';
+    hasError = true;
+  }
+  if (hasError) {
+    alert(errorMessage);
+    return; // 오류가 있을 경우 제출을 중단합니다.
+  }
+
   const quizData = {
     subject: subject.value,
     detailSubject: detailSubject.value,
