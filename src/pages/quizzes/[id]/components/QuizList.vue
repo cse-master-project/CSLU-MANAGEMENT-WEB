@@ -223,8 +223,3 @@ onMounted(async () => {
 </script>
 
 <style scoped></style>
-
-<route lang="yaml">
-meta:
-  layout: admin
-</route>

@@ -232,8 +232,3 @@ const isDelete = ref(false);
   margin: 1% 0; /* 버튼 사이 간격 조정 */
 }
 </style>
-
-<route lang="yaml">
-meta:
-  layout: admin
-</route>

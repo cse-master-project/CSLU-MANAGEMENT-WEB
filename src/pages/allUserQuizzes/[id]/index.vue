@@ -197,8 +197,3 @@ const isDelete = ref(false);
   padding: 8px 16px;
 }
 </style>
-
-<route lang="yaml">
-meta:
-  layout: admin
-</route>
