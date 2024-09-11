@@ -91,10 +91,6 @@
               </div>
             </div>
           </q-card-section>
-
-          <q-card-section>
-            <QuizPermssionStatus :quiz="quiz" />
-          </q-card-section>
         </q-card>
       </div>
     </div>

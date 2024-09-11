@@ -3,6 +3,7 @@
     <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 800px">
       <!-- 과목, 챕터, 생성일 -->
       <q-card-section class="q-pa-md">
+        <div>퀴즈 ID : {{ quizzes.quizId }}</div>
         <div class="text-h6 q-mb-xs text-orange">
           과목 : {{ quizzes.subject }}
         </div>
@@ -22,14 +23,14 @@
         </div>
       </q-card-section>
 
-      <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
+      <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시(view) -->
       <q-card-section class="q-pa-md">
         <component
           :is="quizTypeViewForm(quizzes.quizType)"
           :quizcontent="quizContent"
           v-if="!isEditing"
         />
-        <!-- 퀴즈 수정시 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
+        <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시(edit) -->
         <component
           :is="quizTypeEditForm(quizzes.quizType)"
           :quizcontent="quizContent"
@@ -85,12 +86,12 @@ const quizId = route.params.id; // 현재 퀴즈 찾기
 // 이미지 URL 상태
 const imageUrl = ref(null);
 
-// 서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
+// 서버에서 퀴즈 데이터 가져오기.
 const fetchQuizzes = async () => {
   try {
     const response = await api.get(`/api/quiz/${quizId}`);
     quizzes.value = response.data;
-    console.log('퀴즈value:', quizzes.value);
+    console.log('서버에서 가져온 quiz value : ', quizzes.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
