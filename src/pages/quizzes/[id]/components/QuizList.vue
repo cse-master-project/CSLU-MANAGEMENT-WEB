@@ -1,9 +1,9 @@
 <template>
   <q-page padding>
     <!-- Filters card -->
-    <q-card class="q-mb-md q-gutter-md q-pa-md" bordered>
+    <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-4 q-my-md">
           <q-select
             v-model="subject"
             :options="subjectOptions"
@@ -13,7 +13,7 @@
             @update:model-value="filteredDetailSubjectOptions"
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-4 q-my-md">
           <q-select
             v-model="detailSubject"
             :options="filteredDetailSubjectOptions"
@@ -22,7 +22,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-4 q-my-md">
           <q-select
             v-model="quizType"
             :options="quizTypeOptions"
