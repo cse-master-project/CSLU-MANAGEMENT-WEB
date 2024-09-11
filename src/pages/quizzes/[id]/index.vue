@@ -18,7 +18,13 @@
           <img
             :src="imageUrl"
             alt="문제 이미지"
-            style="max-width: 100%; height: auto"
+            style="max-width: 100%; height: auto; border-radius: 8px"
+            <!--
+            이미지에
+            둥근
+            테두리
+            --
+          />
           />
         </div>
       </q-card-section>
@@ -40,6 +46,8 @@
           v-if="isEditing"
         />
       </q-card-section>
+
+      <!-- 버튼들을 수평으로 정렬 -->
       <q-card-section class="button-container">
         <q-btn
           flat
@@ -63,6 +71,7 @@
         </q-btn>
       </q-card-section>
     </q-card>
+
     <DeleteQuizConfirmation
       v-if="isDelete"
       :is-delete="isDelete"
@@ -206,9 +215,10 @@ const isDelete = ref(false);
 
 <style scoped>
 .my-card {
-  max-width: 400px;
+  max-width: 600px;
   margin: auto;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 더 강화 */
+  border-radius: 12px; /* 카드 테두리 둥글게 */
 }
 
 .text-orange {
@@ -216,22 +226,24 @@ const isDelete = ref(false);
 }
 
 .text-createAt {
-  font-size: 0.75rem; /* 작은 글씨 */
+  font-size: 0.8rem; /* 약간 큰 작은 글씨 */
   color: #888888; /* 회색 */
 }
 
 .my-btn {
-  border-radius: 10px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-  padding: 8px 16px;
-  width: 100%;
-  margin: 1% auto;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 14px 24px; /* 버튼 패딩을 키워서 버튼 크기를 늘림 */
+  font-size: 1.1rem; /* 버튼 글자 크기를 키움 */
+  width: auto;
 }
 
 .button-container {
   display: flex;
-  flex-direction: column; /* 버튼을 위아래로 정렬 */
-  align-items: center; /* 버튼을 가운데 정렬 */
+  flex-direction: row; /* 버튼을 수평으로 정렬 */
+  justify-content: center; /* 버튼을 가운데 정렬 */
+  gap: 100px; /* 버튼 사이 간격 */
   padding: 0 32px; /* 양옆 마진을 카드와 동일하게 */
+  margin-bottom: 20px;
 }
 </style>
