@@ -34,8 +34,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
-
 defineProps({
   quizPermissionStatus: {
     type: Number,
