@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md flex flex-center">
     <q-card class="my-card">
-      <q-img src="/public/BS-18_보더라인.jpg" class="card-image" contain />
+      <q-img src="" class="card-image" contain />
       <q-card-section class="text-h6 text-center q-py-lg">
         환영합니다 관리자님 ^_^
       </q-card-section>
