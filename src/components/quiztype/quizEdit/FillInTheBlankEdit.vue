@@ -1,11 +1,16 @@
 <template>
-  <q-form class="form-container">
-    <div class="title-container">
-      <q-title class="title">빈칸 채우기형</q-title>
+  <q-form class="form-container q-pa-md">
+    <!-- 문제 유형을 카드 밖 오른쪽에 배치 -->
+    <div class="row justify-end q-mb-md">
+      <q-chip small outline class="text-caption text-grey">
+        &lt;빈칸 채우기형&gt;
+      </q-chip>
     </div>
-    <q-card>
-      <q-card-section class="quiz-container">
-        <q-label class="label-quiz">질문</q-label>
+
+    <q-card flat bordered>
+      <!-- 질문 입력 -->
+      <q-card-section class="q-pa-md">
+        <div class="text-blue text-h5 text-bold">질문</div>
         <q-input
           v-model="localQuizContent.quiz"
           type="textarea"
@@ -18,13 +23,16 @@
           class="input-quiz"
         />
       </q-card-section>
+
+      <q-separator />
+
       <!-- 답 입력 -->
-      <q-card-section class="answer-container">
-        <q-label class="label-answer">답안</q-label>
+      <q-card-section class="q-pa-md">
+        <div class="text-blue text-h5 text-bold">답안</div>
         <div
           v-for="(answer, index) in localQuizContent.answer"
           :key="index"
-          class="q-mb-md input-answer"
+          class="q-mb-md"
         >
           <q-input
             v-model="localQuizContent.answer[index]"
@@ -32,15 +40,19 @@
             autogrow
             outlined
             dense
-            placeholder="답안 입력해주세요 (다수일 경우 , 로 구분) "
+            placeholder="답안 입력해주세요 (다수일 경우 , 로 구분)"
             maxlength="100"
             counter
+            class="input-answer"
           />
         </div>
       </q-card-section>
+
+      <q-separator />
+
       <!-- 해설 입력 -->
-      <q-card-section class="comment-container">
-        <q-label class="label-quiz">해설 </q-label>
+      <q-card-section class="q-pa-md">
+        <div class="text-blue text-h5 text-bold">해설</div>
         <q-input
           v-model="localQuizContent.commentary"
           type="textarea"
@@ -51,10 +63,19 @@
           maxlength="300"
           counter
           class="input-commentary"
-      /></q-card-section>
-      <q-card-section class="btn-container">
-        <q-btn class="btn-back" @click="editCancle"> 수정 취소 </q-btn>
-        <q-btn class="btn-submit" @click="submitQuiz"> 수정 완료 </q-btn>
+        />
+      </q-card-section>
+
+      <q-separator />
+
+      <!-- 버튼 섹션 -->
+      <q-card-section class="row justify-center q-gutter-md q-pa-md">
+        <q-btn flat color="negative" class="my-btn" @click="editCancle"
+          >수정 취소</q-btn
+        >
+        <q-btn flat color="primary" class="my-btn" @click="submitQuiz"
+          >수정 완료</q-btn
+        >
       </q-card-section>
     </q-card>
   </q-form>
@@ -109,10 +130,10 @@ const submitQuiz = async () => {
 };
 </script>
 
-<style>
+<style scoped>
 .form-container {
-  max-width: 1000px;
-  margin-bottom: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .q-card {
@@ -120,65 +141,29 @@ const submitQuiz = async () => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.title-container {
-  text-align: center;
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-.title {
-  font-size: 2rem;
-  color: #0080ff;
+.text-blue {
+  color: #1e88e5;
 }
 
-.quiz-container {
-  display: flex;
-  justify-content: center; /* 중앙 정렬 */
-  align-items: baseline; /* 수직 중앙 정렬 */
-}
-.label-quiz {
-  font-size: 1rem;
-  color: #000000;
-  margin-right: 15px;
+.text-h5 {
+  font-size: 1.25rem;
   font-weight: bold;
 }
-.input-quiz {
-  width: 80%;
-}
 
-.answer-container {
-  display: flex;
-  justify-content: center; /* 중앙 정렬 */
-  align-items: baseline; /* 수직 중앙 정렬 */
-}
-.label-answer {
-  font-size: 1rem;
-  color: #000000;
-  margin-right: 15px;
-  font-weight: bold;
-}
-.input-answer {
-  width: 80%;
-}
-
-.comment-container {
-  display: flex;
-  justify-content: center; /* 중앙 정렬 */
-  align-items: baseline; /* 수직 중앙 정렬 */
-}
+.input-quiz,
+.input-answer,
 .input-commentary {
-  width: 80%;
+  width: 100%;
 }
 
-.btn-container {
-  display: flex;
-  justify-content: end; /* 중앙 정렬 */
-  justify-content: space-evenly; /* 중앙 정렬 */
-  align-items: center; /* 수직 중앙 정렬 */
+.my-btn {
+  width: auto;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 8px;
 }
-.btn-back {
-  background-color: rgb(213, 213, 213);
-}
-.btn-submit {
-  background-color: primary;
+
+.q-gutter-md {
+  gap: 16px;
 }
 </style>

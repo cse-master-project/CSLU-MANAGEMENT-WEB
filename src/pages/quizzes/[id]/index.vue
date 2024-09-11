@@ -45,7 +45,7 @@
       <q-card-section class="button-container">
         <q-btn
           flat
-          color="primary"
+          color="negative"
           class="my-btn small-btn"
           icon="delete"
           @click="isDelete = true"
@@ -55,7 +55,7 @@
         </q-btn>
         <q-btn
           flat
-          color="negative"
+          color="primary"
           class="my-btn small-btn"
           icon="edit"
           @click="isEditing = true"
