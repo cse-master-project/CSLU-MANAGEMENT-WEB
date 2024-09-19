@@ -124,11 +124,28 @@ const editCancle = () => {
   emit('update:isEditing', 'false');
 };
 
-// 문제에 포함된 정확히 <<빈칸>>의 개수에 맞춰 답안 입력 필드를 업데이트하는 watch
+// 문제에 포함된 <<빈칸>>의 개수를 최대 3개로 제한하는 watch
 watch(
   () => localQuizContent.value.quiz,
   newQuiz => {
     const blankCount = (newQuiz.match(/<<빈칸>>/g) || []).length;
+
+    if (blankCount > 3) {
+      // 빈칸이 3개를 넘을 경우 경고 메시지
+      alert('빈칸은 최대 3개까지 입력할 수 있습니다.');
+      // 빈칸 개수를 3개로 제한
+      localQuizContent.value.quiz = localQuizContent.value.quiz.replace(
+        /<<빈칸>>/g,
+        (match, offset, string) => {
+          const currentCount = (
+            string.slice(0, offset).match(/<<빈칸>>/g) || []
+          ).length;
+          return currentCount < 3 ? match : '';
+        },
+      );
+    }
+
+    // 빈칸 수에 맞게 blankInputs 업데이트
     if (blankCount > blankInputs.value.length) {
       while (blankInputs.value.length < blankCount) {
         blankInputs.value.push('');
@@ -154,21 +171,21 @@ const submitQuiz = async () => {
   // 답안 정리
   const normalizedAnswers = normalizeAnswers(blankInputs.value);
 
-  // 먼저 로컬에서 데이터를 업데이트 (UI에 반영)
-  localQuizContent.value.answer = normalizedAnswers;
-  emit('update:quizcontent', localQuizContent.value);
-  emit('update:isEditing');
-
+  const quizData = {
+    quiz: localQuizContent.value.quiz,
+    answer: normalizedAnswers,
+    commentary: localQuizContent.value.commentary,
+  };
   // 서버로 데이터 전송
   try {
     const response = await api.patch(
       `/api/management/quiz/${props.quizzes.quizId}`,
-      {
-        quiz: localQuizContent.value.quiz,
-        answer: normalizedAnswers,
-        commentary: localQuizContent.value.commentary,
-      },
+      quizData,
     );
+    // 수정된 데이터를 부모 컴포넌트에 전달
+    emit('update:quizcontent', localQuizContent.value);
+    emit('update:isEditing');
+
     console.log('응답:', response.data); // 서버 응답 확인
     alert('수정이 완료되었습니다 ^_^');
   } catch (error) {

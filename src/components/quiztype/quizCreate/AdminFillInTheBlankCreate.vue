@@ -189,17 +189,27 @@ watch(subject, () => {
   updateDetailSubjectOptions();
 });
 
-// 문제에 포함된 정확히 <<빈칸>>의 개수에 맞춰 답안 입력 필드를 업데이트하는 watch
+// 문제에 포함된 <<빈칸>>의 개수를 최대 3개로 제한하는 watch
 watch(quiz, newQuiz => {
   // <<빈칸>>을 정확히 감지
   const blankCount = (newQuiz.match(/<<빈칸>>/g) || []).length;
+
+  if (blankCount > 3) {
+    // 빈칸이 3개를 넘을 경우 경고 메시지
+    alert('빈칸은 최대 3개까지 입력할 수 있습니다.');
+    // 빈칸 개수를 3개로 제한
+    quiz.value = quiz.value.replace(/<<빈칸>>/g, (match, offset, string) => {
+      const currentCount = (string.slice(0, offset).match(/<<빈칸>>/g) || [])
+        .length;
+      return currentCount < 3 ? match : '';
+    });
+  }
+
   if (blankCount > blankInputs.value.length) {
-    // 빈칸 수가 많아질 경우 빈칸에 맞게 답안을 추가
     while (blankInputs.value.length < blankCount) {
       blankInputs.value.push('');
     }
   } else if (blankCount < blankInputs.value.length) {
-    // 빈칸 수가 줄어들 경우 맞춰서 답안 필드를 제거
     blankInputs.value = blankInputs.value.slice(0, blankCount);
   }
 });
