@@ -60,18 +60,20 @@
 
         <!-- 왼쪽 그룹 옵션 입력 -->
         <q-card-section>
-          <div v-if="showHelp" class="help">
-            -> 왼쪽지문 입력, 오른쪽 지문 입력 후 색에 맞게 매칭 시켜주세요.
-            (순서 중요)
-          </div>
           <div class="options-container">
             <div class="option-left">
-              <div>
+              <div class="reset-container">
                 <q-btn class="btn-reset" @click="resetColors">초기화</q-btn>
-                <q-btn class="btn-help" @click="toggleHelp">help</q-btn>
-                <!-- 도움말 텍스트 -->
+                <q-icon name="help" class="help-icon1">
+                  <q-tooltip
+                    anchor="top right"
+                    self="top left"
+                    style="background-color: black; font-size: medium"
+                  >
+                    왼쪽 지문, 오른쪽 지문 입력시 답안을 색으로 매칭 시켜주세요.
+                  </q-tooltip>
+                </q-icon>
               </div>
-
               <div
                 class="btn-select"
                 v-for="(option, index) in leftOptions"
@@ -223,12 +225,6 @@ watch(subject, () => {
   detailSubject.value = '챕터를 선택 해주세요.';
   updateDetailSubjectOptions();
 });
-
-const showHelp = ref(false);
-
-const toggleHelp = () => {
-  showHelp.value = !showHelp.value;
-};
 
 const selectOption = (color, index) => {
   if (
@@ -515,32 +511,36 @@ input[type='file'] {
   justify-content: space-evenly; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
 }
-.btn-reset {
-  width: 80px;
-  align-items: center;
+.reset-container {
+  display: flex;
+  align-items: center; /* 수직으로 중앙 정렬 */
+  margin-bottom: 10px;
+}
 
-  margin-bottom: 10px;
-  background-color: #42a5f5;
+.btn-reset {
+  background-color: #90bee4;
   color: white;
   font-size: 1rem;
-  text-align: center;
+  padding: 8px 16px; /* 버튼 패딩 */
+  border-radius: 10px; /* 둥근 버튼 */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+  margin-right: 10px; /* 아이콘과의 간격 */
+  transition: background-color 0.3s ease; /* 호버 시 애니메이션 */
+
+  &:hover {
+    background-color: #1e88e5;
+  }
 }
-.btn-help {
-  width: 80px;
-  align-items: center;
-  margin-left: 5px;
-  margin-bottom: 10px;
-  background-color: #42a5f5;
-  color: white;
-  font-size: 1rem;
-  text-align: center;
+.help-icon1 {
+  font-size: 20px;
+  color: #999;
 }
-.help {
-  font-size: 1.1rem;
-  color: #ff0000;
-  margin-left: 110px;
-  margin-bottom: 20px;
+
+.tooltip {
+  background-color: #000000;
+  font-size: 1.3rem;
 }
+
 .btn-select {
   margin-bottom: 10px;
 }
