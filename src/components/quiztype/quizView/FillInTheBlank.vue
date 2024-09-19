@@ -22,12 +22,17 @@
             :key="groupIndex"
             class="answer-group"
           >
-            <span class="group-label"
-              >{{ groupIndex + 1 }}번째 <<빈칸>> :
+            <span class="group-label">
+              {{ groupIndex + 1 }}번째 <<빈칸>> :
             </span>
             <span class="text-positive">
-              {{ group.join(', ') }}
-              <!-- 각 그룹의 답을 콤마로 구분하여 표시 -->
+              <!-- 그룹이 배열인지 확인하여 처리 -->
+              <template v-if="Array.isArray(group)">
+                {{ group.join(', ') }}
+              </template>
+              <template v-else>
+                {{ group }}
+              </template>
             </span>
           </div>
         </div>

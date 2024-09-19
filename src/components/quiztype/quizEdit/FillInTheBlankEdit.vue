@@ -28,14 +28,14 @@
         <div class="label-container">
           <q-label class="label-answer">정답 : </q-label>
           <div
-            v-for="(blank, index) in blankInputs"
+            v-for="(blank, index) in localQuizContent.answer"
             :key="index"
             class="q-mb-md input-answer"
             style="display: flex; align-items: center"
           >
             <!-- 답안 입력 필드 -->
             <q-input
-              v-model="blankInputs[index]"
+              v-model="localQuizContent.answer[index]"
               type="textarea"
               autogrow
               outlined
@@ -112,12 +112,10 @@ const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
 // localQuizContent에 props의 quizcontent 데이터를 복사
 const localQuizContent = ref({
   ...props.quizcontent,
+  answer: [...props.quizcontent.answer.map(group => group.join(', '))],
 });
 
-// 2차원 배열을 쉼표로 구분된 문자열로 변환하여 blankInputs 초기화
-const blankInputs = ref(
-  props.quizcontent.answer.map(group => group.join(', ')),
-);
+console.log('!', localQuizContent.value.answer);
 
 // 수정 취소 기능
 const editCancle = () => {
@@ -146,12 +144,15 @@ watch(
     }
 
     // 빈칸 수에 맞게 blankInputs 업데이트
-    if (blankCount > blankInputs.value.length) {
-      while (blankInputs.value.length < blankCount) {
-        blankInputs.value.push('');
+    if (blankCount > localQuizContent.value.answer.length) {
+      while (localQuizContent.value.answer.length < blankCount) {
+        localQuizContent.value.answer.push('');
       }
-    } else if (blankCount < blankInputs.value.length) {
-      blankInputs.value = blankInputs.value.slice(0, blankCount);
+    } else if (blankCount < localQuizContent.value.answer.length) {
+      localQuizContent.value.answer = localQuizContent.value.answer.slice(
+        0,
+        blankCount,
+      );
     }
   },
 );
@@ -169,7 +170,7 @@ const normalizeAnswers = blankInputs => {
 
 const submitQuiz = async () => {
   // 답안 정리
-  const normalizedAnswers = normalizeAnswers(blankInputs.value);
+  const normalizedAnswers = normalizeAnswers(localQuizContent.value.answer);
 
   const quizData = {
     quiz: localQuizContent.value.quiz,
