@@ -256,15 +256,11 @@ const submitQuiz = async () => {
     submitQuizSuccess.value = true;
   } catch (error) {
     if (error.response.status === 400) {
-      alert(
-        '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
-      );
-    } else if (error.response.status === 500) {
-      alert(
-        '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-      );
-    } else {
-      alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+      // 이미지 전송 실패 시 에러 처리
+      alert('오류가 발생했습니다. 다시 시도해주세요.');
+      // 퀴즈 등록 취소 처리 또는 이미지 전송 실패 시 퀴즈도 등록하지 않음
+      await api.delete(`/api/management/quiz/${quizId.value}`); // 퀴즈 삭제 처리
+      return; // 이미지 전송 실패 시 퀴즈 등록 중단
     }
   }
 };
