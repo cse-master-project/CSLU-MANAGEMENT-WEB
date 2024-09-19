@@ -101,6 +101,7 @@
   <SubmitQuizSuccess
     v-if="submitQuizSuccess"
     :submit-quiz-success="submitQuizSuccess"
+    :quiz-id="quizId"
   />
 </template>
 
@@ -189,6 +190,8 @@ const normalizeAnswers = answers => {
 
 const submitQuizSuccess = ref(false);
 
+const quizId = ref('');
+
 // 서버에 문제 제출.
 const submitQuiz = async () => {
   //답안 정리
@@ -234,13 +237,12 @@ const submitQuiz = async () => {
   try {
     // 문제 데이터 서버에 제출
     const response = await api.post('/api/quiz/default', quizData);
-    const quizId = response.data; // 서버에서 받은 문제 ID
-    console.log(quizId);
+    quizId.value = response.data; // 서버에서 받은 문제 ID
 
     if (filePreview.value) {
       const imageData = {
         base64String: filePreview.value,
-        quizId: quizId,
+        quizId: quizId.value,
       };
       console.log('이미지데이터', imageData);
 
