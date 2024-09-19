@@ -55,36 +55,40 @@
             maxlength="300"
             counter
             class="input-quiz"
-          /><q-icon name="help" class="help-icon">
+          /><q-icon name="help" class="help-icon1">
             <q-tooltip style="background-color: black; font-size: medium"
               >"안녕하세요.저는 ()입니다." 같이 작성 바랍니다.</q-tooltip
             >
           </q-icon>
         </q-card-section>
-        <!-- 답 입력 -->
+        <!-- 빈칸 입력 동적 생성 -->
         <q-card-section class="answer-container">
-          <q-label class="label-answer">답안</q-label>
+          <q-label class="label-answer">빈칸 답안</q-label>
           <div
-            v-for="(answer, index) in answers"
+            v-for="(blank, index) in blankInputs"
             :key="index"
             class="q-mb-md input-answer"
+            style="display: flex; align-items: center"
           >
+            <!-- 답안 입력 필드 -->
             <q-input
-              v-model="answers[index]"
+              v-model="blankInputs[index]"
               type="textarea"
               autogrow
               outlined
               dense
-              placeholder="답안 입력해주세요. "
+              :placeholder="`( ${index + 1} ) 의 답안을 입력해주세요.`"
               maxlength="300"
               counter
+              style="flex-grow: 1"
             />
+            <!-- 도움말 아이콘과 툴팁 -->
+            <q-icon name="help" class="help-icon2" style="margin-left: 12px">
+              <q-tooltip style="background-color: black; font-size: medium">
+                "답안을 입력해주세요. 답이 여러 개일 경우 쉼표(,)로 구분하세요."
+              </q-tooltip>
+            </q-icon>
           </div>
-          <q-icon name="help" class="help-icon">
-            <q-tooltip style="background-color: black; font-size: medium"
-              >답이 여러개 시 ,로 구분하여 작성 바랍니다.</q-tooltip
-            >
-          </q-icon>
         </q-card-section>
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
@@ -122,15 +126,15 @@ import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
 
+//퀴즈 유형바꾸기 (뒤로가기)
 const emits = defineEmits(['change-quiz-type']);
-
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
+//이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
-
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
@@ -149,26 +153,20 @@ const fileInputHandler = event => {
     }
   }
 };
-
+//이미지 업로드 취소 로직
 const cancelFile = () => {
   filePreview.value = null;
   fileName.value = ''; // 파일 이름 초기화
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
+//카테고리 불러오는 로직
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
 
 onMounted(fetchCategories);
 
-const subject = ref('과목을 선택 해주세요.');
-const detailSubject = ref('챕터를 선택 해주세요.');
-const quiz = ref('');
-const answers = ref(['']);
-const commentary = ref('');
-const filteredDetailSubjectOptions = ref([]);
-
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
+// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects.length === 0) {
@@ -178,31 +176,93 @@ const updateDetailSubjectOptions = () => {
   }
 };
 
+//반응형 변수들
+const subject = ref('과목을 선택 해주세요.');
+const detailSubject = ref('챕터를 선택 해주세요.');
+const quiz = ref('');
+const blankInputs = ref([]); // 빈칸에 대한 답안 입력 필드
+const commentary = ref('');
+const filteredDetailSubjectOptions = ref([]);
+
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
   detailSubject.value = '챕터를 선택 해주세요.';
   updateDetailSubjectOptions();
 });
 
-// 답안 정리 함수
-const normalizeAnswers = answers => {
-  return answers
-    .map(
-      answer =>
-        answer
-          .split(',')
-          .map(part => part.trim()) // 각 답안의 공백 제거
-          .filter(part => part) // 빈 값 제거
-          .join(', '), // 다시 공백으로 구분된 문자열로 조합
-    )
-    .filter(answer => answer); // 빈 값 제거
+// 문제에 포함된 괄호의 개수에 맞춰 답안 입력 필드를 업데이트하는 watch
+watch(quiz, newQuiz => {
+  // 괄호로 시작하고 괄호로 끝나는 부분을 모두 감지
+  const blankCount = (newQuiz.match(/\(.*?\)/g) || []).length;
+  if (blankCount > blankInputs.value.length) {
+    // 빈칸 수가 많아질 경우 빈칸에 맞게 답안을 추가
+    while (blankInputs.value.length < blankCount) {
+      blankInputs.value.push('');
+    }
+  } else if (blankCount < blankInputs.value.length) {
+    // 빈칸 수가 줄어들 경우 맞춰서 답안 필드를 제거
+    blankInputs.value = blankInputs.value.slice(0, blankCount);
+  }
+});
+
+// 답안을 이차원 배열로 변환하는 함수
+const normalizeAnswers = blankInputs => {
+  return blankInputs.map(
+    blank =>
+      blank
+        .split(',') // 쉼표로 여러 답안 구분
+        .map(part => part.trim()) // 각 답안의 공백 제거
+        .filter(part => part), // 빈 값 제거
+  );
 };
 
 const submitQuizSuccess = ref(false);
 
 const submitQuiz = async () => {
-  //답안 정리
-  const normalizedAnswers = normalizeAnswers(answers.value);
+  // 입력값 검증
+  let hasError = false;
+  let errorMessage = '';
+
+  // () 빈칸이 문제에 포함되어 있는지 확인
+  const blankCount = (quiz.value.match(/\(.*?\)/g) || []).length;
+  // 빈칸 답안 검증
+  const normalizedAnswers = normalizeAnswers(blankInputs.value);
+  const hasEmptyAnswer = normalizedAnswers.some(
+    answers => answers.length === 0 || answers.every(answer => answer === ''),
+  );
+
+  if (subject.value === '과목을 선택 해주세요.') {
+    errorMessage = '과목을 선택해 주세요.';
+    hasError = true;
+  } else if (detailSubject.value === '챕터를 선택 해주세요.') {
+    errorMessage = '챕터를 선택해 주세요.';
+    hasError = true;
+  } else if (quiz.value.trim() === '') {
+    errorMessage = '문제를 입력해 주세요.';
+    hasError = true;
+  } else if (blankCount === 0) {
+    errorMessage = '문제에 최소 하나 이상의 빈칸 ()을 포함해야 합니다.';
+    hasError = true;
+  } else if (hasEmptyAnswer) {
+    errorMessage = '모든 빈칸에 답을 입력해 주세요.';
+    hasError = true;
+  } else if (commentary.value.trim() === '') {
+    errorMessage = '해설을 입력해 주세요.';
+    hasError = true;
+  }
+
+  if (hasError) {
+    alert(errorMessage);
+    return; // 오류가 있을 경우 제출을 중단합니다.
+  }
+
+  // 해설 입력 검증
+  if (commentary.value.trim() === '') {
+    alert('해설을 입력해 주세요.');
+    return;
+  }
+
+  // 모든 검증이 통과되면 이후 로직 진행
 
   const quizData = {
     subject: subject.value,
@@ -375,21 +435,36 @@ input[type='file'] {
 .input-quiz {
   width: 70%;
 }
+.help-icon1 {
+  margin: 8px 8px;
+  font-size: 20px;
+  color: #999;
+  display: block;
+}
 
 // 답안 입력 스타일
 .answer-container {
   display: flex;
-  justify-content: center; /* 중앙 정렬 */
-  align-items: baseline; /* 수직 중앙 정렬 */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .label-answer {
   font-size: 1rem;
   color: #000000;
   margin-right: 15px;
   font-weight: bold;
+  margin-bottom: 10px; /* 라벨과 답안 사이 간격 */
 }
 .input-answer {
   width: 70%;
+  margin-bottom: 10px; /* 답안 필드 간격 추가 */
+}
+.help-icon2 {
+  margin: 8px 8px;
+  font-size: 20px;
+  color: #999;
+  display: block;
 }
 
 // 해설 입력 스타일
@@ -415,12 +490,7 @@ input[type='file'] {
 .btn-submit {
   background-color: primary;
 }
-.help-icon {
-  margin: 8px 8px;
-  font-size: 20px;
-  color: #999;
-  display: block;
-}
+
 .tooltip {
   background-color: #000000;
   font-size: 1.3rem;
