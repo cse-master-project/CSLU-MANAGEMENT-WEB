@@ -19,17 +19,26 @@
         <q-list bordered padding>
           <q-item v-for="(option, index) in quizcontent.option" :key="index">
             <q-item-section>
-              <div class="option-text">{{ index + 1 }}. {{ option }}</div>
+              <!-- 정답일 경우 색상을 변경 -->
+              <div
+                :class="{
+                  'correct-answer': index + 1 === quizcontent.answer,
+                  'option-text': true,
+                }"
+              >
+                {{ index + 1 }}. {{ option }}
+              </div>
             </q-item-section>
           </q-item>
         </q-list>
       </q-card-section>
 
-      <!-- 빈칸 채우기형일 경우 정답 표시 -->
-      <q-card-section v-else>
+      <!-- 4지선다형 정답 표시 -->
+      <q-card-section>
         <div class="text-weight-medium">
           정답 :
-          <span class="text-positive">{{ quizcontent.answer.join(', ') }}</span>
+          <span class="text-positive">{{ quizcontent.answer }}</span>
+          <!-- 정답은 그대로 표시 (사용자에게 1부터 시작하는 번호) -->
         </div>
       </q-card-section>
 
@@ -46,7 +55,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   quizcontent: {
     type: Object,
     required: true,
@@ -61,6 +70,11 @@ defineProps({
   background-color: #f5f5f5;
   border-radius: 8px;
   transition: background-color 0.3s ease;
+}
+
+.correct-answer {
+  background-color: #43a047; /* 정답일 때의 배경색 */
+  color: white; /* 정답일 때의 텍스트 색 */
 }
 
 .text-caption {
