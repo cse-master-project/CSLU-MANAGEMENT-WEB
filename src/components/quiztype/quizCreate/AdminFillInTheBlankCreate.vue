@@ -56,9 +56,10 @@
             counter
             class="input-quiz"
           /><q-icon name="help" class="help-icon1">
-            <q-tooltip style="background-color: black; font-size: medium"
-              >"안녕하세요.저는 ()입니다." 같이 작성 바랍니다.</q-tooltip
-            >
+            <q-tooltip style="background-color: black; font-size: medium">
+              빈칸 넣을 시 &lt;&lt;빈칸&gt;&gt; 작성 해주세요. <br />
+              예시 : 안녕하세요. 저는 &lt;&lt;빈칸&gt;&gt;입니다.
+            </q-tooltip>
           </q-icon>
         </q-card-section>
         <!-- 빈칸 입력 동적 생성 -->
@@ -190,10 +191,10 @@ watch(subject, () => {
   updateDetailSubjectOptions();
 });
 
-// 문제에 포함된 괄호의 개수에 맞춰 답안 입력 필드를 업데이트하는 watch
+// 문제에 포함된 정확히 <<빈칸>>의 개수에 맞춰 답안 입력 필드를 업데이트하는 watch
 watch(quiz, newQuiz => {
-  // 괄호로 시작하고 괄호로 끝나는 부분을 모두 감지
-  const blankCount = (newQuiz.match(/\(.*?\)/g) || []).length;
+  // <<빈칸>>을 정확히 감지
+  const blankCount = (newQuiz.match(/<<빈칸>>/g) || []).length;
   if (blankCount > blankInputs.value.length) {
     // 빈칸 수가 많아질 경우 빈칸에 맞게 답안을 추가
     while (blankInputs.value.length < blankCount) {
@@ -223,8 +224,8 @@ const submitQuiz = async () => {
   let hasError = false;
   let errorMessage = '';
 
-  // () 빈칸이 문제에 포함되어 있는지 확인
-  const blankCount = (quiz.value.match(/\(.*?\)/g) || []).length;
+  // <<빈칸>>이 문제에 포함되어 있는지 확인
+  const blankCount = (quiz.value.match(/<<빈칸>>/g) || []).length;
   // 빈칸 답안 검증
   const normalizedAnswers = normalizeAnswers(blankInputs.value);
   const hasEmptyAnswer = normalizedAnswers.some(
@@ -241,7 +242,7 @@ const submitQuiz = async () => {
     errorMessage = '문제를 입력해 주세요.';
     hasError = true;
   } else if (blankCount === 0) {
-    errorMessage = '문제에 최소 하나 이상의 빈칸 ()을 포함해야 합니다.';
+    errorMessage = '문제에 최소 하나 이상의 빈칸 <<>>을 포함해야 합니다.';
     hasError = true;
   } else if (hasEmptyAnswer) {
     errorMessage = '모든 빈칸에 답을 입력해 주세요.';
