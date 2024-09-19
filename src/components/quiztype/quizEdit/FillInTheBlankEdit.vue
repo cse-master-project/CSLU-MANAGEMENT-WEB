@@ -1,6 +1,5 @@
 <template>
-  <q-form class="form-container q-pa-md">
-    <!-- 문제 유형을 카드 밖 오른쪽에 배치 -->
+  <q-form class="q-pa-md">
     <div class="row justify-end q-mb-md">
       <q-chip small outline class="text-caption text-grey">
         &lt;빈칸 채우기형&gt;
@@ -8,81 +7,97 @@
     </div>
 
     <q-card flat bordered>
-      <!-- 질문 입력 -->
-      <q-card-section class="q-pa-md">
-        <div class="text-blue text-h5 text-bold">질문</div>
-        <q-input
-          v-model="localQuizContent.quiz"
-          type="textarea"
-          autogrow
-          outlined
-          dense
-          placeholder="문제를 입력해주세요."
-          maxlength="300"
-          counter
-          class="input-quiz"
-        />
-      </q-card-section>
-
-      <q-separator />
-
-      <!-- 답 입력 -->
-      <q-card-section class="q-pa-md">
-        <div class="text-blue text-h5 text-bold">답안</div>
-        <div
-          v-for="(answer, index) in localQuizContent.answer"
-          :key="index"
-          class="q-mb-md"
-        >
+      <!-- 문제 내용 -->
+      <q-card-section class="bg-primary text-white q-pa-md">
+        <div class="label-container">
+          <q-label class="label-quiz">Q. </q-label>
           <q-input
-            v-model="localQuizContent.answer[index]"
-            type="textarea"
-            autogrow
+            v-model="localQuizContent.quiz"
             outlined
+            autogrow
             dense
-            placeholder="답안 입력해주세요 (다수일 경우 , 로 구분)"
-            maxlength="100"
-            counter
-            class="input-answer"
+            maxlength="300"
+            class="text-subtitle1 input-field"
           />
         </div>
       </q-card-section>
-
       <q-separator />
 
-      <!-- 해설 입력 -->
-      <q-card-section class="q-pa-md">
-        <div class="text-blue text-h5 text-bold">해설</div>
-        <q-input
-          v-model="localQuizContent.commentary"
-          type="textarea"
-          autogrow
-          outlined
-          placeholder="해설을 입력하세요"
-          dense
-          maxlength="300"
-          counter
-          class="input-commentary"
-        />
+      <!-- 정답 표시 -->
+      <q-card-section class="answer-container">
+        <div class="label-container">
+          <q-label class="label-answer">정답 : </q-label>
+          <div
+            v-for="(blank, index) in blankInputs"
+            :key="index"
+            class="q-mb-md input-answer"
+            style="display: flex; align-items: center"
+          >
+            <!-- 답안 입력 필드 -->
+            <q-input
+              v-model="blankInputs[index]"
+              type="textarea"
+              autogrow
+              outlined
+              dense
+              :placeholder="`( ${index + 1} ) 의 답안을 입력해주세요.`"
+              maxlength="300"
+              counter
+              style="flex-grow: 1"
+            />
+            <!-- 도움말 아이콘과 툴팁 -->
+            <q-icon name="help" class="help-icon2" style="margin-left: 12px">
+              <q-tooltip style="background-color: black; font-size: medium">
+                "답안을 입력해주세요. 답이 여러 개일 경우 쉼표(,)로 구분하세요."
+              </q-tooltip>
+            </q-icon>
+          </div>
+        </div>
+      </q-card-section>
+      <q-separator />
+
+      <!-- 해설 표시 -->
+      <q-card-section>
+        <div class="label-container">
+          <q-label class="label-commentary">해설 : </q-label>
+          <q-markdown>
+            <q-input
+              v-model="localQuizContent.commentary"
+              outlined
+              dense
+              autogrow
+              maxlength="300"
+              class="input-field"
+            />
+          </q-markdown>
+        </div>
       </q-card-section>
 
-      <q-separator />
-
-      <!-- 버튼 섹션 -->
-      <q-card-section class="row justify-center q-gutter-md q-pa-md">
-        <q-btn flat color="negative" class="my-btn" @click="editCancle"
-          >수정 취소</q-btn
+      <q-card-section class="btn-container">
+        <q-btn
+          flat
+          color="negative"
+          class="my-btn small-btn"
+          @click="editCancle"
         >
-        <q-btn flat color="primary" class="my-btn" @click="submitQuiz"
-          >수정 완료</q-btn
+          수정 취소
+        </q-btn>
+        <q-btn
+          flat
+          color="primary"
+          class="my-btn small-btn"
+          icon="edit"
+          @click="submitQuiz"
         >
+          수정 완료
+        </q-btn>
       </q-card-section>
     </q-card>
   </q-form>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { api } from 'src/boot/axios';
 
 // 데이터 받기.(다른 컴포넌트 -> 현재 컴포넌트)
@@ -94,18 +109,51 @@ const props = defineProps({
 // 이벤트 보내기.(현재 컴포넌트 -> 다른 컴포넌트)
 const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
 
+// localQuizContent에 props의 quizcontent 데이터를 복사
 const localQuizContent = ref({ ...props.quizcontent });
+
+// 2차원 배열을 쉼표로 구분된 문자열로 변환하여 blankInputs 초기화
+const blankInputs = ref(
+  props.quizcontent.answer.map(group => group.join(', ')),
+);
 
 // 수정 취소 기능
 const editCancle = () => {
   emit('update:isEditing', 'false');
 };
 
-// 수정 완료 기능.
+// 문제에 포함된 정확히 <<빈칸>>의 개수에 맞춰 답안 입력 필드를 업데이트하는 watch
+watch(
+  () => localQuizContent.value.quiz,
+  newQuiz => {
+    const blankCount = (newQuiz.match(/<<빈칸>>/g) || []).length;
+    if (blankCount > blankInputs.value.length) {
+      while (blankInputs.value.length < blankCount) {
+        blankInputs.value.push('');
+      }
+    } else if (blankCount < blankInputs.value.length) {
+      blankInputs.value = blankInputs.value.slice(0, blankCount);
+    }
+  },
+);
+
+// 답안 정리 함수(쉼표로 구분된 답안을 이차원 배열로 변환)
+const normalizeAnswers = blankInputs => {
+  return blankInputs.map(
+    blank =>
+      blank
+        .split(',')
+        .map(part => part.trim()) // 공백 제거
+        .filter(part => part), // 빈 값 제거
+  );
+};
+
+// 수정 완료 기능
 const submitQuiz = async () => {
+  const normalizedAnswers = normalizeAnswers(blankInputs.value);
   const quizData = {
     quiz: localQuizContent.value.quiz,
-    answer: localQuizContent.value.answer,
+    answer: normalizedAnswers, // 정리된 답안 저장
     commentary: localQuizContent.value.commentary,
   };
 
@@ -131,39 +179,51 @@ const submitQuiz = async () => {
 </script>
 
 <style scoped>
-.form-container {
-  max-width: 800px;
-  margin: 0 auto;
+.option-text {
+  padding: 8px;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
 }
 
-.q-card {
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.text-caption {
+  font-size: 12px;
 }
 
-.text-blue {
-  color: #1e88e5;
+.text-weight-medium {
+  font-weight: 500;
 }
 
-.text-h5 {
-  font-size: 1.25rem;
-  font-weight: bold;
+.text-positive {
+  color: #43a047;
 }
 
-.input-quiz,
-.input-answer,
-.input-commentary {
-  width: 100%;
+/* 입력 필드와 라벨을 수평으로 배치 */
+.label-container {
+  display: flex;
+  align-items: center; /* 수직 가운데 정렬 */
+  gap: 8px; /* 라벨과 입력 필드 사이 간격 */
+}
+
+.input-field {
+  flex: 1; /* 입력 필드가 가로로 꽉 차도록 확장 */
 }
 
 .my-btn {
-  width: auto;
-  padding: 12px 24px;
-  font-size: 1rem;
   border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 14px 24px; /* 버튼 패딩을 키워서 버튼 크기를 늘림 */
+  font-size: 1.1rem; /* 버튼 글자 크기를 키움 */
+  width: auto;
 }
 
-.q-gutter-md {
-  gap: 16px;
+.btn-container {
+  display: flex;
+  flex-direction: row; /* 버튼을 수평으로 정렬 */
+  justify-content: center; /* 버튼을 가운데 정렬 */
+  gap: 100px; /* 버튼 사이 간격 */
+  padding: 0 32px; /* 양옆 마진을 카드와 동일하게 */
+  margin-bottom: 20px;
 }
 </style>
