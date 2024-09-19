@@ -16,6 +16,7 @@
             outlined
             autogrow
             dense
+            counter
             maxlength="300"
             class="text-subtitle1 input-field"
           />
@@ -41,7 +42,7 @@
             v-model="localQuizContent.option[index]"
             outlined
             dense
-            maxlength="100"
+            maxlength="300"
             autogrow
             class="input-field"
             placeholder="지문을 입력하세요"
@@ -62,6 +63,7 @@
               dense
               autogrow
               maxlength="300"
+              counter
               class="input-field"
             />
           </q-markdown>
