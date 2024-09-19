@@ -110,7 +110,9 @@ const props = defineProps({
 const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
 
 // localQuizContent에 props의 quizcontent 데이터를 복사
-const localQuizContent = ref({ ...props.quizcontent });
+const localQuizContent = ref({
+  ...props.quizcontent,
+});
 
 // 2차원 배열을 쉼표로 구분된 문자열로 변환하여 blankInputs 초기화
 const blankInputs = ref(
@@ -148,25 +150,27 @@ const normalizeAnswers = blankInputs => {
   );
 };
 
-// 수정 완료 기능
 const submitQuiz = async () => {
+  // 답안 정리
   const normalizedAnswers = normalizeAnswers(blankInputs.value);
-  const quizData = {
-    quiz: localQuizContent.value.quiz,
-    answer: normalizedAnswers, // 정리된 답안 저장
-    commentary: localQuizContent.value.commentary,
-  };
 
+  // 먼저 로컬에서 데이터를 업데이트 (UI에 반영)
+  localQuizContent.value.answer = normalizedAnswers;
+  emit('update:quizcontent', localQuizContent.value);
+  emit('update:isEditing');
+
+  // 서버로 데이터 전송
   try {
     const response = await api.patch(
       `/api/management/quiz/${props.quizzes.quizId}`,
-      quizData,
+      {
+        quiz: localQuizContent.value.quiz,
+        answer: normalizedAnswers,
+        commentary: localQuizContent.value.commentary,
+      },
     );
     console.log('응답:', response.data); // 서버 응답 확인
     alert('수정이 완료되었습니다 ^_^');
-
-    emit('update:quizcontent', localQuizContent.value);
-    emit('update:isEditing');
   } catch (error) {
     if (error.response && error.response.status === 400) {
       alert('바뀐게 없습니다 .. ㅜㅠ');
