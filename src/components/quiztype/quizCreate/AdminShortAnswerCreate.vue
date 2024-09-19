@@ -110,21 +110,26 @@ import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
+// 반응형 데이터
+const subject = ref('과목을 선택 해주세요.');
+const detailSubject = ref('챕터를 선택 해주세요.');
+const quiz = ref('');
+const answers = ref(['']);
+const commentary = ref('');
 
+// 뒤로가기 기능
 const emits = defineEmits(['change-quiz-type']);
-
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
+//이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
-
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-
     // 파일 타입이 이미지인지 확인
     if (files[0].type.startsWith('image/')) {
       const reader = new FileReader();
@@ -138,27 +143,19 @@ const fileInputHandler = event => {
     }
   }
 };
-
+//이미지 업로드 취소 로직
 const cancelFile = () => {
   filePreview.value = null;
   fileName.value = ''; // 파일 이름 초기화
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
+// 과목, 챕터 불러오기 로직
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
-
 onMounted(fetchCategories);
-
-const subject = ref('과목을 선택 해주세요.');
-const detailSubject = ref('챕터를 선택 해주세요.');
-const quiz = ref('');
-const answers = ref(['']);
-const commentary = ref('');
-
 const filteredDetailSubjectOptions = ref([]);
-
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
+// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects.length === 0) {
@@ -167,7 +164,6 @@ const updateDetailSubjectOptions = () => {
     filteredDetailSubjectOptions.value = detailSubjects;
   }
 };
-
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
   detailSubject.value = '챕터를 선택 해주세요.';
@@ -188,8 +184,10 @@ const normalizeAnswers = answers => {
     .filter(answer => answer); // 빈 값 제거
 };
 
+// 서버 전송 여부
 const submitQuizSuccess = ref(false);
 
+// 서버에서 받아온 퀴즈 아이디
 const quizId = ref('');
 
 // 서버에 문제 제출.
@@ -222,6 +220,7 @@ const submitQuiz = async () => {
     return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
   }
 
+  //서버에 보낼 퀴즈 데이터
   const quizData = {
     subject: subject.value,
     detailSubject: detailSubject.value,
@@ -239,6 +238,7 @@ const submitQuiz = async () => {
     const response = await api.post('/api/quiz/default', quizData);
     quizId.value = response.data; // 서버에서 받은 문제 ID
 
+    // 이미지가 있다면, 이미지 데이터 서버에 제출
     if (filePreview.value) {
       const imageData = {
         base64String: filePreview.value,
