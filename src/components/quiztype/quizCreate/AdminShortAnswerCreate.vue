@@ -117,7 +117,7 @@ const quiz = ref('');
 const answers = ref(['']);
 const commentary = ref('');
 
-// 뒤로가기 기능
+// 퀴즈 유형 바꾸는 로직 (뒤로가기)
 const emits = defineEmits(['change-quiz-type']);
 const goBack = () => {
   emits('change-quiz-type', '');
@@ -153,7 +153,9 @@ const cancelFile = () => {
 // 과목, 챕터 불러오기 로직
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
+
 onMounted(fetchCategories);
+
 const filteredDetailSubjectOptions = ref([]);
 // 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
@@ -190,7 +192,7 @@ const submitQuizSuccess = ref(false);
 // 서버에서 받아온 퀴즈 아이디
 const quizId = ref('');
 
-// 서버에 문제 제출.
+// 서버에 문제 제출
 const submitQuiz = async () => {
   //답안 정리
   const normalizedAnswers = normalizeAnswers(answers.value);
@@ -198,6 +200,7 @@ const submitQuiz = async () => {
   //입력값 검증
   let hasError = false;
   let errorMessage = '';
+
   if (subject.value === '과목을 선택 해주세요.') {
     errorMessage = '과목을 선택해 주세요.';
     hasError = true;

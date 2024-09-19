@@ -118,6 +118,7 @@
   <SubmitQuizSuccess
     v-if="submitQuizSuccess"
     :submit-quiz-success="submitQuizSuccess"
+    :quiz-id="quizId"
   />
 </template>
 
@@ -126,8 +127,14 @@ import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
+//반응형 데이터
+const subject = ref('과목을 선택 해주세요.');
+const detailSubject = ref('챕터를 선택 해주세요.');
+const quiz = ref('');
+const blankInputs = ref([]); // 빈칸에 대한 답안 입력 필드
+const commentary = ref('');
 
-//퀴즈 유형바꾸기 (뒤로가기)
+// 퀴즈 유형 바꾸는 로직 (뒤로가기)
 const emits = defineEmits(['change-quiz-type']);
 const goBack = () => {
   emits('change-quiz-type', '');
@@ -140,7 +147,6 @@ const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-
     // 파일 타입이 이미지인지 확인
     if (files[0].type.startsWith('image/')) {
       const reader = new FileReader();
@@ -161,12 +167,13 @@ const cancelFile = () => {
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
-//카테고리 불러오는 로직
+// 과목,챕터 불러오기 로직
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
 
 onMounted(fetchCategories);
 
+const filteredDetailSubjectOptions = ref([]);
 // 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
@@ -176,15 +183,6 @@ const updateDetailSubjectOptions = () => {
     filteredDetailSubjectOptions.value = detailSubjects;
   }
 };
-
-//반응형 변수들
-const subject = ref('과목을 선택 해주세요.');
-const detailSubject = ref('챕터를 선택 해주세요.');
-const quiz = ref('');
-const blankInputs = ref([]); // 빈칸에 대한 답안 입력 필드
-const commentary = ref('');
-const filteredDetailSubjectOptions = ref([]);
-
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
   detailSubject.value = '챕터를 선택 해주세요.';
@@ -206,7 +204,7 @@ watch(quiz, newQuiz => {
   }
 });
 
-// 답안을 이차원 배열로 변환하는 함수
+// 답안 정리 함수(답안을 이차원 배열로 변환하는 함수)
 const normalizeAnswers = blankInputs => {
   return blankInputs.map(
     blank =>
@@ -217,13 +215,14 @@ const normalizeAnswers = blankInputs => {
   );
 };
 
+// 서버 전송 여부
 const submitQuizSuccess = ref(false);
 
-const submitQuiz = async () => {
-  // 입력값 검증
-  let hasError = false;
-  let errorMessage = '';
+// 서버에서 받아온 퀴즈 아이디
+const quizId = ref('');
 
+// 서버에 문제 제출
+const submitQuiz = async () => {
   // <<빈칸>>이 문제에 포함되어 있는지 확인
   const blankCount = (quiz.value.match(/<<빈칸>>/g) || []).length;
   // 빈칸 답안 검증
@@ -231,6 +230,10 @@ const submitQuiz = async () => {
   const hasEmptyAnswer = normalizedAnswers.some(
     answers => answers.length === 0 || answers.every(answer => answer === ''),
   );
+
+  // 입력값 검증
+  let hasError = false;
+  let errorMessage = '';
 
   if (subject.value === '과목을 선택 해주세요.') {
     errorMessage = '과목을 선택해 주세요.';
@@ -242,7 +245,7 @@ const submitQuiz = async () => {
     errorMessage = '문제를 입력해 주세요.';
     hasError = true;
   } else if (blankCount === 0) {
-    errorMessage = '문제에 최소 하나 이상의 빈칸 <<>>을 포함해야 합니다.';
+    errorMessage = '문제에 최소 하나 이상의 빈칸 <<빈칸>>을 포함해야 합니다.';
     hasError = true;
   } else if (hasEmptyAnswer) {
     errorMessage = '모든 빈칸에 답을 입력해 주세요.';
@@ -257,14 +260,7 @@ const submitQuiz = async () => {
     return; // 오류가 있을 경우 제출을 중단합니다.
   }
 
-  // 해설 입력 검증
-  if (commentary.value.trim() === '') {
-    alert('해설을 입력해 주세요.');
-    return;
-  }
-
-  // 모든 검증이 통과되면 이후 로직 진행
-
+  //서버에 보낼 퀴즈 데이터
   const quizData = {
     subject: subject.value,
     detailSubject: detailSubject.value,
@@ -279,13 +275,13 @@ const submitQuiz = async () => {
   try {
     // 문제 데이터 서버에 제출
     const response = await api.post('/api/quiz/default', quizData);
-    const quizId = response.data; // 서버에서 받은 문제 ID
-    console.log(quizId);
+    quizId.value = response.data; // 서버에서 받은 문제 ID
 
+    // 이미지가 있다면, 이미지 데이터 서버에 제출
     if (filePreview.value) {
       const imageData = {
         base64String: filePreview.value,
-        quizId: quizId,
+        quizId: quizId.value,
       };
       console.log('이미지데이터', imageData);
 
