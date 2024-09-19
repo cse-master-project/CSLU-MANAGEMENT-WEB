@@ -9,50 +9,57 @@
     <q-card flat bordered>
       <!-- 문제 내용 -->
       <q-card-section class="bg-primary text-white q-pa-md">
-        <q-input
-          v-model="localQuizContent.quiz"
-          outlined
-          autogrow
-          dense
-          maxlength="300"
-          class="text-subtitle1"
-        >
-        </q-input>
-      </q-card-section>
-      <q-separator />
-      <!-- 정답 표시 -->
-      <q-card-section class="answer-container">
-        <q-label class="label-answer">답안</q-label>
-        <div
-          v-for="(answer, index) in localQuizContent.answer"
-          :key="index"
-          class="q-mb-md input-answer"
-        >
+        <div class="label-container">
+          <q-label class="label-quiz">Q. </q-label>
           <q-input
-            v-model="localQuizContent.answer[index]"
-            type="textarea"
-            autogrow
+            v-model="localQuizContent.quiz"
             outlined
+            autogrow
             dense
-            placeholder="답안 입력해주세요. "
             maxlength="300"
-            counter
+            class="text-subtitle1 input-field"
           />
         </div>
       </q-card-section>
       <q-separator />
+
+      <!-- 정답 표시 -->
+      <q-card-section class="answer-container">
+        <div class="label-container">
+          <q-label class="label-answer">정답 : </q-label>
+          <div
+            v-for="(answer, index) in localQuizContent.answer"
+            :key="index"
+            class="q-mb-md input-answer"
+          >
+            <q-input
+              v-model="localQuizContent.answer[index]"
+              type="textarea"
+              autogrow
+              outlined
+              dense
+              placeholder="답안 입력해주세요. "
+              maxlength="300"
+              counter
+              class="input-field"
+            />
+          </div>
+        </div>
+      </q-card-section>
+      <q-separator />
+
       <!-- 해설 표시 -->
       <q-card-section>
-        <div class="text-weight-medium">
-          해설 :
+        <div class="label-container">
+          <q-label class="label-commentary">해설 : </q-label>
           <q-markdown>
             <q-input
               v-model="localQuizContent.commentary"
-              label="해설"
               outlined
               dense
               autogrow
               maxlength="300"
+              class="input-field"
             />
           </q-markdown>
         </div>
@@ -105,11 +112,28 @@ const editCancle = () => {
   emit('update:isEditing', 'false');
 };
 
+// 답안 정리 함수
+const normalizeAnswers = answers => {
+  return answers
+    .map(
+      answer =>
+        answer
+          .split(',') // 콤마로 구분
+          .map(part => part.trim()) // 각 부분의 앞뒤 공백 제거
+          .filter(part => part) // 빈 값 제거
+          .join(', '), // 다시 콤마와 공백으로 구분된 문자열로 변환
+    )
+    .filter(answer => answer); // 빈 값 제거 후 최종 배열 반환
+};
+
 // 수정 완료 기능
 const submitQuiz = async () => {
+  // 답안 정리
+  const normalizedAnswers = normalizeAnswers(localQuizContent.value.answer);
+
   const quizData = {
     quiz: localQuizContent.value.quiz,
-    answer: localQuizContent.value.answer, // 배열 그대로 전송
+    answer: normalizedAnswers, // 정리된 배열 전송
     commentary: localQuizContent.value.commentary,
   };
 
@@ -155,6 +179,18 @@ const submitQuiz = async () => {
 .text-positive {
   color: #43a047;
 }
+
+/* 입력 필드와 라벨을 수평으로 배치 */
+.label-container {
+  display: flex;
+  align-items: center; /* 수직 가운데 정렬 */
+  gap: 8px; /* 라벨과 입력 필드 사이 간격 */
+}
+
+.input-field {
+  flex: 1; /* 입력 필드가 가로로 꽉 차도록 확장 */
+}
+
 .my-btn {
   border-radius: 8px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
