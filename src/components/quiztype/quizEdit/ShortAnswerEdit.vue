@@ -1,51 +1,84 @@
 <template>
-  <div class="q-mb-md form">
-    <div class="text-h6 q-mb-md">문제 유형: 단답형</div>
-    <q-input
-      v-model="localQuizContent.quiz"
-      label="문제"
-      outlined
-      autogrow
-      dense
-      maxlength="300"
-    />
+  <q-form class="q-pa-md">
+    <div class="row justify-end q-mb-md">
+      <q-chip small outline class="text-caption text-grey">
+        &lt;단답형&gt;
+      </q-chip>
+    </div>
 
-    <q-input
-      v-model="localQuizContent.answer"
-      label="정답"
-      outlined
-      dense
-      autogrow
-      maxlength="300"
-    />
+    <q-card flat bordered>
+      <!-- 문제 내용 -->
+      <q-card-section class="bg-primary text-white q-pa-md">
+        <q-input
+          v-model="localQuizContent.quiz"
+          outlined
+          autogrow
+          dense
+          maxlength="300"
+          class="text-subtitle1"
+        >
+        </q-input>
+      </q-card-section>
+      <q-separator />
+      <!-- 정답 표시 -->
+      <q-card-section class="answer-container">
+        <q-label class="label-answer">답안</q-label>
+        <div
+          v-for="(answer, index) in localQuizContent.answer"
+          :key="index"
+          class="q-mb-md input-answer"
+        >
+          <q-input
+            v-model="localQuizContent.answer[index]"
+            type="textarea"
+            autogrow
+            outlined
+            dense
+            placeholder="답안 입력해주세요. "
+            maxlength="300"
+            counter
+          />
+        </div>
+      </q-card-section>
+      <q-separator />
+      <!-- 해설 표시 -->
+      <q-card-section>
+        <div class="text-weight-medium">
+          해설 :
+          <q-markdown>
+            <q-input
+              v-model="localQuizContent.commentary"
+              label="해설"
+              outlined
+              dense
+              autogrow
+              maxlength="300"
+            />
+          </q-markdown>
+        </div>
+      </q-card-section>
 
-    <q-input
-      v-model="localQuizContent.commentary"
-      label="해설"
-      outlined
-      dense
-      autogrow
-      maxlength="300"
-    />
-    <q-btn
-      flat
-      color="negative"
-      class="my-btn small-btn"
-      icon="edit"
-      @click="editCancle"
-    >
-      수정 취소
-    </q-btn>
-    <q-btn
-      flat
-      color="negative"
-      class="my-btn small-btn"
-      icon="edit"
-      @click="submitQuiz"
-    >
-      수정 완료
-    </q-btn>
-  </div>
+      <q-card-section class="btn-container">
+        <q-btn
+          flat
+          color="negative"
+          class="my-btn small-btn"
+          @click="editCancle"
+        >
+          수정 취소
+        </q-btn>
+        <q-btn
+          flat
+          color="primary"
+          class="my-btn small-btn"
+          icon="edit"
+          @click="submitQuiz"
+        >
+          수정 완료
+        </q-btn>
+      </q-card-section>
+    </q-card>
+  </q-form>
 </template>
 
 <script setup>
@@ -61,18 +94,22 @@ const props = defineProps({
 // 이벤트 보내기.(현재 컴포넌트 -> 다른 컴포넌트)
 const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
 
-const localQuizContent = ref({ ...props.quizcontent });
+// 서버에서 받아온 answer를 배열로 그대로 사용
+const localQuizContent = ref({
+  ...props.quizcontent,
+  answer: [...props.quizcontent.answer], // 배열을 복사하여 사용
+});
 
 // 수정 취소 기능
 const editCancle = () => {
   emit('update:isEditing', 'false');
 };
 
-// 수정 완료 기능.
+// 수정 완료 기능
 const submitQuiz = async () => {
   const quizData = {
     quiz: localQuizContent.value.quiz,
-    answer: localQuizContent.value.answer,
+    answer: localQuizContent.value.answer, // 배열 그대로 전송
     commentary: localQuizContent.value.commentary,
   };
 
@@ -84,6 +121,7 @@ const submitQuiz = async () => {
     console.log('응답:', response.data); // 서버 응답 확인
     alert('수정이 완료되었습니다 ^_^');
 
+    // 수정된 데이터를 부모 컴포넌트에 전달
     emit('update:quizcontent', localQuizContent.value);
     emit('update:isEditing');
   } catch (error) {
@@ -98,13 +136,39 @@ const submitQuiz = async () => {
 </script>
 
 <style scoped>
-.form > * {
-  margin: 1% 0;
+.option-text {
+  padding: 8px;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.text-caption {
+  font-size: 12px;
+}
+
+.text-weight-medium {
+  font-weight: 500;
+}
+
+.text-positive {
+  color: #43a047;
 }
 .my-btn {
-  border-radius: 10px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-  padding: 8px 16px;
-  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 14px 24px; /* 버튼 패딩을 키워서 버튼 크기를 늘림 */
+  font-size: 1.1rem; /* 버튼 글자 크기를 키움 */
+  width: auto;
+}
+
+.btn-container {
+  display: flex;
+  flex-direction: row; /* 버튼을 수평으로 정렬 */
+  justify-content: center; /* 버튼을 가운데 정렬 */
+  gap: 100px; /* 버튼 사이 간격 */
+  padding: 0 32px; /* 양옆 마진을 카드와 동일하게 */
+  margin-bottom: 20px;
 }
 </style>
