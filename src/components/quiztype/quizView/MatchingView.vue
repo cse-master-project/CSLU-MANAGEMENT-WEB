@@ -1,41 +1,77 @@
 <template>
   <q-form class="q-pa-md">
-    <q-card>
-      <q-card-section>
-        <div class="text-h6 q-mb-md">문제 유형: 선긋기형</div>
-        <div class="text-subtitle1">문제 : {{ quizcontent.quiz }}</div>
+    <!-- 문제 유형을 카드 밖 오른쪽에 배치 -->
+    <div class="row justify-end q-mb-md">
+      <q-chip small outline class="text-caption text-grey">
+        &lt;선긋기형&gt;
+      </q-chip>
+    </div>
+
+    <q-card flat bordered>
+      <!-- 문제 내용 -->
+      <q-card-section class="bg-primary text-white q-pa-md">
+        <div class="text-subtitle1">Q. {{ quizcontent.quiz }}</div>
       </q-card-section>
 
+      <q-separator />
+
       <div class="q-pa-md row">
+        <!-- 왼쪽 옵션 -->
         <q-card-section class="col">
-          <div
-            v-for="(option, index) in quizcontent.left_option"
-            :key="'left-' + index"
-            class="q-mb-md"
-            :style="{ backgroundColor: getColor(index, 'left') }"
-          >
-            {{ index + 1 }}. {{ option }}
-          </div>
+          <q-list bordered padding>
+            <q-item
+              v-for="(option, index) in quizcontent.left_option"
+              :key="'left-' + index"
+            >
+              <q-item-section>
+                <div
+                  class="option-text"
+                  :style="{ backgroundColor: getColor(index, 'left') }"
+                >
+                  {{ index + 1 }}. {{ option }}
+                </div>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card-section>
 
+        <!-- 오른쪽 옵션 -->
         <q-card-section class="col">
-          <div
-            v-for="(option, index) in quizcontent.right_option"
-            :key="'right-' + index"
-            class="q-mb-md"
-            :style="{ backgroundColor: getColor(index, 'right') }"
-          >
-            {{ index + 1 }}. {{ option }}
-          </div>
+          <q-list bordered padding>
+            <q-item
+              v-for="(option, index) in quizcontent.right_option"
+              :key="'right-' + index"
+            >
+              <q-item-section>
+                <div
+                  class="option-text"
+                  :style="{ backgroundColor: getColor(index, 'right') }"
+                >
+                  {{ index + 1 }}. {{ option }}
+                </div>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card-section>
       </div>
 
+      <q-separator />
+
+      <!-- 정답 표시 -->
       <q-card-section>
-        <div>정답: {{ quizcontent.answer.join(', ') }}</div>
+        <div class="text-weight-medium">
+          정답 :
+          <span class="text-positive">{{ quizcontent.answer.join(', ') }}</span>
+        </div>
       </q-card-section>
 
+      <q-separator />
+
+      <!-- 해설 표시 -->
       <q-card-section>
-        <div>해설: {{ quizcontent.commentary }}</div>
+        <div class="text-weight-medium">
+          해설 : <q-markdown>{{ quizcontent.commentary }}</q-markdown>
+        </div>
       </q-card-section>
     </q-card>
   </q-form>
@@ -50,20 +86,17 @@ const props = defineProps({
 });
 
 const getColor = (index, side) => {
-  // 정답 배열에서 인덱스를 기반으로 색상을 반환
   const answers = props.quizcontent.answer.map(answer => answer.split('t'));
-
-  // 왼쪽 또는 오른쪽 옵션의 색상 결정
   const colorIndex = answers.findIndex(([left, right]) => {
     if (side === 'left') return left == index;
     if (side === 'right') return right == index;
   });
 
-  return colorIndex >= 0 ? getColorForIndex(colorIndex) : 'transparent'; // 정답이 아닌 경우 기본 투명 색상
+  // 정답에 해당하면 색상을 반환하고, 아니면 투명하게 설정
+  return colorIndex >= 0 ? getColorForIndex(colorIndex) : 'transparent';
 };
 
 const getColorForIndex = index => {
-  // 인덱스에 따라 색상을 반환
   switch (index) {
     case 0:
       return 'yellow';
@@ -72,13 +105,38 @@ const getColorForIndex = index => {
     case 2:
       return 'orange';
     default:
-      return 'transparent'; // 인덱스가 정의되지 않은 경우 기본 투명 색상
+      return 'transparent';
   }
 };
 </script>
 
 <style scoped>
-.q-mb-md {
-  margin-bottom: 16px; /* 필요에 따라 조정 */
+.option-text {
+  padding: 8px;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.text-blue {
+  color: #1e88e5;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.text-h5 {
+  font-size: 1.25rem;
+}
+
+.text-caption {
+  font-size: 12px;
+}
+
+.text-weight-medium {
+  font-weight: 500;
 }
 </style>

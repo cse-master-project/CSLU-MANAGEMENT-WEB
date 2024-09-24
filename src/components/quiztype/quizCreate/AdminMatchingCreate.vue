@@ -64,18 +64,20 @@
 
         <!-- 왼쪽 그룹 옵션 입력 -->
         <q-card-section>
-          <div v-if="showHelp" class="help">
-            -> 왼쪽지문 입력, 오른쪽 지문 입력 후 색에 맞게 매칭 시켜주세요.
-            (순서 중요)
-          </div>
           <div class="options-container">
             <div class="option-left">
-              <div>
+              <div class="reset-container">
                 <q-btn class="btn-reset" @click="resetColors">초기화</q-btn>
-                <q-btn class="btn-help" @click="toggleHelp">help</q-btn>
-                <!-- 도움말 텍스트 -->
+                <q-icon name="help" class="help-icon1">
+                  <q-tooltip
+                    anchor="top right"
+                    self="top left"
+                    style="background-color: black; font-size: medium"
+                  >
+                    왼쪽 지문, 오른쪽 지문 입력시 답안을 색으로 매칭 시켜주세요.
+                  </q-tooltip>
+                </q-icon>
               </div>
-
               <div
                 class="btn-select"
                 v-for="(option, index) in leftOptions"
@@ -155,6 +157,7 @@
   <SubmitQuizSuccess
     v-if="submitQuizSuccess"
     :submit-quiz-success="submitQuizSuccess"
+    :quiz-id="quizId"
   />
 </template>
 
@@ -163,21 +166,29 @@ import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
+// 반응형 데이터
+const subject = ref('과목을 선택 해주세요.');
+const detailSubject = ref('챕터를 선택 해주세요.');
+const quiz = ref('');
+const answers = ref(['', '', '']);
+const leftOptions = ref(['', '', '']);
+const rightOptions = ref(['', '', '']);
+const commentary = ref('');
+const leftOptionsBgColor = ref(['', '', '']); // 각 옵션의 배경색을 저장
 
+// 퀴즈 유형 바꾸는 로직 (뒤로가기)
 const emits = defineEmits(['change-quiz-type']);
-
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
+//이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
-
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-
     // 파일 타입이 이미지인지 확인
     if (files[0].type.startsWith('image/')) {
       const reader = new FileReader();
@@ -191,35 +202,21 @@ const fileInputHandler = event => {
     }
   }
 };
-
+//이미지 업로드 취소 로직
 const cancelFile = () => {
   filePreview.value = null;
   fileName.value = ''; // 파일 이름 초기화
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
-// useCategories에서 가져오는 데이터와 상태 변수들
+// 과목, 챕터 불러오기 로직
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
 
 onMounted(fetchCategories);
 
-const subject = ref('과목을 선택 해주세요.');
-const detailSubject = ref('챕터를 선택 해주세요.');
-const quiz = ref('');
-const answers = ref(['', '', '']);
-const leftOptions = ref(['', '', '']);
-const rightOptions = ref(['', '', '']);
-const commentary = ref('');
-
+// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const filteredDetailSubjectOptions = ref([]);
-const leftOptionsBgColor = ref(['', '', '']); // 각 옵션의 배경색을 저장
-
-watch(subject, () => {
-  detailSubject.value = '챕터를 선택 해주세요.';
-  updateDetailSubjectOptions();
-});
-
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects.length === 0) {
@@ -228,11 +225,10 @@ const updateDetailSubjectOptions = () => {
     filteredDetailSubjectOptions.value = detailSubjects;
   }
 };
-const showHelp = ref(false);
-
-const toggleHelp = () => {
-  showHelp.value = !showHelp.value;
-};
+watch(subject, () => {
+  detailSubject.value = '챕터를 선택 해주세요.';
+  updateDetailSubjectOptions();
+});
 
 const selectOption = (color, index) => {
   if (
@@ -291,9 +287,15 @@ const resetColors = () => {
   leftOptionsBgColor.value = ['', '', '']; // 색상 초기화
 };
 
+// 서버 전송 여부
 const submitQuizSuccess = ref(false);
 
+// 서버에서 받아온 퀴즈 아이디
+const quizId = ref('');
+
+// 서버에 문제 제출
 const submitQuiz = async () => {
+  // 답안 정리
   const formattedAnswers = answers.value.map(answer => {
     return answer;
   });
@@ -334,6 +336,7 @@ const submitQuiz = async () => {
     return; // 오류가 있을 경우 제출을 중단합니다.
   }
 
+  //서버에 보낼 퀴즈 데이터
   const quizData = {
     subject: subject.value,
     detailSubject: detailSubject.value,
@@ -352,13 +355,13 @@ const submitQuiz = async () => {
   try {
     // 문제 데이터 서버에 제출
     const response = await api.post('/api/quiz/default', quizData);
-    const quizId = response.data; // 서버에서 받은 문제 ID
-    console.log(quizId);
+    quizId.value = response.data; // 서버에서 받은 문제 ID
 
+    // 이미지가 있다면, 이미지 데이터 서버에 제출
     if (filePreview.value) {
       const imageData = {
         base64String: filePreview.value,
-        quizId: quizId,
+        quizId: quizId.value,
       };
       console.log('이미지데이터', imageData);
 
@@ -369,15 +372,11 @@ const submitQuiz = async () => {
     submitQuizSuccess.value = true;
   } catch (error) {
     if (error.response.status === 400) {
-      alert(
-        '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
-      );
-    } else if (error.response.status === 500) {
-      alert(
-        '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-      );
-    } else {
-      alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+      // 이미지 전송 실패 시 에러 처리
+      alert('오류가 발생했습니다. 다시 시도해주세요.');
+      // 퀴즈 등록 취소 처리 또는 이미지 전송 실패 시 퀴즈도 등록하지 않음
+      await api.delete(`/api/management/quiz/${quizId.value}`); // 퀴즈 삭제 처리
+      return; // 이미지 전송 실패 시 퀴즈 등록 중단
     }
   }
 };
@@ -529,32 +528,36 @@ input[type='file'] {
   justify-content: space-evenly; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
 }
-.btn-reset {
-  width: 80px;
-  align-items: center;
+.reset-container {
+  display: flex;
+  align-items: center; /* 수직으로 중앙 정렬 */
+  margin-bottom: 10px;
+}
 
-  margin-bottom: 10px;
-  background-color: #42a5f5;
+.btn-reset {
+  background-color: #90bee4;
   color: white;
   font-size: 1rem;
-  text-align: center;
+  padding: 8px 16px; /* 버튼 패딩 */
+  border-radius: 10px; /* 둥근 버튼 */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+  margin-right: 10px; /* 아이콘과의 간격 */
+  transition: background-color 0.3s ease; /* 호버 시 애니메이션 */
+
+  &:hover {
+    background-color: #1e88e5;
+  }
 }
-.btn-help {
-  width: 80px;
-  align-items: center;
-  margin-left: 5px;
-  margin-bottom: 10px;
-  background-color: #42a5f5;
-  color: white;
-  font-size: 1rem;
-  text-align: center;
+.help-icon1 {
+  font-size: 20px;
+  color: #999;
 }
-.help {
-  font-size: 1.1rem;
-  color: #ff0000;
-  margin-left: 110px;
-  margin-bottom: 20px;
+
+.tooltip {
+  background-color: #000000;
+  font-size: 1.3rem;
 }
+
 .btn-select {
   margin-bottom: 10px;
 }
