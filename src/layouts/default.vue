@@ -1,19 +1,11 @@
 <template>
   <q-layout view="lHh Lpr lff">
-    <q-header bordered class="bg-info">
+    <q-header bordered class="bg-info q-header">
       <q-toolbar class="toolbar">
-        <q-btn
-          flat
-          dense
-          to="/"
-          class="toolbar-item"
-          style="display: flex; align-items: center"
-        >
-          <q-toolbar-title
-            class="title"
-            style="display: flex; align-items: center"
-          >
-            <q-avatar style="margin-right: 10px">
+        <!--로고&홈-->
+        <q-btn flat dense to="/" class="toolbar-item">
+          <q-toolbar-title class="title">
+            <q-avatar class="avatar">
               <img src="/logo.jpg" />
             </q-avatar>
             CSLU
@@ -25,17 +17,18 @@
           flat
           label="소개"
           to="/about"
-          class="toolbar-item"
-          :class="{ active: isActive('/about') }"
+          class="toolbar-items"
+          :class="{ active: isActive('/about'), loggedIn: isUserLoggedIn }"
         />
+        <!--바로가기 메뉴-->
         <div>
           <q-btn
             stretch
             flat
             label="문제 만들기"
             to="/create"
-            class="toolbar-item"
-            :class="{ active: isActive('/create') }"
+            class="toolbar-items"
+            :class="{ active: isActive('/create'), loggedIn: isUserLoggedIn }"
             @mouseover="showMenu = true"
             color="primary"
             text-color="white"
@@ -57,7 +50,9 @@
                 clickable
                 class="menu-item"
                 v-ripple
-                :class="{ 'selected-btn': selectedQuizType === quizType.value }"
+                :class="{
+                  'selected-btn': selectedQuizType === quizType.value,
+                }"
                 @click="selectQuizType(quizType.value)"
                 style="padding: 10px 20px"
               >
@@ -72,20 +67,19 @@
           flat
           label="문제 관리"
           to="/management"
-          class="toolbar-item"
+          class="toolbar-items"
           v-if="isUserLoggedIn"
-          :class="{ active: isActive('/management') }"
+          :class="{ active: isActive('/management'), loggedIn: isUserLoggedIn }"
         />
         <q-btn
           stretch
           flat
           label="마이 페이지"
           to="/mypage"
-          class="toolbar-item"
+          class="toolbar-items"
           v-if="isUserLoggedIn"
-          :class="{ active: isActive('/mypage') }"
+          :class="{ active: isActive('/mypage'), loggedIn: isUserLoggedIn }"
         />
-
         <q-btn
           v-if="!isUserLoggedIn"
           rounded
@@ -101,15 +95,82 @@
           class="loginbtn"
           @click="isLogout = true"
         />
+        <q-btn
+          class="side-menu"
+          flat
+          @click="drawerLeft = !drawerLeft"
+          round
+          dense
+          icon="menu"
+        />
       </q-toolbar>
     </q-header>
+
+    <!--사이드바 메뉴-->
+    <q-drawer
+      v-model="drawerLeft"
+      :width="200"
+      :breakpoint="1024"
+      elevated
+      class="bg-white text-black"
+    >
+      <q-list>
+        <q-item clickable to="/about" @click="drawer = false">
+          <q-item-section>소개</q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          to="/create"
+          @click="drawer = false"
+          v-if="isUserLoggedIn"
+        >
+          <q-item-section>문제 만들기</q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          to="/management"
+          v-if="isUserLoggedIn"
+          @click="drawer = false"
+        >
+          <q-item-section>문제 관리</q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          to="/mypage"
+          v-if="isUserLoggedIn"
+          @click="drawer = false"
+        >
+          <q-item-section>마이 페이지</q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          @click="
+            isLogin = true;
+            drawer = false;
+          "
+          v-if="!isUserLoggedIn"
+        >
+          <q-item-section>LOG IN</q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          @click="
+            isLogout = true;
+            drawer = false;
+          "
+          v-if="isUserLoggedIn"
+        >
+          <q-item-section>LOG OUT</q-item-section>
+        </q-item>
+      </q-list>
+    </q-drawer>
 
     <q-page-container :style="pageContainerStyles">
       <router-view v-if="!selectedQuizType" />
       <component v-else :is="getQuizComponent(selectedQuizType)" />
     </q-page-container>
 
-    <q-footer>
+    <q-footer class="q-footer">
       <footerbar>CSLU © 2024 . All Rights Reserved. </footerbar>
     </q-footer>
     <UserLoginGoogle
@@ -199,6 +260,9 @@ const getQuizComponent = quizType => {
       return null;
   }
 };
+
+//사이드바 메뉴
+const drawerLeft = ref(false);
 </script>
 
 <style>
@@ -210,7 +274,7 @@ const getQuizComponent = quizType => {
 }
 .q-footer {
   height: 100px;
-  border: 1px solid #dddddd;
+  border-top: 1px solid #dddddd;
   background-color: white;
   color: black;
   font-size: 1rem;
@@ -223,21 +287,33 @@ const getQuizComponent = quizType => {
   width: 70%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   position: relative;
 }
 
 .title {
   font-size: 1.8rem;
   font-family: 'NotoB', sans-serif;
+  display: flex;
+  align-items: center;
 }
+.avatar {
+  margin-right: 10px;
+}
+
 .toolbar-item {
   font-size: 1.2rem;
   position: relative;
   padding: 10px 20px;
+  margin: 0 10px; /* 항목 간 간격 추가 */
   transition: color 0.3s ease;
 }
-
+.toolbar-items {
+  font-size: 1.2rem;
+  position: relative;
+  padding: 10px 20px;
+  margin: 0 auto; /* 항목 간 간격 추가 */
+  transition: color 0.3s ease;
+}
 .toolbar-item.active::after,
 .toolbar-item:hover::after {
   content: '';
@@ -295,5 +371,38 @@ const getQuizComponent = quizType => {
   font-size: 1rem;
   border-radius: 40px;
   padding: 0 20px;
+}
+
+.hamburger-menu {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+  .toolbar {
+    font-family: 'Toss Product Sans';
+    width: 100%;
+    justify-content: space-between;
+  }
+  .side-menu {
+    display: block;
+  }
+
+  .toolbar-items,
+  .loginbtn {
+    display: none;
+  }
+}
+@media (min-width: 1200px) {
+  .side-menu {
+    display: none;
+  }
+}
+
+/* Dynamic styles based on login status */
+.toolbar-item.loggedIn {
+  margin: 0 10px; /* Margin when logged in */
+}
+.toolbar-items.loggedIn {
+  margin: 0 10px; /* Margin when logged in */
 }
 </style>

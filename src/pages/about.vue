@@ -47,7 +47,7 @@
                       :src="img.src"
                       class="screenimage"
                       alt="Section Image"
-                      style="width: 370px; height: 600px"
+                      style="width: 350px; height: 700px"
                     />
                   </q-carousel-slide>
                 </q-carousel>
@@ -101,12 +101,12 @@ const sections = ref([
       '원하는 문제 유형을 선택하여 시작해 보세요!\n 아래와 같은 문제 유형이 있습니다.',
     image: [
       {
-        src: '/quizimg/screen.png',
+        src: '/quizimg/multiple.png',
         text: '4지선다형',
       },
-      { src: '/quizimg/screen.png', text: '단답형' },
-      { src: '/quizimg/screen.png', text: '선긋기형' },
-      { src: '/quizimg/screen.png', text: 'O/X형' },
+      { src: '/quizimg/shortanswer.png', text: '단답형' },
+      { src: '/quizimg/matching.png', text: '선긋기형' },
+      { src: '/quizimg/truefalse.png', text: 'O/X형' },
       { src: '/quizimg/screen.png', text: '빈칸 채우기형' },
     ],
   },
@@ -114,7 +114,7 @@ const sections = ref([
     title: '과목 및 챕터 선택',
     content:
       '문제 유형을 선택하셨다면, 다음으로는 과목과 해당 과목의 챕터를 선택하세요.',
-    image: [{ src: '/quizimg/lang.jpg', text: '' }],
+    image: [{ src: '/quizimg/lang.png', text: '' }],
   },
   {
     title: '문제 입력',
@@ -159,8 +159,6 @@ onMounted(() => {
       observer.value.observe(element); // 섹션 요소를 observer에 등록
     }
   });
-
-  window.addEventListener('scroll', handleScroll);
 });
 
 // 컴포넌트가 언마운트될 때 실행되는 함수
@@ -168,28 +166,7 @@ onUnmounted(() => {
   if (observer.value) {
     observer.value.disconnect(); // observer의 모든 관찰을 중지합니다.
   }
-  window.removeEventListener('scroll', handleScroll);
 });
-
-// 스크롤 이벤트 핸들러
-const handleScroll = () => {
-  const firstSection = document.querySelector('.section:nth-child(1)');
-  if (firstSection) {
-    const rect = firstSection.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      // 첫 번째 섹션이 뷰포트 내에 있을 때만 이미지 인덱스 증가
-      const scrollPosition = window.scrollY + window.innerHeight;
-      const sectionHeight = firstSection.offsetHeight;
-      const relativeScroll = scrollPosition - firstSection.offsetTop;
-      const totalImages = sections.value[0].image.length;
-      const newIndex = Math.min(
-        totalImages - 1,
-        Math.floor((relativeScroll / sectionHeight) * totalImages),
-      );
-      currentImageIndex.value = newIndex;
-    }
-  }
-};
 
 // 이전 이미지로 이동
 const prevImage = () => {
@@ -234,7 +211,7 @@ const nextImage = () => {
 }
 
 .section.active {
-  animation: fadeInUp 2s ease-in-out forwards;
+  animation: fadeInUp 1s ease-in-out forwards;
 }
 
 .content-wrapper {

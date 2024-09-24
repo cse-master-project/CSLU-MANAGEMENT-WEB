@@ -19,7 +19,7 @@
           flat
           label="챕터 관리"
           to="/admin/adminSubjectManagement"
-          class="toolbar-item"
+          class="toolbar-items"
           :class="{ active: isActive('/admin/adminSubjectManagement') }"
         />
         <q-btn
@@ -28,7 +28,7 @@
           flat
           label="기본 문제 추가"
           to="/admin/adminCreate"
-          class="toolbar-item"
+          class="toolbar-items"
           :class="{ active: isActive('/admin/adminCreate') }"
         />
         <q-btn
@@ -37,7 +37,7 @@
           flat
           label="기본 문제 관리"
           to="/admin/adminManagement"
-          class="toolbar-item"
+          class="toolbar-items"
           :class="{ active: isActive('/admin/adminManagement') }"
         />
         <q-btn
@@ -46,7 +46,7 @@
           flat
           label="사용자 문제 관리"
           to="/admin/adminUserManagement"
-          class="toolbar-item"
+          class="toolbar-items"
           :class="{ active: isActive('/admin/adminUserManagement') }"
         />
         <q-btn
@@ -55,7 +55,7 @@
           flat
           label="미승인 문제 관리"
           to="/admin/adminNotApproved"
-          class="toolbar-item"
+          class="toolbar-items"
           :class="{ active: isActive('/admin/adminNotApproved') }"
         />
         <q-btn
@@ -64,7 +64,7 @@
           flat
           label="신고 문제 관리"
           to="/admin/adminReported"
-          class="toolbar-item"
+          class="toolbar-items"
           :class="{ active: isActive('/admin/adminReported') }"
         />
         <!-- 로그인 상태에 따라 로그아웃 버튼 표시 -->
@@ -74,8 +74,70 @@
           label="로그아웃"
           color="orange"
           @click="isLogout = true"
+          class="logout"
+        />
+        <q-btn
+          class="menu"
+          flat
+          @click="drawerLeft = !drawerLeft"
+          round
+          dense
+          icon="menu"
         />
       </q-toolbar>
+
+      <q-drawer
+        v-model="drawerLeft"
+        :width="200"
+        :breakpoint="1024"
+        elevated
+        class="bg-white text-black"
+        ><q-list
+          ><q-btn
+            v-if="isLoggedIn"
+            stretch
+            flat
+            label="챕터 관리"
+            to="/admin/adminSubjectManagement"
+            :class="{ active: isActive('/admin/adminSubjectManagement') }" />
+          <q-btn
+            v-if="isLoggedIn"
+            stretch
+            flat
+            label="기본 문제 추가"
+            to="/admin/adminCreate"
+            :class="{ active: isActive('/admin/adminCreate') }" />
+          <q-btn
+            v-if="isLoggedIn"
+            stretch
+            flat
+            label="기본 문제 관리"
+            to="/admin/adminManagement"
+            :class="{ active: isActive('/admin/adminManagement') }" />
+          <q-btn
+            v-if="isLoggedIn"
+            stretch
+            flat
+            label="사용자 문제 관리"
+            to="/admin/adminUserManagement"
+            :class="{ active: isActive('/admin/adminUserManagement') }" />
+          <q-btn
+            v-if="isLoggedIn"
+            stretch
+            flat
+            label="미승인 문제 관리"
+            to="/admin/adminNotApproved"
+            :class="{ active: isActive('/admin/adminNotApproved') }" />
+          <q-btn
+            v-if="isLoggedIn"
+            stretch
+            flat
+            label="신고 문제 관리"
+            to="/admin/adminReported"
+            :class="{ active: isActive('/admin/adminReported') }"
+        /></q-list>
+        <!-- 로그인 상태에 따라 로그아웃 버튼 표시 -->
+      </q-drawer>
     </q-header>
 
     <!-- 페이지 컨테이너 스타일 조정 -->
@@ -116,11 +178,12 @@ const isLogout = ref(false);
 
 // 현재 경로와 비교하여 활성화된 버튼을 감지하는 함수
 const isActive = path => route.path === path;
+const drawerLeft = ref(false);
 </script>
 
 <style lang="scss" scoped>
 .q-header {
-  height: 70px; /* 헤더 높이 조정 */
+  height: 8%; /* 헤더 높이 조정 */
   display: flex;
   align-items: center; /* 헤더 내부 요소 중앙 정렬 */
   justify-content: center; /* 헤더 내부 요소 중앙 정렬 */
@@ -148,6 +211,11 @@ const isActive = path => route.path === path;
   font-size: 1rem; /* 글씨 크기 조정 */
   position: relative;
 }
+.toolbar-items {
+  margin: 0 8px; /* 버튼 사이 간격 조정 */
+  font-size: 1rem; /* 글씨 크기 조정 */
+  position: relative;
+}
 
 .toolbar-item.active::after {
   content: '';
@@ -160,13 +228,29 @@ const isActive = path => route.path === path;
 }
 
 .title {
-  font-size: 1.5rem; /* 제목 글씨 크기 조정 */
-  font-weight: bold;
+  font-family: 'NotoB';
+  font-size: 1.8rem; /* 제목 글씨 크기 조정 */
 }
 
 .page-container {
   max-width: 1080px;
   margin: 20px auto; /* 페이지 중앙 정렬 및 여백 설정 */
   padding: 20px; /* 페이지 내용 여백 설정 */
+}
+@media (max-width: 1024px) {
+  .toolbar {
+    justify-content: space-between; /* 아이템 사이 공간을 균등하게 분배 */
+  }
+  .toolbar-items {
+    display: none;
+  }
+  .logout {
+    display: none;
+  }
+}
+@media (min-width: 1025px) {
+  .menu {
+    display: none;
+  }
 }
 </style>
