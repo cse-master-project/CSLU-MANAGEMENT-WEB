@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { userApi } from 'src/boot/userAxios';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
 import userUseCategories from 'src/services/userUseCategories.js';

@@ -117,7 +117,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
@@ -200,7 +200,7 @@ const normalizeAnswers = answers => {
 
 const submitQuizSuccess = ref(false);
 
-const submitQuiz = () => {
+const submitQuiz = async () => {
   //답안 정리
   const normalizedAnswers = normalizeAnswers(answers.value);
 
@@ -215,25 +215,56 @@ const submitQuiz = () => {
     }),
   };
   console.log('서버에 제출될 데이터:', quizData);
-  api
-    .post('/api/quiz/default', quizData)
-    .then(response => {
-      submitQuizSuccess.value = true;
-      console.log(quizData);
-    })
-    .catch(error => {
-      if (error.response.status === 400) {
-        alert(
-          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
-        );
-      } else if (error.response.status === 500) {
-        alert(
-          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-        );
-      } else {
-        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
-      }
-    });
+  try {
+    // 문제 데이터 서버에 제출
+    const response = await api.post('/api/quiz/default', quizData);
+    const quizId = response.data; // 서버에서 받은 문제 ID
+    console.log(quizId);
+
+    if (filePreview.value) {
+      const imageData = {
+        base64String: filePreview.value,
+        quizId: quizId,
+      };
+      console.log('이미지데이터', imageData);
+
+      await api.post('/api/quiz/image', imageData);
+      console.log('이미지 추가 완료');
+    }
+
+    submitQuizSuccess.value = true;
+  } catch (error) {
+    if (error.response.status === 400) {
+      alert(
+        '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
+      );
+    } else if (error.response.status === 500) {
+      alert(
+        '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      );
+    } else {
+      alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+    }
+  }
+  // api
+  //   .post('/api/quiz/default', quizData)
+  //   .then(response => {
+  //     submitQuizSuccess.value = true;
+  //     console.log(quizData);
+  //   })
+  //   .catch(error => {
+  //     if (error.response.status === 400) {
+  //       alert(
+  //         '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
+  //       );
+  //     } else if (error.response.status === 500) {
+  //       alert(
+  //         '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+  //       );
+  //     } else {
+  //       alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+  //     }
+  //   });
 };
 </script>
 

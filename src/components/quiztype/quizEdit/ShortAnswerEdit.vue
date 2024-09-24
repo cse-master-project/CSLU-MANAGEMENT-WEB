@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 
 // 데이터 받기.(다른 컴포넌트 -> 현재 컴포넌트)

@@ -12,6 +12,14 @@
         <div class="text-caption text-createAt">
           생성일 : {{ formatDate(quizzes.createAt) }}
         </div>
+        <!-- 이미지 표시 -->
+        <div v-if="imageUrl" class="q-mt-md">
+          <img
+            :src="imageUrl"
+            alt="문제 이미지"
+            style="max-width: 100%; height: auto"
+          />
+        </div>
       </q-card-section>
 
       <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
@@ -54,13 +62,13 @@
         </q-btn>
       </q-card-section>
     </q-card>
+    <DeleteQuizConfirmation
+      v-if="isDelete"
+      :is-delete="isDelete"
+      :current-quiz="quizzes"
+      @update:isDelete="isDelete = $event"
+    />
   </q-page>
-  <DeleteQuizConfirmation
-    v-if="isDelete"
-    :is-delete="isDelete"
-    :current-quiz="quizzes"
-    @update:isDelete="isDelete = $event"
-  />
 </template>
 
 <script setup>
@@ -74,7 +82,10 @@ const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
 
-//서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
+// 이미지 URL 상태
+const imageUrl = ref(null);
+
+// 서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
 const fetchQuizzes = async () => {
   try {
     const response = await api.get(`/api/quiz/${quizId}`);
@@ -84,16 +95,32 @@ const fetchQuizzes = async () => {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
+
 // 생성일 포맷팅.
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 };
 
-onMounted(() => {
-  fetchQuizzes();
+// 서버에서 이미지 가져오기
+const fetchImage = async () => {
+  try {
+    const response = await api.get(`/api/quiz/${quizId}/image`);
+    console.log('서버에 받아온것 : ', response);
+
+    // base64 문자열 처리
+    const base64String = response.data;
+    imageUrl.value = `data:image/png;base64,${base64String}`;
+  } catch (error) {
+    console.error('이미지 데이터를 불러오는 데 실패했습니다.', error);
+  }
+};
+
+onMounted(async () => {
+  await fetchQuizzes();
+  await fetchImage();
 });
 
-//JSON 파싱.
+// JSON 파싱.
 const quizContent = computed(() => {
   if (quizzes.value && quizzes.value.jsonContent) {
     try {

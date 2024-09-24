@@ -63,7 +63,7 @@
 <script setup>
 import { googleSdkLoaded } from 'vue3-google-login';
 import axios from 'axios';
-import { ref, defineProps, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { userApi } from 'src/boot/userAxios';
 import { useCookies } from 'vue3-cookies'; //쿠키 관리 라이브러리
 import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상태관리

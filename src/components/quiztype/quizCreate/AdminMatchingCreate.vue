@@ -289,11 +289,46 @@ const resetColors = () => {
 
 const submitQuizSuccess = ref(false);
 
-const submitQuiz = () => {
+const submitQuiz = async () => {
   const formattedAnswers = answers.value.map(answer => {
     return answer;
   });
   console.log('answers', formattedAnswers);
+
+  // 입력값 검증
+  let hasError = false;
+  let errorMessage = '';
+
+  if (subject.value === '과목을 선택 해주세요.') {
+    errorMessage = '과목을 선택해 주세요.';
+    hasError = true;
+  } else if (detailSubject.value === '챕터를 선택 해주세요.') {
+    errorMessage = '챕터를 선택해 주세요.';
+    hasError = true;
+  } else if (quiz.value.trim() === '') {
+    errorMessage = '문제를 입력해 주세요.';
+    hasError = true;
+  } else if (leftOptions.value.some(option => option.trim() === '')) {
+    errorMessage = '왼쪽 옵션을 모두 입력해 주세요.';
+    hasError = true;
+  } else if (rightOptions.value.some(option => option.trim() === '')) {
+    errorMessage = '오른쪽 옵션을 모두 입력해 주세요.';
+    hasError = true;
+  } else if (
+    answers.value.length === 0 ||
+    answers.value.some(answer => answer.trim() === '')
+  ) {
+    errorMessage = '답을 매칭해 주세요.';
+    hasError = true;
+  } else if (commentary.value.trim() === '') {
+    errorMessage = '해설을 입력해 주세요.';
+    hasError = true;
+  }
+
+  if (hasError) {
+    alert(errorMessage);
+    return; // 오류가 있을 경우 제출을 중단합니다.
+  }
 
   const quizData = {
     subject: subject.value,
@@ -310,24 +345,37 @@ const submitQuiz = () => {
   };
 
   console.log('서버에 제출될 데이터:', quizData);
-  api
-    .post('/api/quiz/default', quizData)
-    .then(response => {
-      submitQuizSuccess.value = true;
-      console.log('문제 등록 성공:', response.data);
-    })
-    .catch(error => {
-      console.error('문제 등록 오류:', error);
-      if (error.response && error.response.status === 400) {
-        alert('문제 등록에 실패했습니다. 입력값을 확인해 주세요.');
-      } else if (error.response.status === 500) {
-        alert(
-          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-        );
-      } else {
-        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
-      }
-    });
+  try {
+    // 문제 데이터 서버에 제출
+    const response = await api.post('/api/quiz/default', quizData);
+    const quizId = response.data; // 서버에서 받은 문제 ID
+    console.log(quizId);
+
+    if (filePreview.value) {
+      const imageData = {
+        base64String: filePreview.value,
+        quizId: quizId,
+      };
+      console.log('이미지데이터', imageData);
+
+      await api.post('/api/quiz/image', imageData);
+      console.log('이미지 추가 완료');
+    }
+
+    submitQuizSuccess.value = true;
+  } catch (error) {
+    if (error.response.status === 400) {
+      alert(
+        '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
+      );
+    } else if (error.response.status === 500) {
+      alert(
+        '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      );
+    } else {
+      alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+    }
+  }
 };
 </script>
 
