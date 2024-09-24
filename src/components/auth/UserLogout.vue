@@ -1,14 +1,6 @@
 <template>
   <q-dialog v-model="visible" persistent>
-    <q-card
-      style="
-        width: 20%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-      "
-    >
+    <q-card class="logoutmodal">
       <q-btn
         flat
         dense
@@ -23,13 +15,10 @@
         "
       ></q-btn>
       <q-card-section>
-        <div style="font-size: 1.4rem; margin: 10px auto; padding: 0">
-          로그아웃 하시겠습니까?
-        </div>
+        <div class="logoutmsg" style="">로그아웃 하시겠습니까?</div>
       </q-card-section>
-      <q-card-actions align="center">
-        <q-btn class="logoutbtn" @click="logout">YES.</q-btn>
-      </q-card-actions>
+      <q-btn class="logoutbtn" @click="logout">YES.</q-btn>
+      <q-btn class="logoutbtn" @click="close">No.</q-btn>
     </q-card>
   </q-dialog>
 </template>
@@ -87,14 +76,64 @@ const close = () => {
 </script>
 
 <style scoped>
+.logoutmodal {
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
 .logoutbtn {
   background-color: rgba(0, 12, 30, 0.8);
-  width: 100%;
-  margin: 3% auto;
+  width: 90%;
+  margin: 2% auto;
   font-family: 'Toss Product Sans';
   font-weight: 600;
   color: white;
   font-size: 1rem;
   padding: 10px 90px;
+}
+.logoutmsg {
+  font-size: 1.4rem;
+  margin: 10px auto;
+  padding: 0;
+  font-family: Toss Product Sans;
+}
+.btn-group {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .logoutmodal {
+    width: 50%;
+  }
+  .logoutmsg {
+    font-size: 23px;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .logoutmodal {
+    width: 90%;
+  }
+  .logoutmsg {
+    font-size: 23px;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .logoutmodal {
+    width: 90%;
+  }
+  .logoutmsg {
+    font-size: 23px;
+  }
+}
+@media (max-width: 479px) {
+  .logoutmodal {
+    width: 90%;
+  }
+  .logoutmsg {
+    font-size: 23px;
+  }
 }
 </style>
