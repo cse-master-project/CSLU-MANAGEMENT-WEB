@@ -8,7 +8,7 @@
         <!-- 과목과 챕터 선택 -->
         <q-card-section class="select-container">
           <div class="select-subject">
-            <q-label class="label-subject">과목선택</q-label>
+            <q-label class="label-subject">과목 선택</q-label>
             <q-select
               class="select-box"
               v-model="subject"
@@ -19,7 +19,7 @@
             />
           </div>
           <div class="select-chapter">
-            <q-label class="label-chapter">챕터선택</q-label>
+            <q-label class="label-chapter">챕터 선택</q-label>
             <q-select
               class="select-box"
               v-model="detailSubject"
@@ -29,11 +29,14 @@
             />
           </div>
         </q-card-section>
+
         <!-- 이미지 업로드 -->
         <q-card-section class="imageUpload-container">
           <div>
             <label for="file">
-              <div class="upload-button">+</div>
+              <div class="upload-button">
+                <img src="/add-image.png" alt="Upload Image" />
+              </div>
             </label>
             <input type="file" id="file" @change="fileInputHandler" />
           </div>
@@ -42,6 +45,7 @@
             <div class="cancel-button" @click="cancelFile">X</div>
           </div>
         </q-card-section>
+
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
           <q-label class="label-quiz">질문</q-label>
@@ -415,13 +419,11 @@ const submitQuiz = async () => {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-right: 10px;
 }
 .select-chapter {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-left: 10px;
 }
 .label-subject,
 .label-chapter {
@@ -431,7 +433,7 @@ const submitQuiz = async () => {
   font-weight: bold;
 }
 .select-box {
-  width: 200px;
+  width: 220px;
 }
 
 //이미지 업로드 스타일
@@ -454,15 +456,30 @@ input[type='file'] {
 }
 /* 파일 업로드 버튼 스타일 - 원형, 크기, 배경색, 글자색, 중앙 정렬 */
 .upload-button {
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   background-color: #42a5f5;
-  color: white;
-  font-size: 2rem;
-  text-align: center;
-  line-height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 50%;
+  cursor: pointer;
 }
+
+.upload-button img {
+  max-width: 60%;
+  max-height: 60%;
+}
+// .upload-button {
+//   width: 50px;
+//   height: 50px;
+//   background-color: #42a5f5;
+//   color: white;
+//   font-size: 2rem;
+//   text-align: center;
+//   line-height: 50px;
+//   border-radius: 50%;
+// }
 /* 파일 미리보기 스타일 */
 .previewImage-container {
   margin-top: 10px;
@@ -585,5 +602,12 @@ input[type='file'] {
 }
 .btn-submit {
   background-color: primary;
+}
+@media (max-width: 430px) {
+  .select-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
 }
 </style>
