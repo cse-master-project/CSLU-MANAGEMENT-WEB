@@ -25,9 +25,13 @@
       </q-card-section>
       <q-separator class="separator" />
       <q-card-actions class="google-login">
-        <q-btn flat color="primary" @click="LoginGoogle">
-          <img src="/google.png" alt="구글 로그인" class="google-img" />
-        </q-btn>
+        <img
+          src="/google.png"
+          alt="구글 로그인"
+          class="google-img"
+          @click="LoginGoogle"
+          style="cursor: pointer"
+        />
       </q-card-actions>
       <q-card-actions align="right" v-show="signUpVisible">
         <q-card-section class="q-pt-none">
@@ -61,6 +65,7 @@
 </template>
 
 <script setup>
+import { Notify } from 'quasar';
 import { googleSdkLoaded } from 'vue3-google-login';
 import axios from 'axios';
 import { ref, watch } from 'vue';
@@ -70,8 +75,8 @@ import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상�
 
 const { cookies } = useCookies(); //쿠키 사용.
 
-const userStore = useUserAuthStore();
-userStore.loadAuthDataFromCookies();
+// const userStore = useUserAuthStore();
+// userStore.loadAuthDataFromCookies();
 
 const props = defineProps({
   isLogin: Boolean,
@@ -171,6 +176,14 @@ const LoginGoogle = () => {
                 .then(response => {
                   const userStore = useUserAuthStore();
                   userStore.setAuthData(response.data);
+
+                  Notify.create({
+                    message: `${nickname.value}님, 환영합니다!`,
+                    timeout: 2000, // 2초 후 자동으로 닫힘
+                    color: 'positive', // 알림의 색상
+                    position: 'top', // 알림의 위치
+                  });
+
                   closeDialog();
                 })
                 .catch(error => {
@@ -283,5 +296,13 @@ const signUpGoogle = () => {
 
 .q-dialog--transition {
   transition: opacity 0.3s;
+}
+.googlebtn {
+  width: 75%;
+}
+@media (max-width: 1440px) {
+  .my-card {
+    width: 300px;
+  }
 }
 </style>
