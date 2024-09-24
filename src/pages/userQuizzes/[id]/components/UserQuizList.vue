@@ -113,15 +113,14 @@
           </q-btn>
         </div>
         <div style="flex: 1">
-          <q-btn
-            class="searchbtn"
-            @click="filterQuizzes"
-            style="font-size: 16px; width: 100%"
-          >
-            검색
-          </q-btn>
+          <q-btn class="searchbtn" @click="filterQuizzes"> 검색 </q-btn>
         </div>
       </div>
+    </div>
+
+    <!-- 문제 개수 -->
+    <div style="font-size: 1rem">
+      필터링된 개수 : <strong>{{ quizcount }}</strong>
     </div>
 
     <!-- Quiz Cards -->
@@ -176,6 +175,8 @@ const subject = ref('');
 const detailSubject = ref('');
 const permssionStatus = ref('');
 const quizType = ref('');
+const quizcount = ref(0); //만든 문제 개수
+
 const dropdowns = ref({
   subject: false,
   detailSubject: false,
@@ -227,6 +228,7 @@ const fetchQuizzes = async () => {
     const response = await userApi.get('/api/quiz/my');
     quizzes.value = response.data;
     filteredQuizzes.value = quizzes.value;
+    quizcount.value = filteredQuizzes.value.length;
     console.log('퀴즈목록 : ', quizzes.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
@@ -266,6 +268,7 @@ const resetFilters = () => {
   permssionStatusLabel.value = '선택해주세요';
   quizTypeLabel.value = '선택해주세요';
   filteredQuizzes.value = quizzes.value;
+  quizcount.value = filteredQuizzes.value.length; // 초기화 하고 필터링된 퀴즈 개수 다시 초기화
 };
 
 // 필터링 기능
@@ -286,6 +289,7 @@ const filterQuizzes = () => {
       quizTypeMatch
     );
   });
+  quizcount.value = filteredQuizzes.value.length; // 필터링 하고 필터링된 퀴즈 수 업데이트하기
 };
 
 // 페이지 상세조회
@@ -374,6 +378,9 @@ const getDotClass = value => {
 .searchbtn {
   border-radius: 10px;
   padding: 7px 11px;
+  font-size: 16px;
+  width: 100%;
+  background-color: #ced4da;
 }
 .resetbtn {
   border-radius: 10px;
