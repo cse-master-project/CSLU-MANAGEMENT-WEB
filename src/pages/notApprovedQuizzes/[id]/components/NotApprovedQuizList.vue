@@ -47,32 +47,45 @@
     </q-card>
 
     <!-- Quiz Cards -->
-    <div class="row q-pt-md justify-between">
+    <div class="row q-col-gutter-md q-pt-md">
       <div
-        v-for="quiz in paginatedQuizzes"
+        v-for="quiz in quizzes"
         :key="quiz.quizId"
-        class="col-12 col-md-6 q-my-md q-gutter-md"
+        class="col-12 col-md-6 q-my-md"
       >
         <q-card
-          class="my-card"
+          class="my-card bg-white q-mb-md"
           clickable
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
-          style="cursor: pointer"
+          style="cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1)"
         >
           <q-card-section>
-            <div class="text-h6">과목 : {{ quiz.subject }}</div>
-            <div class="text-subtitle2">챕터 : {{ quiz.detailSubject }}</div>
-            <div class="text-body2">
-              문제 유형 : {{ formatQuizType(quiz.quizType) }}
+            <div>퀴즈ID : {{ quiz.quizId }}</div>
+            <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
+            <div class="text-subtitle2 text-secondary">
+              챕터: {{ quiz.detailSubject }}
             </div>
-            <div class="text-caption text-createAt">
-              생성일 : {{ formatDate(quiz.createAt) }}
+            <div class="text-body2 text-dark">
+              문제 유형: {{ formatQuizType(quiz.quizType) }}
             </div>
-          </q-card-section>
+            <div class="text-caption text-grey">
+              생성일: {{ formatDate(quiz.createAt) }}
+            </div>
 
-          <q-card-section>
-            <QuizPermssionStatus :quiz="quiz" />
+            <!-- 퀴즈 내용 파싱 및 표시 -->
+            <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
+              <div class="text-h6">
+                문제: {{ parsedContent(quiz.jsonContent)?.quiz }}
+              </div>
+
+              <div class="text-body2">
+                정답: {{ parsedContent(quiz.jsonContent)?.answer }}
+              </div>
+              <div class="text-body2">
+                해설: {{ parsedContent(quiz.jsonContent)?.commentary }}
+              </div>
+            </div>
           </q-card-section>
         </q-card>
       </div>
@@ -163,6 +176,15 @@ const formatQuizType = quizType => {
 };
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
+// JSON 콘텐츠 파싱 함수
+const parsedContent = jsonContent => {
+  try {
+    return JSON.parse(jsonContent);
+  } catch (e) {
+    console.error('JSON 파싱 오류:', e);
+    return null;
+  }
 };
 
 // 필터링 초기화 기능
