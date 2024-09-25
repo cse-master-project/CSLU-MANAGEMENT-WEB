@@ -105,6 +105,7 @@
   <SubmitQuizSuccess
     v-if="submitQuizSuccess"
     :submit-quiz-success="submitQuizSuccess"
+    :quiz-id="quizId"
   />
 </template>
 
@@ -113,21 +114,26 @@ import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
+// 반응형 데이터
+const subject = ref('과목을 선택 해주세요.');
+const detailSubject = ref('챕터를 선택 해주세요.');
+const quiz = ref('');
+const answers = ref(['']);
+const commentary = ref('');
 
+// 퀴즈 유형 바꾸는 로직 (뒤로가기)
 const emits = defineEmits(['change-quiz-type']);
-
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
+//이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
-
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-
     // 파일 타입이 이미지인지 확인
     if (files[0].type.startsWith('image/')) {
       const reader = new FileReader();
@@ -141,27 +147,21 @@ const fileInputHandler = event => {
     }
   }
 };
-
+//이미지 업로드 취소 로직
 const cancelFile = () => {
   filePreview.value = null;
   fileName.value = ''; // 파일 이름 초기화
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
+// 과목, 챕터 불러오기 로직
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
 
 onMounted(fetchCategories);
 
-const subject = ref('과목을 선택 해주세요.');
-const detailSubject = ref('챕터를 선택 해주세요.');
-const quiz = ref('');
-const answers = ref(['']);
-const commentary = ref('');
-
 const filteredDetailSubjectOptions = ref([]);
-
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
+// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects.length === 0) {
@@ -170,7 +170,6 @@ const updateDetailSubjectOptions = () => {
     filteredDetailSubjectOptions.value = detailSubjects;
   }
 };
-
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
   detailSubject.value = '챕터를 선택 해주세요.';
@@ -191,9 +190,13 @@ const normalizeAnswers = answers => {
     .filter(answer => answer); // 빈 값 제거
 };
 
+// 서버 전송 여부
 const submitQuizSuccess = ref(false);
 
-// 서버에 문제 제출.
+// 서버에서 받아온 퀴즈 아이디
+const quizId = ref('');
+
+// 서버에 문제 제출
 const submitQuiz = async () => {
   //답안 정리
   const normalizedAnswers = normalizeAnswers(answers.value);
@@ -201,6 +204,7 @@ const submitQuiz = async () => {
   //입력값 검증
   let hasError = false;
   let errorMessage = '';
+
   if (subject.value === '과목을 선택 해주세요.') {
     errorMessage = '과목을 선택해 주세요.';
     hasError = true;
@@ -223,6 +227,7 @@ const submitQuiz = async () => {
     return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
   }
 
+  //서버에 보낼 퀴즈 데이터
   const quizData = {
     subject: subject.value,
     detailSubject: detailSubject.value,
@@ -238,13 +243,13 @@ const submitQuiz = async () => {
   try {
     // 문제 데이터 서버에 제출
     const response = await api.post('/api/quiz/default', quizData);
-    const quizId = response.data; // 서버에서 받은 문제 ID
-    console.log(quizId);
+    quizId.value = response.data; // 서버에서 받은 문제 ID
 
+    // 이미지가 있다면, 이미지 데이터 서버에 제출
     if (filePreview.value) {
       const imageData = {
         base64String: filePreview.value,
-        quizId: quizId,
+        quizId: quizId.value,
       };
       console.log('이미지데이터', imageData);
 
@@ -255,15 +260,11 @@ const submitQuiz = async () => {
     submitQuizSuccess.value = true;
   } catch (error) {
     if (error.response.status === 400) {
-      alert(
-        '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
-      );
-    } else if (error.response.status === 500) {
-      alert(
-        '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-      );
-    } else {
-      alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
+      // 이미지 전송 실패 시 에러 처리
+      alert('오류가 발생했습니다. 다시 시도해주세요.');
+      // 퀴즈 등록 취소 처리 또는 이미지 전송 실패 시 퀴즈도 등록하지 않음
+      await api.delete(`/api/management/quiz/${quizId.value}`); // 퀴즈 삭제 처리
+      return; // 이미지 전송 실패 시 퀴즈 등록 중단
     }
   }
 };

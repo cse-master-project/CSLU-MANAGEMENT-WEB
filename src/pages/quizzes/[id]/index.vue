@@ -3,6 +3,7 @@
     <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 800px">
       <!-- 과목, 챕터, 생성일 -->
       <q-card-section class="q-pa-md">
+        <div>퀴즈 ID : {{ quizzes.quizId }}</div>
         <div class="text-h6 q-mb-xs text-orange">
           과목 : {{ quizzes.subject }}
         </div>
@@ -17,19 +18,19 @@
           <img
             :src="imageUrl"
             alt="문제 이미지"
-            style="max-width: 100%; height: auto"
+            style="max-width: 100%; height: auto; border-radius: 8px"
           />
         </div>
       </q-card-section>
 
-      <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
+      <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시(view) -->
       <q-card-section class="q-pa-md">
         <component
           :is="quizTypeViewForm(quizzes.quizType)"
           :quizcontent="quizContent"
           v-if="!isEditing"
         />
-        <!-- 퀴즈 수정시 퀴즈 타입에 따라 동적 컴포넌트 표시 -->
+        <!-- 퀴즈 타입에 따라 동적 컴포넌트 표시(edit) -->
         <component
           :is="quizTypeEditForm(quizzes.quizType)"
           :quizcontent="quizContent"
@@ -39,10 +40,12 @@
           v-if="isEditing"
         />
       </q-card-section>
+
+      <!-- 버튼들을 수평으로 정렬 -->
       <q-card-section class="button-container">
         <q-btn
           flat
-          color="primary"
+          color="negative"
           class="my-btn small-btn"
           icon="delete"
           @click="isDelete = true"
@@ -52,7 +55,7 @@
         </q-btn>
         <q-btn
           flat
-          color="negative"
+          color="primary"
           class="my-btn small-btn"
           icon="edit"
           @click="isEditing = true"
@@ -62,6 +65,7 @@
         </q-btn>
       </q-card-section>
     </q-card>
+
     <DeleteQuizConfirmation
       v-if="isDelete"
       :is-delete="isDelete"
@@ -85,12 +89,12 @@ const quizId = route.params.id; // 현재 퀴즈 찾기
 // 이미지 URL 상태
 const imageUrl = ref(null);
 
-// 서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
+// 서버에서 퀴즈 데이터 가져오기.
 const fetchQuizzes = async () => {
   try {
     const response = await api.get(`/api/quiz/${quizId}`);
     quizzes.value = response.data;
-    console.log('퀴즈value:', quizzes.value);
+    console.log('서버에서 가져온 quiz value : ', quizzes.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
@@ -205,9 +209,10 @@ const isDelete = ref(false);
 
 <style scoped>
 .my-card {
-  max-width: 400px;
+  max-width: 600px;
   margin: auto;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 더 강화 */
+  border-radius: 12px; /* 카드 테두리 둥글게 */
 }
 
 .text-orange {
@@ -215,22 +220,24 @@ const isDelete = ref(false);
 }
 
 .text-createAt {
-  font-size: 0.75rem; /* 작은 글씨 */
+  font-size: 0.8rem; /* 약간 큰 작은 글씨 */
   color: #888888; /* 회색 */
 }
 
 .my-btn {
-  border-radius: 10px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-  padding: 8px 16px;
-  width: 100%;
-  margin: 1% auto;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 14px 24px; /* 버튼 패딩을 키워서 버튼 크기를 늘림 */
+  font-size: 1.1rem; /* 버튼 글자 크기를 키움 */
+  width: auto;
 }
 
 .button-container {
   display: flex;
-  flex-direction: column; /* 버튼을 위아래로 정렬 */
-  align-items: center; /* 버튼을 가운데 정렬 */
+  flex-direction: row; /* 버튼을 수평으로 정렬 */
+  justify-content: center; /* 버튼을 가운데 정렬 */
+  gap: 100px; /* 버튼 사이 간격 */
   padding: 0 32px; /* 양옆 마진을 카드와 동일하게 */
+  margin-bottom: 20px;
 }
 </style>
