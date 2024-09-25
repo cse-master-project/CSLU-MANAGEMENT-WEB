@@ -1,6 +1,8 @@
 <template>
+  <!-- 로그인 다이얼로그 창 -->
   <q-dialog v-model="visible" transition-show="fade" transition-hide="fade">
     <q-card class="my-card">
+      <!-- 닫기 버튼 -->
       <q-btn
         flat
         round
@@ -17,13 +19,18 @@
       >
         <q-tooltip style="background-color: black"> 닫기 </q-tooltip>
       </q-btn>
+
+      <!-- 로그인 카드  -->
       <q-card-section align="center" class="card-header">
         <div class="logoimg">
           <img src="/logo.jpg" class="responsive-logo" />
         </div>
         <div class="text-h6">로그인</div>
       </q-card-section>
+
       <q-separator class="separator" />
+
+      <!-- 구글 로그인 버튼 -->
       <q-card-actions class="google-login">
         <img
           src="/google.png"
@@ -33,6 +40,8 @@
           style="cursor: pointer"
         />
       </q-card-actions>
+
+      <!-- 회원가입 시 닉네임 입력 필드 -->
       <q-card-actions align="right" v-show="signUpVisible">
         <q-card-section class="q-pt-none">
           <q-input
@@ -60,38 +69,51 @@
         </q-card-section>
       </q-card-actions>
     </q-card>
+
+    <!-- GoogleLogin 컴포넌트 (콜백 처리) -->
     <GoogleLogin :callback="callback" />
   </q-dialog>
 </template>
 
 <script setup>
 import { Notify } from 'quasar';
-import { googleSdkLoaded } from 'vue3-google-login';
-import axios from 'axios';
 import { ref, watch, onMounted } from 'vue';
-import { userApi } from 'src/boot/userAxios';
-import { useCookies } from 'vue3-cookies'; //쿠키 관리 라이브러리
-import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상태관리
+import { googleAuth } from 'src/services/userAuth.js'; // Google 로그인 서비스 가져오기
 
-const { cookies } = useCookies(); //쿠키 사용.
-
-// const userStore = useUserAuthStore();
-// userStore.loadAuthDataFromCookies();
-
+// 부모 컴포넌트로부터 전달된 props 정의 (로그인 상태 여부)
 const props = defineProps({
   isLogin: Boolean,
 });
-const visible = ref(props.isLogin); //다이얼로그의 가시성(부모로부터 isLogin받음.)
+
+// 다이얼로그의 표시 여부를 관리하는 상태
+const visible = ref(props.isLogin);
+
+// 회원가입 화면 표시 여부 상태
 const signUpVisible = ref(false);
+
+// Google 액세스 토큰
 const googleacAcessToken = ref(null);
+
+// 회원가입 시 입력된 닉네임
 const nickname = ref(null);
-const userInfo = ref({}); // userInfo 변수를 정의합니다.
+
+// 사용자 정보 저장 변수
+const userInfo = ref({});
+
+// 부모 컴포넌트로 로그인 상태 변화를 알리기 위한 emit 설정
 const emit = defineEmits(['update:isLogin']);
 
+// Google 클라이언트 ID 및 비밀 키 (clientSecret은 환경 변수로 가져옴)
+const clientId =
+  '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com';
+const clientSecret = process.env.VUE_APP_GOOGLE_SECRET_CODE;
+
+// 컴포넌트가 마운트될 때 사용자 정보 가져오기
 onMounted(async () => {
   await fetchInfo();
 });
 
+// props의 isLogin 값이 변경될 때 다이얼로그 상태 갱신
 watch(
   () => props.isLogin,
   newVal => {
@@ -102,6 +124,7 @@ watch(
   },
 );
 
+// 다이얼로그가 닫히면 상태 초기화 및 부모에 로그인 상태 업데이트 알림
 watch(
   () => visible.value,
   newVal => {
@@ -112,138 +135,84 @@ watch(
   },
 );
 
+// 다이얼로그 상태 초기화 함수 (회원가입 화면 및 액세스 토큰 초기화)
 function resetState() {
   signUpVisible.value = false;
   googleacAcessToken.value = null;
   nickname.value = null;
 }
 
+// 다이얼로그 닫기 함수
 function closeDialog() {
   visible.value = false;
 }
 
-let userDetails = {}; //사용자 정보 저장.
-
-const LoginGoogle = () => {
-  googleSdkLoaded(google => {
-    google.accounts.oauth2
-      .initCodeClient({
-        client_id:
-          '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
-        scope: 'email profile openid',
-        redirect_uri: 'http://localhost:9000',
-        callback: response => {
-          if (response.code) {
-            sendCodeToBackend(response.code);
-          }
-        },
-      })
-      .requestCode();
-  });
-};
-
-const fetchInfo = async () => {
+// Google 로그인 처리 함수
+async function LoginGoogle() {
   try {
-    const response = await userApi.get('/api/user/info');
-    userInfo.value = response.data;
-    console.log('사용자 정보 : ', userInfo.value);
-  } catch (error) {
-    console.error('실패', error);
-  }
-};
+    // Google SDK를 통해 인증 코드 요청
+    const code = await googleAuth.getAuthCode(clientId);
 
-const sendCodeToBackend = async code => {
-  try {
-    const response = await axios.post('https://oauth2.googleapis.com/token', {
+    // 인증 코드를 통해 액세스 토큰 요청
+    googleacAcessToken.value = await googleAuth.getAccessToken(
       code,
-      client_id:
-        '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
-      client_secret: process.env.VUE_APP_GOOGLE_SECRET_CODE,
-      redirect_uri: 'postmessage',
-      grant_type: 'authorization_code',
-    });
-
-    const accessToken = response.data.access_token;
-    googleacAcessToken.value = accessToken;
-
-    const userResponse = await axios.get(
-      'https://www.googleapis.com/oauth2/v3/userinfo',
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
+      clientId,
+      clientSecret,
     );
 
-    if (userResponse && userResponse.data) {
-      userDetails = userResponse.data;
+    // Google 사용자 정보 가져오기
+    const googleUserInfo = await googleAuth.getUserInfo(
+      googleacAcessToken.value,
+    );
 
-      const userData = {
-        accessToken: accessToken,
-      };
+    // 사용자 등록 상태 확인
+    const registered = await googleAuth.checkUserRegistration(
+      googleacAcessToken.value,
+    );
 
-      userApi
-        .post('/api/user/auth/google/check', userData)
-        .then(async response => {
-          const registered = response.data.registered;
-          if (registered) {
-            const loginResponse = await userApi.post(
-              '/api/user/auth/google/login',
-              userData.accessToken,
-            );
-            const userStore = useUserAuthStore();
-            userStore.setAuthData(loginResponse.data);
+    if (registered) {
+      // 등록된 사용자일 경우 로그인 처리
+      await googleAuth.loginUser(googleacAcessToken.value);
+      userInfo.value = await googleAuth.fetchUserInfo();
 
-            await fetchInfo();
+      // 로그인 알림
+      Notify.create({
+        message: `${userInfo.value.nickname}님, 환영합니다!`,
+        textColor: 'white',
+        classes: 'custom-notify',
+        timeout: 1500,
+        position: 'top',
+      });
 
-            //알림창
-            Notify.create({
-              message: `${userInfo.value.nickname}님, 환영합니다!`,
-              textColor: 'white',
-              classes: 'custom-notify',
-              timeout: 1500,
-              position: 'top',
-            });
-
-            closeDialog();
-          } else if (!registered) {
-            signUpVisible.value = true;
-          }
-        })
-        .catch(error => {
-          if (error.response.status === 400) {
-            alert(
-              '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요.',
-            );
-          } else {
-            console.error('등록 확인 중 오류 발생:', error);
-          }
-        });
+      closeDialog(); // 다이얼로그 닫기
     } else {
-      console.error('사용자 정보를 가져오지 못했습니다.');
+      // 등록되지 않은 사용자일 경우 회원가입 화면 표시
+      signUpVisible.value = true;
     }
   } catch (error) {
-    console.error('토큰 교환 실패:', error.response.data);
+    console.error('구글 로그인 실패:', error);
   }
-};
+}
 
-const signUpGoogle = () => {
-  const userData2 = {
-    accessToken: googleacAcessToken.value,
-    nickname: nickname.value,
-  };
+// 회원가입 처리 함수
+async function signUpGoogle() {
+  try {
+    // Google 회원가입 처리
+    await googleAuth.signUpGoogle(googleacAcessToken.value, nickname.value);
+    closeDialog(); // 회원가입 후 다이얼로그 닫기
+  } catch (error) {
+    console.error('회원가입 실패:', error);
+  }
+}
 
-  userApi
-    .post('/api/user/auth/google/sign-up', userData2)
-    .then(response => {
-      const userStore = useUserAuthStore();
-      userStore.setAuthData(response.data);
-      closeDialog();
-    })
-    .catch(error => {
-      console.log('회원가입 실패:', error);
-    });
-};
+// 사용자 정보 가져오기 함수
+async function fetchInfo() {
+  try {
+    userInfo.value = await googleAuth.fetchUserInfo();
+  } catch (error) {
+    console.error('사용자 정보 가져오기 실패:', error);
+  }
+}
 </script>
 
 <style scoped>
