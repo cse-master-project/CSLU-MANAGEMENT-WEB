@@ -81,7 +81,7 @@ const emitQuizType = () => {
 
 <style>
 .page {
-  height: 80vh;
+  height: 50vh;
   display: flex;
   justify-content: center;
 }
@@ -165,5 +165,10 @@ const emitQuizType = () => {
   width: 80%;
   padding: 0;
   border-top: 1px solid #ccc;
+}
+@media (max-width: 430px) {
+  .page {
+    height: 130vh;
+  }
 }
 </style>
