@@ -15,7 +15,7 @@
         "
       ></q-btn>
       <q-card-section>
-        <div class="logoutmsg" style="">로그아웃 하시겠습니까?</div>
+        <div class="logoutmsg">로그아웃 하시겠습니까?</div>
       </q-card-section>
       <q-btn class="logoutbtn" @click="logout">YES.</q-btn>
       <q-btn class="logoutbtn" @click="close">No.</q-btn>
@@ -25,9 +25,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useUserAuthStore } from 'src/stores/userAuth'; //사용자 인증 상태관리
-import { userApi } from 'src/boot/userAxios';
 import { useRouter } from 'vue-router';
+import { userAuth } from 'src/services/userAuth'; // 로그아웃 서비스 가져오기
 
 const props = defineProps({
   isLogout: Boolean,
@@ -35,36 +34,18 @@ const props = defineProps({
 const visible = ref(props.isLogout);
 
 const emit = defineEmits(['update:isLogout']);
-
-// Pinia 스토어 사용
-const userStore = useUserAuthStore();
 const router = useRouter();
 
-// 로그아웃 데이터를 서버에 post 요청 전송
+// 로그아웃 처리 함수
 const logout = async () => {
   try {
-    emit('update:isLogout', false);
-    const accessToken = userStore.accessToken; // accessToken을 스토어에서 가져옵니다.
-    // 서버에 로그아웃 요청 보내기
-    await userApi.post(
-      '/api/user/auth/google/logout',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // 인자로 받은 accessToken 사용
-        },
-      },
-    );
-
-    // 사용자 상태 초기화
-    userStore.logout();
-    //console.log('로그아웃 성공');
+    emit('update:isLogout', false); // 다이얼로그 닫기
+    await userAuth.logoutUser(); // 로그아웃 서비스 호출
 
     // 로그아웃 성공 후 홈 페이지로 리디렉션
     router.push('/home');
   } catch (error) {
     alert('로그아웃 실패.');
-    console.error('로그아웃 실패:', error);
   }
 };
 

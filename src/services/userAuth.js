@@ -3,6 +3,7 @@ import { googleSdkLoaded } from 'vue3-google-login'; // Google SDK 로드 함수
 import { userApi } from 'src/boot/userAxios';
 import { useUserAuthStore } from 'src/stores/userAuth';
 
+// 로그인 로직
 export const googleAuth = {
   // Google SDK를 통해 인증 코드 요청
   async getAuthCode(clientId) {
@@ -69,7 +70,7 @@ export const googleAuth = {
     try {
       const userData = { accessToken };
       const response = await userApi.post(
-        '/api/user/auth/google/check',
+        '/api/v2/user/auth/google/check',
         userData,
       );
       return response.data.registered; // 사용자 등록 여부 반환
@@ -83,7 +84,7 @@ export const googleAuth = {
   async loginUser(accessToken) {
     try {
       const response = await userApi.post(
-        '/api/user/auth/google/login',
+        '/api/v2/user/auth/google/login',
         accessToken,
       );
       const userStore = useUserAuthStore();
@@ -103,7 +104,7 @@ export const googleAuth = {
         nickname,
       };
       const response = await userApi.post(
-        '/api/user/auth/google/sign-up',
+        '/api/v2/user/auth/google/sign-up',
         userData,
       );
       const userStore = useUserAuthStore();
@@ -123,6 +124,34 @@ export const googleAuth = {
     } catch (error) {
       console.error('사용자 정보 가져오기 실패:', error);
       throw new Error('사용자 정보 가져오기 실패');
+    }
+  },
+};
+
+// 로그아웃 로직
+export const userAuth = {
+  // 로그아웃 함수
+  async logoutUser() {
+    const userStore = useUserAuthStore(); // 스토어 인스턴스
+    const accessToken = userStore.accessToken; // 스토어에서 accessToken 가져오기
+
+    try {
+      // 로그아웃 요청을 서버로 전송
+      await userApi.post(
+        '/api/v2/user/auth/google/logout',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Bearer 토큰으로 accessToken 전송
+          },
+        },
+      );
+
+      // 사용자 인증 정보 초기화
+      userStore.logout(); // Pinia 스토어에서 로그아웃 처리
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+      throw new Error('로그아웃 실패');
     }
   },
 };
