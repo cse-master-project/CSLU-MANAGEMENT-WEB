@@ -19,18 +19,25 @@ export const useAdminAuthStore = defineStore('adminAuth', {
       this.refreshIseAt = data.refreshIseAt;
       this.refreshExpAt = data.refreshExpAt;
 
-      // 30분 유효 시간으로 쿠키 저장
+      // 30분 유효 시간으로 만료 시간을 설정
       const thirtyMinutesLater = new Date();
-      thirtyMinutesLater.setMinutes(thirtyMinutesLater.getMinutes() + 30);
+      thirtyMinutesLater.setMinutes(thirtyMinutesLater.getMinutes() + 30); // 현재 시간 기준 30분 후
 
+      // 만료 시간으로 쿠키 저장 (30분)
       Cookies.set('accessToken', data.accessToken, {
-        expires: thirtyMinutesLater,
+        expires: thirtyMinutesLater, // 30분 후 만료
         path: '/',
       });
       Cookies.set('refreshToken', data.refreshToken, {
-        expires: thirtyMinutesLater,
+        expires: thirtyMinutesLater, // 30분 후 만료
         path: '/',
       });
+
+      // 콘솔로 만료 시간을 출력
+      console.log(
+        '새로운 리프레시 토큰 만료 시간 (30분 후):',
+        thirtyMinutesLater,
+      );
     },
     // 새로고침 시 쿠키에서 토큰을 불러와 상태 복원
     loadAuthDataFromCookies() {
