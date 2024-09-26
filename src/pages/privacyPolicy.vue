@@ -2,13 +2,13 @@
   <q-page class="page">
     <q-card class="privacy-card">
       <q-card-section class="image-section">
-        <img src="/public/auth1.png" alt="Privacy Policy Image 1" />
+        <img src="/auth1.png" alt="Privacy Policy Image 1" />
       </q-card-section>
       <q-card-section class="image-section">
-        <img src="/public/auth2.png" alt="Privacy Policy Image 2" />
+        <img src="/auth2.png" alt="Privacy Policy Image 2" />
       </q-card-section>
       <q-card-section class="image-section">
-        <img src="/public/auth3.png" alt="Privacy Policy Image 3" />
+        <img src="/auth3.png" alt="Privacy Policy Image 3" />
       </q-card-section>
     </q-card>
   </q-page>
