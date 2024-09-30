@@ -8,6 +8,12 @@ export const googleAuth = {
   // Google SDK를 통해 인증 코드 요청
   async getAuthCode(clientId) {
     return new Promise((resolve, reject) => {
+      // 환경에 따른 redirect_uri 설정
+      const redirectUri =
+        process.env.NODE_ENV === 'production'
+          ? 'https://cslu-studying-web.duckdns.org/callback'
+          : 'http://localhost:9000/callback';
+
       // Google SDK 로드가 완료된 후 인증 코드 요청
       googleSdkLoaded(google => {
         google.accounts.oauth2
@@ -15,7 +21,7 @@ export const googleAuth = {
             client_id:
               '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
             scope: 'email profile openid',
-            redirect_uri: 'http://localhost:9000',
+            redirect_uri: redirectUri,
             callback: response => {
               if (response.code) {
                 resolve(response.code); // 인증 코드 반환
