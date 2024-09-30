@@ -112,7 +112,7 @@
       :width="200"
       :breakpoint="1024"
       elevated
-      class="bg-white text-black"
+      class="drawer"
     >
       <q-list>
         <q-item clickable to="/about" @click="drawer = false">
@@ -377,9 +377,9 @@ const drawerLeft = ref(false);
   border-radius: 40px;
   padding: 0 20px;
 }
-
-.hamburger-menu {
-  display: none;
+.drawer .q-item {
+  font-size: 1rem;
+  margin-bottom: 10px;
 }
 
 @media (max-width: 1200px) {

@@ -85,13 +85,13 @@
           icon="menu"
         />
       </q-toolbar>
-
+      <!-- 사이드 바 -->
       <q-drawer
         v-model="drawerLeft"
         :width="200"
         :breakpoint="1024"
         elevated
-        class="bg-white text-black"
+        class="drawer"
         ><q-list
           ><q-btn
             v-if="isLoggedIn"
@@ -200,6 +200,7 @@ const drawerLeft = ref(false);
 }
 
 .toolbar {
+  font-family: 'Nanum';
   width: 100%; /* 툴바 너비 조정 */
   display: flex;
   justify-content: space-around; /* 아이템 사이 공간을 균등하게 분배 */
@@ -208,12 +209,12 @@ const drawerLeft = ref(false);
 
 .toolbar-item {
   margin: 0 8px; /* 버튼 사이 간격 조정 */
-  font-size: 1rem; /* 글씨 크기 조정 */
+  font-size: 1.1rem; /* 글씨 크기 조정 */
   position: relative;
 }
 .toolbar-items {
   margin: 0 8px; /* 버튼 사이 간격 조정 */
-  font-size: 1rem; /* 글씨 크기 조정 */
+  font-size: 1.1rem; /* 글씨 크기 조정 */
   position: relative;
 }
 
@@ -237,7 +238,15 @@ const drawerLeft = ref(false);
   margin: 20px auto; /* 페이지 중앙 정렬 및 여백 설정 */
   padding: 20px; /* 페이지 내용 여백 설정 */
 }
-@media (max-width: 1024px) {
+.drawer .q-btn {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: black;
+}
+.drawer .q-btn.active {
+  color: var(--q-primary);
+}
+@media (max-width: 1100px) {
   .toolbar {
     justify-content: space-between; /* 아이템 사이 공간을 균등하게 분배 */
   }
@@ -248,7 +257,8 @@ const drawerLeft = ref(false);
     display: none;
   }
 }
-@media (min-width: 1025px) {
+
+@media (min-width: 1101px) {
   .menu {
     display: none;
   }

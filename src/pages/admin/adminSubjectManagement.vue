@@ -143,4 +143,40 @@ const showSection = section => {
   flex-direction: column; /* 콘텐츠를 세로 방향으로 배치 */
   gap: 1rem; /* 콘텐츠 간의 간격을 1rem으로 설정 */
 }
+@media (max-width: 600px) {
+  .button-section {
+    gap: 1rem;
+  }
+  .action-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #f5f5f5;
+    color: black;
+  }
+}
+@media (max-width: 410px) {
+  .button-section {
+    gap: 1rem;
+  }
+  .action-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #f5f5f5;
+    color: black;
+  }
+}
 </style>
