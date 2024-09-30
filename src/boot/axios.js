@@ -1,8 +1,8 @@
 //관리자용
-
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
 import { useAdminAuthStore } from 'src/stores/adminAuth';
+import { adminAuth } from 'src/services/adminAuth';
 
 const api = axios.create({
   // 기본 URL
@@ -43,23 +43,17 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // 토큰 갱신 요청
-        const response = await axios.post('/api/manager/refresh', {
-          refreshToken: adminStore.refreshToken,
-        });
+        // 서비스 레이어에서 토큰 갱신 처리
+        const newAccessToken = await adminAuth.refreshToken();
 
-        // 새로운 토큰을 Pinia 스토어에 저장
-        adminStore.setAuthData(response.data);
-
-        // 원래 요청에 새로운 토큰을 포함시켜 재시도
-        originalRequest.headers.Authorization = `Bearer ${adminStore.accessToken}`;
-
-        return apiClient(originalRequest);
+        // 새로운 토큰으로 원래 요청을 다시 시도
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return api(originalRequest);
       } catch (e) {
-        // 갱신 실패 시 로그아웃 처리
-        adminStore.logout();
-        // 추가적으로 로그인 페이지로 리다이렉트 등의 처리 필요
+        // 갱신 실패 시 로그아웃 및 로그인 페이지 리다이렉트
         console.error('토큰 갱신 실패:', e);
+        adminStore.logout();
+        this.$router.push('/login');
       }
     }
 

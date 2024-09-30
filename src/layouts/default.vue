@@ -169,9 +169,14 @@
       <router-view v-if="!selectedQuizType" />
       <component v-else :is="getQuizComponent(selectedQuizType)" />
     </q-page-container>
-
-    <q-footer class="q-footer">
-      <footerbar>CSLU © 2024 . All Rights Reserved. </footerbar>
+    <!-- 바닥 -->
+    <q-footer class="q-footer footer-bar">
+      <div class="footer-content">
+        <footerbar>CSLU © 2024 . All Rights Reserved.</footerbar>
+        <q-btn flat dense class="footer-btn" to="/privacyPolicy">
+          개인정보처리 방침
+        </q-btn>
+      </div>
     </q-footer>
     <UserLoginGoogle
       v-if="isLogin"
@@ -404,5 +409,41 @@ const drawerLeft = ref(false);
 }
 .toolbar-items.loggedIn {
   margin: 0 10px; /* Margin when logged in */
+}
+
+/* 바닥 */
+.footer-bar {
+  background-color: #ffffff; /* 어두운 배경색 */
+  color: #000000; /* 밝은 텍스트 색상 */
+  padding: 16px; /* 상하좌우 여백 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px; /* 푸터의 최대 너비 설정 */
+  padding: 0 16px;
+}
+
+footerbar {
+  font-size: 14px; /* 텍스트 크기 */
+}
+
+.footer-btn {
+  color: #2c3e50; /* 버튼 텍스트 색상 */
+  border: 1px solid #ffffff; /* 버튼 테두리 */
+  border-radius: 8px; /* 버튼 모서리 둥글게 */
+  padding: 4px 12px; /* 버튼 내부 여백 */
+  transition: background-color 0.3s ease; /* 배경색 변화 애니메이션 */
+}
+
+.footer-btn:hover {
+  background-color: #3498db; /* 버튼 호버 시 배경색 */
+  color: #000000;
 }
 </style>

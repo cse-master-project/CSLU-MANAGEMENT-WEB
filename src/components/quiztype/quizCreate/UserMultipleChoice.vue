@@ -29,6 +29,7 @@
             />
           </div>
         </q-card-section>
+
         <!-- 이미지 업로드 -->
         <q-card-section class="imageUpload-container">
           <div>
@@ -44,16 +45,17 @@
             <div class="cancel-button" @click="cancelFile">X</div>
           </div>
         </q-card-section>
+
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">문제</q-label>
+          <q-label class="label-quiz">질문</q-label>
           <q-input
             v-model="quiz"
             type="textarea"
             autogrow
             outlined
             dense
-            placeholder="문제를 입력하세요."
+            placeholder="문제를 입력하세요"
             maxlength="300"
             counter
             class="input-quiz"
@@ -77,10 +79,10 @@
               type="textarea"
               outlined
               dense
+              maxlength="100"
               autogrow
-              maxlength="300"
               class="q-mb-md input-choices"
-              placeholder="지문을 입력하세요."
+              placeholder="지문을 입력하세요"
             />
           </div>
         </q-card-section>
@@ -92,7 +94,7 @@
             type="textarea"
             autogrow
             outlined
-            placeholder="해설을 입력하세요."
+            placeholder="해설을 입력하세요"
             dense
             maxlength="300"
             counter
@@ -109,6 +111,7 @@
   <UserSubmitQuizSuccess
     v-if="submitQuizSuccess"
     :submit-quiz-success="submitQuizSuccess"
+    :quiz-id="quizId"
   />
 </template>
 
@@ -116,21 +119,32 @@
 import { ref, onMounted, watch } from 'vue';
 import { userApi } from 'src/boot/userAxios';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
-import userUseCategories from 'src/services/userUseCategories.js';
+import userUseCategories from 'src/services/userUseCategories.js'; // 반응형 데이터
+const subject = ref('과목을 선택 해주세요.');
+const detailSubject = ref('챕터를 선택 해주세요.');
+const quiz = ref('');
+const option = ref([
+  { label: '', value: '1' },
+  { label: '', value: '2' },
+  { label: '', value: '3' },
+  { label: '', value: '4' },
+]);
+const selectedAnswer = ref(null);
+const commentary = ref('');
 
+// 퀴즈 유형 바꾸는 로직 (뒤로가기)
 const emits = defineEmits(['change-quiz-type']);
-
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
+//이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-
     // 파일 타입이 이미지인지 확인
     if (files[0].type.startsWith('image/')) {
       const reader = new FileReader();
@@ -144,32 +158,21 @@ const fileInputHandler = event => {
     }
   }
 };
-
+//이미지 업로드 취소 로직
 const cancelFile = () => {
   filePreview.value = null;
   fileName.value = ''; // 파일 이름 초기화
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
+// 과목, 챕터 불러오기 로직
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   userUseCategories();
 
 onMounted(fetchCategories);
 
-const subject = ref('');
-const detailSubject = ref('');
-const quiz = ref('');
-const option = ref([
-  { label: '', value: '1' },
-  { label: '', value: '2' },
-  { label: '', value: '3' },
-  { label: '', value: '4' },
-]);
-const selectedAnswer = ref(null);
-const commentary = ref('');
+// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const filteredDetailSubjectOptions = ref([]);
-
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects.length === 0) {
@@ -178,16 +181,50 @@ const updateDetailSubjectOptions = () => {
     filteredDetailSubjectOptions.value = detailSubjects;
   }
 };
-
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '';
+  detailSubject.value = '챕터를 선택 해주세요.';
   updateDetailSubjectOptions();
 });
 
+// 서버 전송 여부
 const submitQuizSuccess = ref(false);
 
-const submitQuiz = () => {
+// 서버에서 받아온 퀴즈 아이디
+const quizId = ref('');
+
+// 서버에 문제 제출.
+const submitQuiz = async () => {
+  // 입력값 검증
+  let hasError = false;
+  let errorMessage = '';
+
+  if (subject.value === '과목을 선택 해주세요.') {
+    errorMessage = '과목을 선택해 주세요.';
+    hasError = true;
+  } else if (detailSubject.value === '챕터를 선택 해주세요.') {
+    errorMessage = '챕터를 선택해 주세요.';
+    hasError = true;
+  } else if (quiz.value.trim() === '') {
+    errorMessage = '문제를 입력해 주세요.';
+    hasError = true;
+  } else if (option.value.some(choice => choice.label.trim() === '')) {
+    errorMessage = '모든 지문을 입력해 주세요.';
+    hasError = true;
+  } else if (selectedAnswer.value === null) {
+    errorMessage = '정답을 선택해 주세요.';
+    hasError = true;
+  } else if (commentary.value.trim() === '') {
+    errorMessage = '해설을 입력해 주세요.';
+    hasError = true;
+  }
+
+  if (hasError) {
+    alert(errorMessage);
+    return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
+  }
+
+  //서버에 제출될 데이터
   const quizData = {
     subject: subject.value,
     detailSubject: detailSubject.value,
@@ -200,24 +237,34 @@ const submitQuiz = () => {
     }),
     hasImage: false,
   };
-  userApi
-    .post('/api/quiz/user', quizData)
-    .then(response => {
-      submitQuizSuccess.value = true;
-    })
-    .catch(error => {
-      if (error.response.status === 400) {
-        alert(
-          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
-        );
-      } else if (error.response.status === 500) {
-        alert(
-          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-        );
-      } else {
-        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
-      }
-    });
+  console.log('서버에 제출될 데이터:', quizData);
+  try {
+    // 문제 데이터 서버에 제출
+    const response = await userApi.post('/api/quiz/user', quizData);
+    quizId.value = response.data; // 서버에서 받은 문제 ID
+
+    // 이미지가 있다면, 이미지 데이터 서버에 제출
+    if (filePreview.value) {
+      const imageData = {
+        base64String: filePreview.value,
+        quizId: quizId.value,
+      };
+      console.log('이미지데이터', imageData);
+
+      await userApi.post('/api/quiz/image', imageData);
+      console.log('이미지 추가 완료');
+    }
+
+    submitQuizSuccess.value = true;
+  } catch (error) {
+    if (error.response.status === 400) {
+      // 이미지 전송 실패 시 에러 처리
+      alert('오류가 발생했습니다. 다시 시도해주세요.');
+      // 퀴즈 등록 취소 처리 또는 이미지 전송 실패 시 퀴즈도 등록하지 않음
+      await api.delete(`/api/management/quiz/${quizId.value}`); // 퀴즈 삭제 처리
+      return; // 이미지 전송 실패 시 퀴즈 등록 중단
+    }
+  }
 };
 </script>
 
@@ -257,13 +304,11 @@ const submitQuiz = () => {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-right: 10px;
 }
 .select-chapter {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-left: 10px;
 }
 .label-subject,
 .label-chapter {
@@ -273,7 +318,7 @@ const submitQuiz = () => {
   font-weight: bold;
 }
 .select-box {
-  width: 200px;
+  width: 220px;
 }
 
 //이미지 업로드 스타일
@@ -295,6 +340,16 @@ input[type='file'] {
   cursor: pointer;
 }
 /* 파일 업로드 버튼 스타일 - 원형, 크기, 배경색, 글자색, 중앙 정렬 */
+// .upload-button {
+//   width: 50px;
+//   height: 50px;
+//   background-color: #42a5f5;
+//   color: white;
+//   font-size: 2rem;
+//   text-align: center;
+//   line-height: 50px;
+//   border-radius: 50%;
+// }
 .upload-button {
   width: 80px;
   height: 80px;
@@ -333,8 +388,8 @@ input[type='file'] {
   color: white;
   font-size: 1.5rem;
   text-align: center;
+  line-height: 50px;
   border-radius: 50%;
-  cursor: pointer;
 }
 
 // 문제 입력 스타일
@@ -382,26 +437,15 @@ input[type='file'] {
 }
 .btn-back {
   background-color: rgb(213, 213, 213);
-  color: black;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.875rem;
-  line-height: 1.71429;
-  height: 40px;
-  font-family: 'Toss Product Sans';
-  box-shadow: rgba(39, 40, 40, 0.24) 0px 8px 16px 0px;
 }
 .btn-submit {
-  background-color: rgb(0, 154, 233);
-  color: white;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.875rem;
-  line-height: 1.71429;
-  height: 40px;
-  font-family: 'Toss Product Sans';
-  box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
+  background-color: primary;
+}
+@media (max-width: 430px) {
+  .select-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
 }
 </style>
