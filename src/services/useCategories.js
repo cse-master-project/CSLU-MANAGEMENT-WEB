@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 
+// 카테고리 사용하기. (view:조회)
 export default function useCategories() {
   const categories = ref([]);
   const subjectOptions = ref([]);
@@ -30,3 +31,36 @@ export default function useCategories() {
     getDetailSubjectsBySubject,
   };
 }
+
+// 과목, 챕터 관리 서비스
+export const chapterManagement = {
+  // - 추가
+  //과목
+  addSubject() {
+    return api.post('api/v2/quiz/subject', subjectData);
+  },
+  //챕터
+  addChapter() {
+    return api.post('api/quiz/subject/chapter', chapterData);
+  },
+
+  // - 수정
+  //과목
+  editSubject() {
+    return api.patch('api/v2/quiz/subject', subjectData);
+  },
+  //챕터
+  editChapter() {
+    return api.patch('api/quiz/subject/chapter', chapterData);
+  },
+
+  // - 삭제
+  //과목
+  addSubject() {
+    return api.delete('api/v2/quiz/subject', subjectData);
+  },
+  //챕터
+  addChapter() {
+    return api.delete('api/quiz/subject/chapter', chapterData);
+  },
+};

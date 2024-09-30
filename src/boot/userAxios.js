@@ -44,7 +44,7 @@ userApi.interceptors.response.use(
 
       try {
         // 토큰 갱신 요청
-        const response = await axios.post('/api/user/refresh', {
+        const response = await axios.post('/api/v2/user/refresh', {
           refreshToken: userStore.refreshToken,
         });
 
