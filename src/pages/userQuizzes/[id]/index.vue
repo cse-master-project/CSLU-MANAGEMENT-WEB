@@ -3,12 +3,21 @@
     <q-card class="my-card" v-if="quiz" style="width: 90%; max-width: 600px">
       <!-- 과목, 챕터, 생성일 -->
       <q-card-section class="q-pa-md">
+        <div>퀴즈 ID : {{ quiz.quizId }}</div>
         <div class="text-h6 q-mb-xs text-orange">과목 : {{ quiz.subject }}</div>
         <div class="text-subtitle2 q-mt-sm">
           챕터 : {{ quiz.detailSubject }}
         </div>
         <div class="text-caption text-createAt">
           생성일 : {{ formatDate(quiz.createAt) }}
+        </div>
+        <!-- 이미지 표시 -->
+        <div v-if="imageUrl" class="q-mt-md">
+          <img
+            :src="imageUrl"
+            alt="문제 이미지"
+            style="max-width: 100%; height: auto; border-radius: 8px"
+          />
         </div>
       </q-card-section>
 
@@ -44,11 +53,15 @@ const rejectReasons = ref([]);
 const route = useRoute();
 const quizId = Number(route.params.id); // 현재 퀴즈 ID 가져오기
 
+// 이미지 URL 상태
+const imageUrl = ref(null);
+
+// 서버에서 퀴즈 데이터 가져오기.
 const fetchQuiz = async () => {
   try {
     const response = await userApi.get(`/api/quiz/${quizId}`);
     quiz.value = response.data;
-    console.log('신고 문제:', quiz.value);
+    console.log('문제 :', quiz.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는 데 실패했습니다.', error);
   }
@@ -77,6 +90,20 @@ const fetchRejectReasons = async () => {
     console.log('반려 이유:', rejectReasons.value);
   } catch (error) {
     console.error('반려 이유를 불러오는 데 실패했습니다.', error);
+  }
+};
+
+// 서버에서 이미지 가져오기
+const fetchImage = async () => {
+  try {
+    const response = await userApi.get(`/api/quiz/${quizId}/image`);
+    console.log('서버에 받아온것 : ', response);
+
+    // base64 문자열 처리
+    const base64String = response.data;
+    imageUrl.value = `data:image/png;base64,${base64String}`;
+  } catch (error) {
+    console.error('이미지 데이터를 불러오는 데 실패했습니다.', error);
   }
 };
 
@@ -127,5 +154,6 @@ onMounted(() => {
   fetchQuiz();
   fetchQuizPermissionStatus();
   fetchRejectReasons();
+  fetchImage();
 });
 </script>
