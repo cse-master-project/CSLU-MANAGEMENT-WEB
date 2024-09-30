@@ -35,13 +35,15 @@
         <q-card-section class="imageUpload-container">
           <div>
             <label for="file">
-              <div class="upload-button">+</div>
+              <div class="upload-button">
+                <img src="/add-image.png" alt="Upload Image" />
+              </div>
             </label>
             <input type="file" id="file" @change="fileInputHandler" />
           </div>
           <div v-if="filePreview" class="previewImage-container">
             <img :src="filePreview" alt="File Preview" class="preview-image" />
-            <q-icon name="close" class="cancel-button" @click="cancelFile" />
+            <div class="cancel-button" @click="cancelFile">X</div>
           </div>
         </q-card-section>
         <!-- 문제 입력 -->
@@ -396,18 +398,19 @@ input[type='file'] {
 }
 /* 파일 업로드 버튼 스타일 - 원형, 크기, 배경색, 글자색, 중앙 정렬 */
 .upload-button {
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   background-color: #42a5f5;
-  color: white;
-  font-size: 2rem;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 50%;
-  transition: transform 0.5s ease-in-out;
+  cursor: pointer;
 }
-//회전 애니메이션
-.upload-button:hover {
-  transform: rotate(360deg);
+
+.upload-button img {
+  max-width: 60%;
+  max-height: 60%;
 }
 /* 파일 미리보기 스타일 */
 .previewImage-container {
