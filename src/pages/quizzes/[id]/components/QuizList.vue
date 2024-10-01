@@ -16,7 +16,7 @@
         <div class="col-12 col-md-3 q-my-md">
           챕터
           <q-select
-            v-model="detailSubject"
+            v-model="chapter"
             :options="filteredDetailSubjectOptions.reverse().slice()"
             outlined
             dense
@@ -49,6 +49,7 @@
         </div>
       </div>
     </q-card>
+
     <!--레이아웃 변경-->
     <div class="layoutbtn q-gutter-md" align="right">
       <q-btn @click="setLayout(1)" class="layout-btn no-padding">
@@ -61,6 +62,7 @@
         <img src="/3layout.png" alt="3열" class="layoutimg"
       /></q-btn>
     </div>
+
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
@@ -80,7 +82,7 @@
             <div>퀴즈ID : {{ quiz.quizId }}</div>
             <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
             <div class="text-subtitle2 text-secondary">
-              챕터: {{ quiz.detailSubject }}
+              챕터: {{ quiz.chapter }}
             </div>
             <div class="text-body2 text-dark">
               문제 유형: {{ formatQuizType(quiz.quizType) }}
@@ -120,6 +122,7 @@
     </div>
   </q-page>
 </template>
+
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
@@ -137,7 +140,7 @@ const totalElements = ref(0); // 전체 퀴즈 수
 
 const filteredQuizzes = ref([]);
 const subject = ref(filterStore.subject);
-const detailSubject = ref(filterStore.detailSubject);
+const chapter = ref(filterStore.chapter);
 const quizType = ref(filterStore.quizType);
 const quizTypeOptions = [
   { value: 1, label: '4지선다형' },
@@ -157,13 +160,13 @@ const updateDetailSubjectOptions = () => {
   );
 };
 watch(subject, newValue => {
-  detailSubject.value = '';
+  chapter.value = '';
   filteredDetailSubjectOptions.value = [];
   updateDetailSubjectOptions();
   filterStore.setSubject(newValue);
 });
-watch(detailSubject, newValue => {
-  filterStore.setDetailSubject(newValue);
+watch(chapter, newValue => {
+  filterStore.setChapter(newValue); // setDetailSubject에서 setChapter로 변경
 });
 watch(quizType, newValue => {
   filterStore.setQuizType(newValue);
@@ -172,7 +175,7 @@ watch(quizType, newValue => {
 // 서버에서 퀴즈 목록 들고 오기.
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/quiz/default', {
+    const response = await api.get('/api/v2/quiz/default', {
       params: {
         page: 0, // 서버에서 전체 데이터를 가져오기 위한 페이지 번호
         size: 1000, // 서버에서 전체 데이터를 가져오기 위한 크기
@@ -209,11 +212,9 @@ const changePage = page => {
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
-    const detailSubjectMatch =
-      !detailSubject.value || quiz.detailSubject === detailSubject.value;
-    const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value;
-    return subjectMatch && detailSubjectMatch && quizTypeMatch;
+    const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
+    const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
+    return subjectMatch && chapterMatch && quizTypeMatch;
   });
   // 페이지네이션을 적용한 퀴즈 목록을 업데이트
   paginatedQuizzes.value = paginatedQuizzes.value;
@@ -222,7 +223,7 @@ const filterQuizzes = () => {
 // 필터링 초기화 함수
 const resetFilters = () => {
   subject.value = '';
-  detailSubject.value = '';
+  chapter.value = '';
   quizType.value = '';
 
   filterQuizzes(); // 필터링 및 페이지네이션 적용
@@ -287,6 +288,7 @@ onMounted(async () => {
   await fetchQuizzes();
 });
 </script>
+
 <style scoped>
 .my-card {
   border-radius: 10px;
