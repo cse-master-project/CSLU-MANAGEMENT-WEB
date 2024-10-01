@@ -1,18 +1,14 @@
 <template>
   <q-page class="q-pa-md flex flex-center">
     <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 800px">
-      <!-- 과목, 챕터, 생성일 -->
+      <!-- 과목, 챕터 -->
       <q-card-section class="q-pa-md">
         <div>퀴즈 ID : {{ quizzes.quizId }}</div>
         <div class="text-h6 q-mb-xs text-orange">
           과목 : {{ quizzes.subject }}
         </div>
-        <div class="text-subtitle2 q-mt-sm">
-          챕터 : {{ quizzes.detailSubject }}
-        </div>
-        <div class="text-caption text-createAt">
-          생성일 : {{ formatDate(quizzes.createAt) }}
-        </div>
+        <div class="text-subtitle2 q-mt-sm">챕터 : {{ quizzes.chapter }}</div>
+
         <!-- 이미지 표시 -->
         <div v-if="imageUrl" class="q-mt-md">
           <img
@@ -79,7 +75,6 @@
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
-import { date } from 'quasar';
 import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
@@ -92,23 +87,22 @@ const imageUrl = ref(null);
 // 서버에서 퀴즈 데이터 가져오기.
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get(`/api/quiz/${quizId}`);
+    const response = await api.get(`/api/v2/quiz/${quizId}`);
     quizzes.value = response.data;
     console.log('서버에서 가져온 quiz value : ', quizzes.value);
+    // hasImage가 true이면 이미지를 가져옴
+    if (quizzes.value.hasImage) {
+      await fetchImage(); // 이미지 로드 함수 호출
+    }
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
 
-// 생성일 포맷팅.
-const formatDate = dateString => {
-  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
-};
-
 // 서버에서 이미지 가져오기
 const fetchImage = async () => {
   try {
-    const response = await api.get(`/api/quiz/${quizId}/image`);
+    const response = await api.get(`/api/v2/quiz/${quizId}/image`);
     console.log('서버에 받아온것 : ', response);
 
     // base64 문자열 처리
@@ -121,7 +115,6 @@ const fetchImage = async () => {
 
 onMounted(async () => {
   await fetchQuizzes();
-  await fetchImage();
 });
 
 // JSON 파싱.
