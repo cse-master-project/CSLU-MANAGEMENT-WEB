@@ -22,7 +22,7 @@
             <q-label class="label-chapter">챕터 선택</q-label>
             <q-select
               class="select-box"
-              v-model="detailSubject"
+              v-model="chapter"
               :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
@@ -122,7 +122,7 @@ import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
 // 반응형 데이터
 const subject = ref('과목을 선택 해주세요.');
-const detailSubject = ref('챕터를 선택 해주세요.');
+const chapter = ref('챕터를 선택 해주세요.');
 const quiz = ref('');
 const option = ref([
   { label: '', value: '1' },
@@ -184,7 +184,7 @@ const updateDetailSubjectOptions = () => {
 };
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '챕터를 선택 해주세요.';
+  chapter.value = '챕터를 선택 해주세요.';
   updateDetailSubjectOptions();
 });
 
@@ -203,14 +203,14 @@ const submitQuiz = async () => {
   if (subject.value === '과목을 선택 해주세요.') {
     errorMessage = '과목을 선택해 주세요.';
     hasError = true;
-  } else if (detailSubject.value === '챕터를 선택 해주세요.') {
+  } else if (chapter.value === '챕터를 선택 해주세요.') {
     errorMessage = '챕터를 선택해 주세요.';
     hasError = true;
   } else if (quiz.value.trim() === '') {
     errorMessage = '문제를 입력해 주세요.';
     hasError = true;
   } else if (option.value.some(choice => choice.label.trim() === '')) {
-    errorMessage = '모든 지문을 입력해 주세요.';
+    errorMessage = '모hasImage든 지문을 입력해 주세요.';
     hasError = true;
   } else if (selectedAnswer.value === null) {
     errorMessage = '정답을 선택해 주세요.';
@@ -224,11 +224,13 @@ const submitQuiz = async () => {
     alert(errorMessage);
     return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
   }
+  // 이미지가 있는지 확인하여 hasImage 값을 설정
+  const hasImage = !!filePreview.value;
 
   //서버에 제출될 데이터
   const quizData = {
     subject: subject.value,
-    detailSubject: detailSubject.value,
+    chapter: chapter.value,
     quizType: '1',
     jsonContent: JSON.stringify({
       quiz: quiz.value,
@@ -236,12 +238,12 @@ const submitQuiz = async () => {
       answer: selectedAnswer.value + 1, // 선택된 답의 인덱스를 +1 해서 서버에 보냄
       commentary: commentary.value,
     }),
-    hasImage: false,
+    hasImage: hasImage,
   };
   console.log('서버에 제출될 데이터:', quizData);
   try {
     // 문제 데이터 서버에 제출
-    const response = await api.post('/api/quiz/default', quizData);
+    const response = await api.post('/api/v2/quiz/default', quizData);
     quizId.value = response.data; // 서버에서 받은 문제 ID
 
     // 이미지가 있다면, 이미지 데이터 서버에 제출
@@ -252,7 +254,7 @@ const submitQuiz = async () => {
       };
       console.log('이미지데이터', imageData);
 
-      await api.post('/api/quiz/image', imageData);
+      await api.post('/api/v2/quiz/image', imageData);
       console.log('이미지 추가 완료');
     }
 

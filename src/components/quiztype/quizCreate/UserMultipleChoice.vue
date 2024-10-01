@@ -120,6 +120,7 @@ import { ref, onMounted, watch } from 'vue';
 import { userApi } from 'src/boot/userAxios';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
 import userUseCategories from 'src/services/userUseCategories.js'; // 반응형 데이터
+// 반응형 데이터
 const subject = ref('과목을 선택 해주세요.');
 const detailSubject = ref('챕터를 선택 해주세요.');
 const quiz = ref('');
