@@ -6,7 +6,7 @@
         <q-btn flat dense to="/admin" class="toolbar-item">
           <q-toolbar-title class="title">
             <q-avatar>
-              <img src="/gnu2.jpg" />
+              <img src="/logo.jpg" />
             </q-avatar>
             CSLU
           </q-toolbar-title>

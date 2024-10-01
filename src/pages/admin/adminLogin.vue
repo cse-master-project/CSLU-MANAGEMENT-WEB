@@ -1,9 +1,9 @@
 <template>
   <q-page class="q-pa-md flex flex-center">
     <q-card class="my-card">
-      <q-img src="" class="card-image" contain />
-      <q-card-section class="text-h6 text-center q-py-lg">
-        환영합니다 관리자님 ^_^
+      <q-img src="/gnu.jpg" class="card-image" contain />
+      <q-card-section class="text-h5 text-center q-py-lg">
+        CSLU 관리자 로그인
       </q-card-section>
       <q-card-section class="q-pt-none">
         <q-input
