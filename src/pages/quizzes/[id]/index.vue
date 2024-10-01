@@ -74,7 +74,7 @@
 <script setup>
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { api } from 'src/boot/axios';
+import { fetchQuiz, fetchQuizImage } from 'src/services/quiz/quizDetail.js';
 import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
@@ -87,8 +87,8 @@ const imageUrl = ref(null);
 // 서버에서 퀴즈 데이터 가져오기.
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get(`/api/v2/quiz/${quizId}`);
-    quizzes.value = response.data;
+    const data = await fetchQuiz(quizId);
+    quizzes.value = data;
     console.log('서버에서 가져온 quiz value : ', quizzes.value);
     // hasImage가 true이면 이미지를 가져옴
     if (quizzes.value.hasImage) {
@@ -102,11 +102,7 @@ const fetchQuizzes = async () => {
 // 서버에서 이미지 가져오기
 const fetchImage = async () => {
   try {
-    const response = await api.get(`/api/v2/quiz/${quizId}/image`);
-    console.log('서버에 받아온것 : ', response);
-
-    // base64 문자열 처리
-    const base64String = response.data;
+    const base64String = await fetchQuizImage(quizId);
     imageUrl.value = `data:image/png;base64,${base64String}`;
   } catch (error) {
     console.error('이미지 데이터를 불러오는 데 실패했습니다.', error);
