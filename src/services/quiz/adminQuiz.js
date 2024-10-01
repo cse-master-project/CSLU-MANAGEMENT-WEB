@@ -1,6 +1,6 @@
 import { api } from 'src/boot/axios';
 
-// 관리자 문제 서버에 보내는 api
+// 관리자 문제 생성 서버에 보내는 api
 export const submitQuiz = async quizData => {
   try {
     // 문제 데이터 서버에 제출
@@ -31,3 +31,5 @@ export const deleteQuiz = async quizId => {
     throw error;
   }
 };
+
+// 관리자 문제 조회
