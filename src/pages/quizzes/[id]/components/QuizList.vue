@@ -134,7 +134,7 @@ import useCategories from 'src/services/useCategories.js';
 const filterStore = useFilterStore();
 
 const quizzes = ref([]);
-const currentPage = ref(1); // 현재 페이지 번호
+const currentPage = ref(1); // 페이지네이션을 위한 초기 페이지 값 설정
 const pageSize = ref(20); // 페이지 크기
 const totalElements = ref(0); // 전체 퀴즈 수
 

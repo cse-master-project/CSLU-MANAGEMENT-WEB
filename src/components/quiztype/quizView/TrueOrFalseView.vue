@@ -30,7 +30,7 @@
       <!-- 해설 표시 -->
       <q-card-section>
         <div class="text-weight-medium">
-          해설 : <q-markdown>{{ quizcontent.commentary }}</q-markdown>
+          해설 : {{ quizcontent.commentary }}
         </div>
       </q-card-section>
     </q-card>

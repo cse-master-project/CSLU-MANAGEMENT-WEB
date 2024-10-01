@@ -56,17 +56,16 @@
       <q-card-section>
         <div class="label-container">
           <q-label class="label-commentary">해설 : </q-label>
-          <q-markdown>
-            <q-input
-              v-model="localQuizContent.commentary"
-              outlined
-              dense
-              autogrow
-              maxlength="300"
-              counter
-              class="input-field"
-            />
-          </q-markdown>
+
+          <q-input
+            v-model="localQuizContent.commentary"
+            outlined
+            dense
+            autogrow
+            maxlength="300"
+            counter
+            class="input-field"
+          />
         </div>
       </q-card-section>
 
