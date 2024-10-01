@@ -1,6 +1,6 @@
 import { api } from 'src/boot/axios';
 
-// 관리자 문제 생성 서버에 보내는 api
+// 관리자 문제 생성시 서버에 보내는 api
 export const submitQuiz = async quizData => {
   try {
     // 문제 데이터 서버에 제출
@@ -32,4 +32,18 @@ export const deleteQuiz = async quizId => {
   }
 };
 
-// 관리자 문제 조회
+// 관리자 목록 조회시 서버에 보내는 api
+export const fetchQuizzesFromApi = async () => {
+  try {
+    const response = await api.get('/api/v2/quiz/default', {
+      params: {
+        page: 0,
+        size: 1000,
+      },
+    });
+    return response.data.content; // 퀴즈 목록 데이터 반환
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+    throw error; // 에러 발생 시 호출한 곳에서 처리할 수 있도록 에러를 던짐
+  }
+};

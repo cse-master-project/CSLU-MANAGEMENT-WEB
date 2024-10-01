@@ -125,7 +125,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { api } from 'src/boot/axios';
+import { fetchQuizzesFromApi } from 'src/services/quiz/adminQuiz.js'; // 퀴즈 서비스 호출
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import { useFilterStore } from 'src/stores/filter';
@@ -175,14 +175,8 @@ watch(quizType, newValue => {
 // 서버에서 퀴즈 목록 들고 오기.
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/v2/quiz/default', {
-      params: {
-        page: 0, // 서버에서 전체 데이터를 가져오기 위한 페이지 번호
-        size: 1000, // 서버에서 전체 데이터를 가져오기 위한 크기
-      },
-    });
-    quizzes.value = response.data.content;
-    console.log('퀴즈목록', quizzes.value);
+    quizzes.value = await fetchQuizzesFromApi(); // 서비스 호출
+    // console.log('퀴즈목록', quizzes.value);
     quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt)); // 날짜 기준 내림차순 정렬
     filterQuizzes(); // 초기 필터링 및 페이지네이션 적용
     totalElements.value = quizzes.value.length; // 전체 퀴즈 수 업데이트
