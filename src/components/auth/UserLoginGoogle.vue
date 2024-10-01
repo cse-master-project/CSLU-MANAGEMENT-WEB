@@ -104,8 +104,7 @@ const userInfo = ref({});
 const emit = defineEmits(['update:isLogin']);
 
 // Google 클라이언트 ID 및 비밀 키 (clientSecret은 환경 변수로 가져옴)
-const clientId =
-  '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com';
+const clientId = process.env.VUE_APP_GOOGLE_CLIENT_ID;
 const clientSecret = process.env.VUE_APP_GOOGLE_SECRET_CODE;
 
 // 컴포넌트가 마운트될 때 사용자 정보 가져오기

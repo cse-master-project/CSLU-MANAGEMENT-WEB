@@ -18,8 +18,7 @@ export const googleAuth = {
       googleSdkLoaded(google => {
         google.accounts.oauth2
           .initCodeClient({
-            client_id:
-              '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
+            client_id: process.env.VUE_APP_GOOGLE_CLIENT_ID,
             scope: 'email profile openid',
             redirect_uri: redirectUri,
             callback: response => {
@@ -39,8 +38,7 @@ export const googleAuth = {
     try {
       const response = await axios.post('https://oauth2.googleapis.com/token', {
         code,
-        client_id:
-          '703819159310-7pgrn092d6v4mk03mmj89th86d8455ir.apps.googleusercontent.com',
+        client_id: process.env.VUE_APP_GOOGLE_CLIENT_ID,
         client_secret: process.env.VUE_APP_GOOGLE_SECRET_CODE,
         redirect_uri: 'postmessage',
         grant_type: 'authorization_code',

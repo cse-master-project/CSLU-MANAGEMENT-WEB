@@ -60,6 +60,7 @@ module.exports = configure(function (/* ctx */) {
       env: {
         VUE_APP_API_URL: process.env.VUE_APP_API_URL,
         VUE_APP_GOOGLE_SECRET_CODE: process.env.VUE_APP_GOOGLE_SECRET_CODE,
+        VUE_APP_GOOGLE_CLIENT_ID: process.env.VUE_APP_GOOGLE_CLIENT_ID,
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
