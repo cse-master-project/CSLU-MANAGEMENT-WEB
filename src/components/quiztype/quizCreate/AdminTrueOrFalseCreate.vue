@@ -22,7 +22,7 @@
             <q-label class="label-chapter">챕터선택</q-label>
             <q-select
               class="select-box"
-              v-model="detailSubject"
+              v-model="chapter"
               :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
@@ -87,7 +87,7 @@
         /></q-card-section>
         <q-card-section class="btn-container">
           <q-btn class="btn-back" @click="goBack"> 뒤로가기 </q-btn>
-          <q-btn class="btn-submit" @click="submitQuiz"> 문제 등록 </q-btn>
+          <q-btn class="btn-submit" @click="submitQuizForm"> 문제 등록 </q-btn>
         </q-card-section>
       </q-card>
     </div>
@@ -102,7 +102,11 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { api } from 'src/boot/axios';
+import {
+  submitQuiz,
+  submitQuizImage,
+  deleteQuiz,
+} from 'src/services/quiz/adminQuizCreate.js';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
 import useCategories from 'src/services/useCategories.js';
 // 반응형 데이터
@@ -111,7 +115,7 @@ const options = [
   { label: 'X', value: 0 },
 ];
 const subject = ref('과목을 선택 해주세요.');
-const detailSubject = ref('챕터를 선택 해주세요.');
+const chapter = ref('챕터를 선택 해주세요.');
 const quiz = ref('');
 const selectedAnswer = ref(null);
 const commentary = ref('');
@@ -167,7 +171,7 @@ const updateDetailSubjectOptions = () => {
 };
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '챕터를 선택 해주세요.';
+  chapter.value = '챕터를 선택 해주세요.';
   updateDetailSubjectOptions();
 });
 
@@ -178,7 +182,7 @@ const submitQuizSuccess = ref(false);
 const quizId = ref('');
 
 // 서버에 문제 제출
-const submitQuiz = async () => {
+const submitQuizForm = async () => {
   //입력값 검증
   let hasError = false;
   let errorMessage = '';
@@ -186,7 +190,7 @@ const submitQuiz = async () => {
   if (subject.value === '과목을 선택 해주세요.') {
     errorMessage = '과목을 선택해 주세요.';
     hasError = true;
-  } else if (detailSubject.value === '챕터를 선택 해주세요.') {
+  } else if (chapter.value === '챕터를 선택 해주세요.') {
     errorMessage = '챕터를 선택해 주세요.';
     hasError = true;
   } else if (quiz.value.trim() === '') {
@@ -208,41 +212,30 @@ const submitQuiz = async () => {
   //서버에 보낼 퀴즈 데이터
   const quizData = {
     subject: subject.value,
-    detailSubject: detailSubject.value,
+    chapter: chapter.value,
     quizType: '4',
     jsonContent: JSON.stringify({
       quiz: quiz.value,
       answer: selectedAnswer.value,
       commentary: commentary.value,
     }),
-    hasImage: filePreview.value ? true : false,
+    hasImage: !!filePreview.value,
   };
   console.log('서버에 제출될 데이터:', quizData);
   try {
-    // 문제 데이터 서버에 제출
-    const response = await api.post('/api/quiz/default', quizData);
-    quizId.value = response.data; // 서버에서 받은 문제 ID
+    // 문제 데이터 서버에 제출후 반환된 퀴즈 ID 저장.
+    quizId.value = await submitQuiz(quizData);
 
-    // 이미지가 있다면, 이미지 데이터 서버에 제출
+    // 이미지가 있다면 이미지 서버에 제출
     if (filePreview.value) {
-      const imageData = {
-        base64String: filePreview.value,
-        quizId: quizId.value,
-      };
-      console.log('이미지데이터', imageData);
-
-      await api.post('/api/quiz/image', imageData);
-      console.log('이미지 추가 완료');
+      await submitQuizImage(quizId.value, filePreview.value);
     }
 
-    submitQuizSuccess.value = true;
+    submitQuizSuccess.value = true; // 퀴즈 제출 성공
   } catch (error) {
-    if (error.response.status === 400) {
-      // 이미지 전송 실패 시 에러 처리
+    if (error.response?.status === 400) {
       alert('오류가 발생했습니다. 다시 시도해주세요.');
-      // 퀴즈 등록 취소 처리 또는 이미지 전송 실패 시 퀴즈도 등록하지 않음
-      await api.delete(`/api/management/quiz/${quizId.value}`); // 퀴즈 삭제 처리
-      return; // 이미지 전송 실패 시 퀴즈 등록 중단
+      await deleteQuiz(quizId.value); // 퀴즈 삭제 처리
     }
   }
 };
