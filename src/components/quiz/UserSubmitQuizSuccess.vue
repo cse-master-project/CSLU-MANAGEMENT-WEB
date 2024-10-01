@@ -19,6 +19,7 @@ import { useRouter } from 'vue-router';
 
 const props = defineProps({
   submitQuizSuccess: Boolean,
+  quizId: Number, // 퀴즈 ID를 props로 받음
 });
 
 const emit = defineEmits(['update:submitQuizSuccess']);
@@ -29,7 +30,7 @@ const router = useRouter();
 
 const confirm = () => {
   emit('update:submitQuizSuccess', false);
-  router.push('/Management'); // 성공 후 페이지 이동
+  router.push(`/userQuizzes/${props.quizId}`); // 성공 후 퀴즈 상세 페이지로 이동
 };
 </script>
 
