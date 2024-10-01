@@ -213,11 +213,12 @@ const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
     const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
-    const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
+    const quizTypeMatch =
+      !quizType.value || quiz.quizType === quizType.value.value; // 객체에서 value 값을 추출하여 비교
     return subjectMatch && chapterMatch && quizTypeMatch;
   });
   // 페이지네이션을 적용한 퀴즈 목록을 업데이트
-  paginatedQuizzes.value = paginatedQuizzes.value;
+  console.log('Filtered Quizzes:', filteredQuizzes.value);
 };
 
 // 필터링 초기화 함수
