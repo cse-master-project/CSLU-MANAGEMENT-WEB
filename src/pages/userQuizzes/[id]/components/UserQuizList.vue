@@ -139,14 +139,28 @@
         >
           <q-card-section>
             <div class="text-h6" style="font-weight: bold">
-              {{ quiz.subject }}
+              과목 : {{ quiz.subject }}
             </div>
-            <div class="text-subtitle2">{{ quiz.detailSubject }}</div>
+            <div class="text-subtitle2">챕터 : {{ quiz.chapter }}</div>
             <div class="text-body2">
-              {{ formatQuizType(quiz.quizType) }}
+              문제 유형 : {{ formatQuizType(quiz.quizType) }}
             </div>
             <div class="text-caption text-createAt">
-              {{ formatDate(quiz.createAt) }}
+              생성일 : {{ formatDate(quiz.createAt) }}
+            </div>
+
+            <!-- 퀴즈 내용 파싱 및 표시 -->
+            <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
+              <div class="text-h6">
+                문제 : {{ parsedContent(quiz.jsonContent)?.quiz }}
+              </div>
+
+              <div class="text-body2">
+                정답 : {{ parsedContent(quiz.jsonContent)?.answer }}
+              </div>
+              <div class="text-body2">
+                해설 : {{ parsedContent(quiz.jsonContent)?.commentary }}
+              </div>
             </div>
           </q-card-section>
 
@@ -163,7 +177,7 @@
 
 <script setup>
 import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
-import { userApi } from 'src/boot/userAxios';
+import { fetchQuizzesFromApi } from 'src/services/quiz/userQuiz.js'; // 퀴즈 서비스 호출
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
@@ -225,11 +239,11 @@ watch(subject, () => {
 
 const fetchQuizzes = async () => {
   try {
-    const response = await userApi.get('/api/quiz/my');
-    quizzes.value = response.data;
+    quizzes.value = await fetchQuizzesFromApi();
+    // console.log('퀴즈목록', quizzes.value);
+    quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt)); // 날짜 기준 내림차순 정렬
     filteredQuizzes.value = quizzes.value;
     quizcount.value = filteredQuizzes.value.length;
-    console.log('퀴즈목록 : ', quizzes.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
@@ -255,6 +269,15 @@ const formatQuizType = quizType => {
 };
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
+// JSON 콘텐츠 파싱 함수
+const parsedContent = jsonContent => {
+  try {
+    return JSON.parse(jsonContent);
+  } catch (e) {
+    console.error('JSON 파싱 오류:', e);
+    return null;
+  }
 };
 
 // 필터링 초기화 기능

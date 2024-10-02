@@ -35,15 +35,9 @@ export const deleteQuiz = async quizId => {
 // 제출자 목록 조회시 서버에 보내는 api
 export const fetchQuizzesFromApi = async () => {
   try {
-    const response = await userApi.get('/api/v2/quiz/default', {
-      params: {
-        page: 0,
-        size: 1000,
-      },
-    });
-    return response.data.content; // 퀴즈 목록 데이터 반환
+    const response = await userApi.get('/api/v2/quiz/my');
+    return response.data;
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
-    throw error; // 에러 발생 시 호출한 곳에서 처리할 수 있도록 에러를 던짐
   }
 };

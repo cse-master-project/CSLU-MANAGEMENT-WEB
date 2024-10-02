@@ -9,7 +9,7 @@ export default function userUseCategories() {
     try {
       const response = await userApi.get('/api/quiz/subject');
       categories.value = response.data;
-      console.log(categories.value);
+      //console.log(categories.value);
       subjectOptions.value = categories.value.map(category => ({
         value: category.subject,
         label: category.subject,
