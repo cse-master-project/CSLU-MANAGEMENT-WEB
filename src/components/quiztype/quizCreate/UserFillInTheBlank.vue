@@ -293,7 +293,7 @@ const submitQuizForm = async () => {
     }),
     hasImage: !!filePreview.value,
   };
-  console.log('서버에 제출될 데이터:', quizData);
+  //console.log('서버에 제출될 데이터:', quizData);
   try {
     // 문제 데이터 서버에 제출후 반환된 퀴즈 ID 저장.
     quizId.value = await submitQuiz(quizData);
