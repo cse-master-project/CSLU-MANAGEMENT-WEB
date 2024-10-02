@@ -26,7 +26,6 @@
         <component
           :is="quizTypeViewForm(quiz.quizType)"
           :quizcontent="quizContent"
-          v-if="!isEditing"
         />
       </q-card-section>
 
@@ -69,7 +68,7 @@ const fetchQuiz = async () => {
 
 const fetchQuizPermissionStatus = async () => {
   try {
-    const response = await userApi.get('/api/quiz/my');
+    const response = await userApi.get('/api/v2/quiz/my');
     const quiz1 = response.data.find(item => item.quizId === quizId);
     quizPermissionStatus.value = quiz1 ? quiz1.permissionStatus : '알 수 없음';
     console.log(
@@ -87,6 +86,7 @@ const fetchRejectReasons = async () => {
       params: { quizId },
     });
     rejectReasons.value = response.data;
+
     console.log('반려 이유:', rejectReasons.value);
   } catch (error) {
     console.error('반려 이유를 불러오는 데 실패했습니다.', error);

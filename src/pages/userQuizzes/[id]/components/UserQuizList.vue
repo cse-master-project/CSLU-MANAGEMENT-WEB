@@ -240,7 +240,7 @@ watch(subject, () => {
 const fetchQuizzes = async () => {
   try {
     quizzes.value = await fetchQuizzesFromApi();
-    // console.log('퀴즈목록', quizzes.value);
+    console.log('퀴즈목록', quizzes.value);
     quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt)); // 날짜 기준 내림차순 정렬
     filteredQuizzes.value = quizzes.value;
     quizcount.value = filteredQuizzes.value.length;

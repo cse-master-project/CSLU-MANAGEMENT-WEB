@@ -74,7 +74,10 @@
 <script setup>
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { fetchQuiz, fetchQuizImage } from 'src/services/quiz/quizDetail.js';
+import {
+  fetchQuiz,
+  fetchQuizImage,
+} from 'src/services/quiz/adminQuizDetail.js';
 import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
 
 const quizzes = ref([]);
