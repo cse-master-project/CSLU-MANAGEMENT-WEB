@@ -95,7 +95,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { api } from 'src/boot/axios';
+import { fetchQuizzesFromApi } from 'src/services/quiz/allUserQuiz.js'; // 퀴즈 서비스 호출
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import useCategories from 'src/services/useCategories.js';
@@ -132,8 +132,7 @@ watch(subject, () => {
 //서버에서 퀴즈 목록 들고 오기.
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/v2/quiz/user');
-    quizzes.value = response.data.content;
+    quizzes.value = await fetchQuizzesFromApi();
     console.log(quizzes.value);
     filteredQuizzes.value = quizzes.value;
   } catch (error) {
