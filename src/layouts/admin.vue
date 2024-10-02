@@ -44,7 +44,7 @@
           v-if="isLoggedIn"
           stretch
           flat
-          label="사용자 문제 관리"
+          label="출제자 문제 관리"
           to="/admin/adminUserManagement"
           class="toolbar-items"
           :class="{ active: isActive('/admin/adminUserManagement') }"
@@ -53,7 +53,7 @@
           v-if="isLoggedIn"
           stretch
           flat
-          label="미승인 문제 관리"
+          label="출제자 미승인 문제 관리"
           to="/admin/adminNotApproved"
           class="toolbar-items"
           :class="{ active: isActive('/admin/adminNotApproved') }"
@@ -123,7 +123,7 @@
             v-if="isLoggedIn"
             stretch
             flat
-            label="사용자 문제 관리"
+            label="출제자 문제 관리"
             to="/admin/adminUserManagement"
             :class="{ active: isActive('/admin/adminUserManagement') }"
           />
@@ -131,7 +131,7 @@
             v-if="isLoggedIn"
             stretch
             flat
-            label="미승인 문제 관리"
+            label="출제자 미승인 문제 관리"
             to="/admin/adminNotApproved"
             :class="{ active: isActive('/admin/adminNotApproved') }"
           />
