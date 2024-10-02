@@ -3,7 +3,7 @@
     <!-- Filters card -->
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-4 q-my-md">
           과목
           <q-select
             v-model="subject"
@@ -13,7 +13,7 @@
             @update:model-value="updateDetailSubjectOptions"
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-4 q-my-md">
           챕터
           <q-select
             v-model="chapter"
@@ -22,8 +22,8 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
-          문제유형
+        <div class="col-12 col-md-4 q-my-md">
+          문제 유형
           <q-select
             v-model="quizType"
             :options="quizTypeOptions"
@@ -80,9 +80,9 @@
         >
           <q-card-section>
             <div>퀴즈ID : {{ quiz.quizId }}</div>
-            <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
+            <div class="text-h6 text-primary">과목 : {{ quiz.subject }}</div>
             <div class="text-subtitle2 text-secondary">
-              챕터: {{ quiz.chapter }}
+              챕터 : {{ quiz.chapter }}
             </div>
             <div class="text-body2 text-dark">
               문제 유형: {{ formatQuizType(quiz.quizType) }}
@@ -243,14 +243,6 @@ const formatQuizType = quizType => {
   }
 };
 
-const formatDate = dateString => {
-  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
-};
-
-const goToQuizDetail = quizId => {
-  router.push(`/quizzes/${quizId}`);
-};
-
 // JSON 콘텐츠 파싱 함수
 const parsedContent = jsonContent => {
   try {
@@ -260,6 +252,14 @@ const parsedContent = jsonContent => {
     return null;
   }
 };
+const formatDate = dateString => {
+  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
+
+const goToQuizDetail = quizId => {
+  router.push(`/quizzes/${quizId}`);
+};
+
 const currentLayout = ref(1);
 
 const setLayout = layout => {
