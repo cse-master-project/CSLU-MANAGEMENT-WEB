@@ -23,7 +23,7 @@
             <q-label class="label-chapter">챕터 선택</q-label>
             <q-select
               class="select-box"
-              v-model="detailSubject"
+              v-model="chapter"
               :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
@@ -48,14 +48,14 @@
         </q-card-section>
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">문제</q-label>
+          <q-label class="label-quiz">질문</q-label>
           <q-input
             v-model="quiz"
             type="textarea"
             autogrow
             outlined
             dense
-            placeholder="문제를 입력하세요."
+            placeholder="문제를 입력하세요"
             maxlength="300"
             counter
             class="input-quiz"
@@ -63,17 +63,22 @@
         </q-card-section>
         <q-card-section class="answer-container">
           <q-label class="label-answer">답안</q-label>
-          <q-input
-            v-model="answer"
-            type="textarea"
-            autogrow
-            outlined
-            dense
-            placeholder="답안을 입력하세요."
-            maxlength="300"
-            counter
+          <div
+            v-for="(answer, index) in answers"
+            :key="index"
             class="q-mb-md input-answer"
-          />
+          >
+            <q-input
+              v-model="answers[index]"
+              type="textarea"
+              autogrow
+              outlined
+              dense
+              placeholder="답안 입력해주세요. "
+              maxlength="300"
+              counter
+            />
+          </div>
         </q-card-section>
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
@@ -91,7 +96,7 @@
         /></q-card-section>
         <q-card-section class="btn-container">
           <q-btn class="btn-back" @click="goBack"> 뒤로가기 </q-btn>
-          <q-btn class="btn-submit" @click="submitQuiz"> 문제 등록 </q-btn>
+          <q-btn class="btn-submit" @click="submitQuizForm"> 문제 등록 </q-btn>
         </q-card-section>
       </q-card>
     </div>
@@ -100,29 +105,39 @@
   <UserSubmitQuizSuccess
     v-if="submitQuizSuccess"
     :submit-quiz-success="submitQuizSuccess"
+    :quiz-id="quizId"
   />
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { userApi } from 'src/boot/userAxios';
+import {
+  submitQuiz,
+  submitQuizImage,
+  deleteQuiz,
+} from 'src/services/quiz/userQuiz.js';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
 import userUseCategories from 'src/services/userUseCategories.js';
+// 반응형 데이터
+const subject = ref('과목을 선택 해주세요.');
+const chapter = ref('챕터를 선택 해주세요.');
+const quiz = ref('');
+const answers = ref(['']);
+const commentary = ref('');
 
+// 퀴즈 유형 바꾸는 로직 (뒤로가기)
 const emits = defineEmits(['change-quiz-type']);
-
 const goBack = () => {
   emits('change-quiz-type', '');
 };
 
+//이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
-
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-
     // 파일 타입이 이미지인지 확인
     if (files[0].type.startsWith('image/')) {
       const reader = new FileReader();
@@ -136,7 +151,7 @@ const fileInputHandler = event => {
     }
   }
 };
-
+//이미지 업로드 취소 로직
 const cancelFile = () => {
   filePreview.value = null;
   fileName.value = ''; // 파일 이름 초기화
@@ -148,15 +163,8 @@ const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
 
 onMounted(fetchCategories);
 
-const subject = ref('');
-const detailSubject = ref('');
-const quiz = ref('');
-const answer = ref('');
-const commentary = ref('');
-
 const filteredDetailSubjectOptions = ref([]);
-
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
+// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects.length === 0) {
@@ -167,50 +175,90 @@ const updateDetailSubjectOptions = () => {
 };
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '';
+  chapter.value = '챕터를 선택 해주세요.';
   updateDetailSubjectOptions();
 });
 
+// 답안 정리 함수
+const normalizeAnswers = answers => {
+  return answers
+    .map(
+      answer =>
+        answer
+          .split(',')
+          .map(part => part.trim()) // 각 답안의 공백 제거
+          .filter(part => part) // 빈 값 제거
+          .join(', '), // 다시 공백으로 구분된 문자열로 조합
+    )
+    .filter(answer => answer); // 빈 값 제거
+};
+
+// 서버 전송 여부
 const submitQuizSuccess = ref(false);
 
-// 서버에 문제 제출.
-const submitQuiz = () => {
+// 서버에서 받아온 퀴즈 아이디
+const quizId = ref('');
+
+// 서버에 문제 제출
+const submitQuizForm = async () => {
+  //답안 정리
+  const normalizedAnswers = normalizeAnswers(answers.value);
+
+  //입력값 검증
+  let hasError = false;
+  let errorMessage = '';
+
+  if (subject.value === '과목을 선택 해주세요.') {
+    errorMessage = '과목을 선택해 주세요.';
+    hasError = true;
+  } else if (chapter.value === '챕터를 선택 해주세요.') {
+    errorMessage = '챕터를 선택해 주세요.';
+    hasError = true;
+  } else if (quiz.value.trim() === '') {
+    errorMessage = '문제를 입력해 주세요.';
+    hasError = true;
+  } else if (normalizedAnswers.length === 0) {
+    errorMessage = '답을 입력해 주세요.';
+    hasError = true;
+  } else if (commentary.value.trim() === '') {
+    errorMessage = '해설을 입력해 주세요.';
+    hasError = true;
+  }
+
+  if (hasError) {
+    alert(errorMessage);
+    return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
+  }
+
+  //서버에 보낼 퀴즈 데이터
   const quizData = {
     subject: subject.value,
-    detailSubject: detailSubject.value,
+    chapter: chapter.value,
     quizType: '2',
     jsonContent: JSON.stringify({
       quiz: quiz.value,
-      answer: answer.value,
+      answer: normalizedAnswers,
       commentary: commentary.value,
     }),
-    hasImage: false,
+    hasImage: !!filePreview.value,
   };
-  console.log('서버에 제출될 데이터:', quizData);
-  userApi
-    .post('/api/quiz/user', quizData)
-    .then(response => {
-      // console.log('서버 응답:', response.data);
-      submitQuizSuccess.value = true;
-    })
-    .catch(error => {
-      //console.error('서버 응답 오류:', error);
-      if (error.response.status === 400) {
-        // 예: 사용자에게 문제가 부족하거나 잘못된 데이터를 입력했다고 알림
-        alert(
-          '입력된 데이터가 부족하거나 잘못되었습니다. 빈칸이 없는지 확인해주세요 ^_^',
-        );
-      } else if (error.response.status === 500) {
-        // 예: 서버 측에서 처리 중 오류 발생
-        alert(
-          '서버에서 문제를 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-        );
-      } else {
-        // 기타 다른 오류 상황에 대한 처리
-        alert('문제 등록 중 예상치 못한 오류가 발생했습니다.');
-      }
-      // 실패 시 사용자 경험을 개선할 수 있는 추가적인 로직 추가
-    });
+  //console.log('서버에 제출될 데이터:', quizData);
+  try {
+    // 문제 데이터 서버에 제출후 반환된 퀴즈 ID 저장.
+    quizId.value = await submitQuiz(quizData);
+
+    // 이미지가 있다면 이미지 서버에 제출
+    if (filePreview.value) {
+      await submitQuizImage(quizId.value, filePreview.value);
+    }
+
+    submitQuizSuccess.value = true; // 퀴즈 제출 성공
+  } catch (error) {
+    if (error.response?.status === 400) {
+      alert('오류가 발생했습니다. 다시 시도해주세요.');
+      await deleteQuiz(quizId.value); // 퀴즈 삭제 처리
+    }
+  }
 };
 </script>
 

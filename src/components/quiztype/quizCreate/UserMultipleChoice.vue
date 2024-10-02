@@ -102,7 +102,7 @@
         /></q-card-section>
         <q-card-section class="btn-container">
           <q-btn class="btn-back" @click="goBack"> 뒤로가기 </q-btn>
-          <q-btn class="btn-submit" @click="submitQuiz"> 문제 등록 </q-btn>
+          <q-btn class="btn-submit" @click="submitQuizForm"> 문제 등록 </q-btn>
         </q-card-section>
       </q-card>
     </div>
@@ -117,7 +117,11 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { userApi } from 'src/boot/userAxios';
+import {
+  submitQuiz,
+  submitQuizImage,
+  deleteQuiz,
+} from 'src/services/quiz/userQuiz.js';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
 import userUseCategories from 'src/services/userUseCategories.js'; // 반응형 데이터
 // 반응형 데이터
@@ -195,7 +199,7 @@ const submitQuizSuccess = ref(false);
 const quizId = ref('');
 
 // 서버에 문제 제출.
-const submitQuiz = async () => {
+const submitQuizForm = async () => {
   // 입력값 검증
   let hasError = false;
   let errorMessage = '';
@@ -225,9 +229,6 @@ const submitQuiz = async () => {
     return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
   }
 
-  // 이미지가 있는지 확인하여 hasImage 값을 설정
-  const hasImage = !!filePreview.value;
-
   //서버에 제출될 데이터
   const quizData = {
     subject: subject.value,
@@ -239,34 +240,23 @@ const submitQuiz = async () => {
       answer: selectedAnswer.value + 1, // 선택된 답의 인덱스를 +1 해서 서버에 보냄
       commentary: commentary.value,
     }),
-    hasImage: hasImage,
+    hasImage: !!filePreview.value,
   };
-  console.log('서버에 제출될 데이터:', quizData);
+  //console.log('서버에 제출될 데이터:', quizData);
   try {
-    // 문제 데이터 서버에 제출
-    const response = await userApi.post('/api/v2/quiz/user', quizData);
-    quizId.value = response.data; // 서버에서 받은 문제 ID
+    // 문제 데이터 서버에 제출후 반환된 퀴즈 ID 저장.
+    quizId.value = await submitQuiz(quizData);
 
-    // 이미지가 있다면, 이미지 데이터 서버에 제출
+    // 이미지가 있다면 이미지 서버에 제출
     if (filePreview.value) {
-      const imageData = {
-        base64String: filePreview.value,
-        quizId: quizId.value,
-      };
-      console.log('이미지데이터', imageData);
-
-      await userApi.post('/api/v2/quiz/image', imageData);
-      console.log('이미지 추가 완료');
+      await submitQuizImage(quizId.value, filePreview.value);
     }
 
-    submitQuizSuccess.value = true;
+    submitQuizSuccess.value = true; // 퀴즈 제출 성공
   } catch (error) {
-    if (error.response.status === 400) {
-      // 이미지 전송 실패 시 에러 처리
+    if (error.response?.status === 400) {
       alert('오류가 발생했습니다. 다시 시도해주세요.');
-      // 퀴즈 등록 취소 처리 또는 이미지 전송 실패 시 퀴즈도 등록하지 않음
-      await api.delete(`/api/management/quiz/${quizId.value}`); // 퀴즈 삭제 처리
-      return; // 이미지 전송 실패 시 퀴즈 등록 중단
+      await deleteQuiz(quizId.value); // 퀴즈 삭제 처리
     }
   }
 };
