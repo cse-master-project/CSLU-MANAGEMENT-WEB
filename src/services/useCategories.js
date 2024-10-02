@@ -10,7 +10,7 @@ export default function useCategories() {
     try {
       const response = await api.get('/api/quiz/subject');
       categories.value = response.data;
-      console.log(categories.value);
+      // console.log(categories.value);
       subjectOptions.value = categories.value.map(category => category.subject);
     } catch (error) {
       console.error('카테고리를 불러오는 중 오류가 발생했습니다:', error);
