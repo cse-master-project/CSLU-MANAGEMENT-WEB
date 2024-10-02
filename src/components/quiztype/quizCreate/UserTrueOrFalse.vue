@@ -106,7 +106,7 @@ import {
   submitQuiz,
   submitQuizImage,
   deleteQuiz,
-} from 'src/services/quiz/adminQuiz.js';
+} from 'src/services/quiz/userQuiz.js';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
 import userUseCategories from 'src/services/userUseCategories.js';
 // 반응형 데이터
