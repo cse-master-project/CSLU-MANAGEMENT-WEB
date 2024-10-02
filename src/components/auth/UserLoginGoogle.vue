@@ -246,10 +246,12 @@ async function fetchInfo() {
 }
 
 .google-login {
+  margin-top: 4%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  margin-bottom: 4%;
 }
 
 .google-img {
