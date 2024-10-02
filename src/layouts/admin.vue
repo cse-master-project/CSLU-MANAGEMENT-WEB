@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lff">
+  <q-layout view="lHh Lpr lFf">
     <q-header bordered class="bg-grey-5">
       <!-- 툴바 & 제목 -->
       <q-toolbar class="toolbar">
@@ -85,6 +85,7 @@
           icon="menu"
         />
       </q-toolbar>
+
       <!-- 사이드 바 -->
       <q-drawer
         v-model="drawerLeft"
@@ -92,42 +93,48 @@
         :breakpoint="1024"
         elevated
         class="drawer"
-        ><q-list
-          ><q-btn
+      >
+        <q-list>
+          <q-btn
             v-if="isLoggedIn"
             stretch
             flat
             label="챕터 관리"
             to="/admin/adminSubjectManagement"
-            :class="{ active: isActive('/admin/adminSubjectManagement') }" />
+            :class="{ active: isActive('/admin/adminSubjectManagement') }"
+          />
           <q-btn
             v-if="isLoggedIn"
             stretch
             flat
             label="기본 문제 추가"
             to="/admin/adminCreate"
-            :class="{ active: isActive('/admin/adminCreate') }" />
+            :class="{ active: isActive('/admin/adminCreate') }"
+          />
           <q-btn
             v-if="isLoggedIn"
             stretch
             flat
             label="기본 문제 관리"
             to="/admin/adminManagement"
-            :class="{ active: isActive('/admin/adminManagement') }" />
+            :class="{ active: isActive('/admin/adminManagement') }"
+          />
           <q-btn
             v-if="isLoggedIn"
             stretch
             flat
             label="사용자 문제 관리"
             to="/admin/adminUserManagement"
-            :class="{ active: isActive('/admin/adminUserManagement') }" />
+            :class="{ active: isActive('/admin/adminUserManagement') }"
+          />
           <q-btn
             v-if="isLoggedIn"
             stretch
             flat
             label="미승인 문제 관리"
             to="/admin/adminNotApproved"
-            :class="{ active: isActive('/admin/adminNotApproved') }" />
+            :class="{ active: isActive('/admin/adminNotApproved') }"
+          />
           <q-btn
             v-if="isLoggedIn"
             stretch
@@ -135,8 +142,17 @@
             label="신고 문제 관리"
             to="/admin/adminReported"
             :class="{ active: isActive('/admin/adminReported') }"
-        /></q-list>
-        <!-- 로그인 상태에 따라 로그아웃 버튼 표시 -->
+          />
+          <q-btn
+            stretch
+            flat
+            v-if="isLoggedIn"
+            rounded
+            label="로그아웃"
+            color="orange"
+            @click="isLogout = true"
+          />
+        </q-list>
       </q-drawer>
     </q-header>
 
@@ -145,10 +161,10 @@
       <router-view />
     </q-page-container>
 
-    <!--Footer-->
-    <q-footer>
-      <footerbar>CSLU © 2024 . All Rights Reserved. </footerbar></q-footer
-    >
+    <!-- Footer -->
+    <q-footer class="footer">
+      <footerbar>CSLU © 2024 . All Rights Reserved.</footerbar>
+    </q-footer>
 
     <!-- AdminLogout 모달 표시 -->
     <AdminLogout
@@ -197,6 +213,10 @@ const drawerLeft = ref(false);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 1; /* 푸터의 z-index 설정 */
 }
 
 .toolbar {
@@ -209,7 +229,7 @@ const drawerLeft = ref(false);
 
 .toolbar-item {
   margin: 0 8px; /* 버튼 사이 간격 조정 */
-  font-size: 1.1rem; /* 글씨 크기 조정 */
+  font-size: 1rem; /* 글씨 크기 조정 */
   position: relative;
 }
 .toolbar-items {
@@ -221,31 +241,39 @@ const drawerLeft = ref(false);
 .toolbar-item.active::after {
   content: '';
   position: absolute;
-  bottom: -4px; /* 밑줄 위치 조정 */
+  bottom: -4px;
   left: 0;
   right: 0;
-  height: 2px; /* 밑줄 두께 */
-  background-color: currentColor; /* 글씨 색상과 동일한 색상 */
+  height: 2px;
+  background-color: currentColor;
 }
 
 .title {
   font-family: 'NotoB';
-  font-size: 1.8rem; /* 제목 글씨 크기 조정 */
+  font-size: 1.8rem;
 }
 
 .page-container {
   max-width: 1080px;
-  margin: 20px auto; /* 페이지 중앙 정렬 및 여백 설정 */
-  padding: 20px; /* 페이지 내용 여백 설정 */
+  margin: 20px auto;
+  padding: 20px;
+  flex: 1;
+  position: relative;
+  z-index: 0;
+}
+
+.drawer {
+  z-index: 2;
 }
 .drawer .q-btn {
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin-bottom: 10px;
   color: black;
 }
 .drawer .q-btn.active {
   color: var(--q-primary);
 }
+
 @media (max-width: 1100px) {
   .toolbar {
     justify-content: space-between; /* 아이템 사이 공간을 균등하게 분배 */
