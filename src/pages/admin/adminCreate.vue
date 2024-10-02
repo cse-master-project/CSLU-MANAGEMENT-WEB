@@ -46,7 +46,7 @@ const quizTypeCreateForm = {
 <style>
 @media (max-width: 500px) {
   .q-page {
-    height: 120vh;
+    height: 130vh;
   }
 }
 </style>
