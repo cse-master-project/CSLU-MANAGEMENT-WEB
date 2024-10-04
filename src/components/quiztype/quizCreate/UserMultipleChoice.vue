@@ -479,5 +479,8 @@ input[type='file'] {
     align-items: center;
     gap: 5px;
   }
+  .title-container {
+    margin-left: 5%;
+  }
 }
 </style>

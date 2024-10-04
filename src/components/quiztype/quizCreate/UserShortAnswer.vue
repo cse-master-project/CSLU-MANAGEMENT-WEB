@@ -32,7 +32,6 @@
               outlined
               dense
               @update:model-value="updateDetailSubjectOptions"
-              style="width: 200px"
             />
           </div>
           <div class="select-chapter">
@@ -43,7 +42,6 @@
               :options="filteredDetailSubjectOptions.slice().reverse()"
               outlined
               dense
-              style="width: 200px"
             />
           </div>
         </q-card-section>
@@ -328,13 +326,11 @@ const submitQuizForm = async () => {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-right: 10px;
 }
 .select-chapter {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-left: 10px;
 }
 .label-subject,
 .label-chapter {
@@ -344,7 +340,7 @@ const submitQuizForm = async () => {
   font-weight: bold;
 }
 .select-box {
-  max-width: 400px;
+  width: 220px;
 }
 
 //이미지 업로드 스타일
@@ -480,5 +476,15 @@ input[type='file'] {
   height: 40px;
   font-family: 'Toss Product Sans';
   box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
+}
+@media (max-width: 430px) {
+  .select-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .title-container {
+    margin-left: 5%;
+  }
 }
 </style>

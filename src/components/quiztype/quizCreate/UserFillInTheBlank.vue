@@ -25,7 +25,7 @@
         <!-- 과목과 챕터 선택 -->
         <q-card-section class="select-container">
           <div class="select-subject">
-            <q-label class="label-subject">과목선택</q-label>
+            <q-label class="label-subject">과목 선택</q-label>
             <q-select
               class="select-box"
               v-model="subject"
@@ -36,7 +36,7 @@
             />
           </div>
           <div class="select-chapter">
-            <q-label class="label-chapter">챕터선택</q-label>
+            <q-label class="label-chapter">챕터 선택</q-label>
             <q-select
               class="select-box"
               v-model="chapter"
@@ -381,13 +381,11 @@ const submitQuizForm = async () => {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-right: 10px;
 }
 .select-chapter {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-left: 10px;
 }
 .label-subject,
 .label-chapter {
@@ -397,7 +395,7 @@ const submitQuizForm = async () => {
   font-weight: bold;
 }
 .select-box {
-  width: 200px;
+  width: 220px;
 }
 
 //이미지 업로드 스타일
@@ -553,5 +551,15 @@ input[type='file'] {
 .tooltip {
   background-color: #000000;
   font-size: 1.3rem;
+}
+@media (max-width: 430px) {
+  .select-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .title-container {
+    margin-left: 5%;
+  }
 }
 </style>
