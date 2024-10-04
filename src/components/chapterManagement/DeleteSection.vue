@@ -1,7 +1,7 @@
 <template>
   <q-card class="custom-card">
     <q-card-section class="card-section">
-      <q-p class="section-title">과목 삭제</q-p>
+      <q class="section-title">과목 삭제</q>
       <q-select
         v-model="deleteSubject"
         :options="subjectOptions"
@@ -12,7 +12,7 @@
       <q-btn @click="submitDeleteSubject" class="submit-btn">과목 삭제</q-btn>
     </q-card-section>
     <q-card-section class="card-section">
-      <q-p class="section-title">챕터 삭제</q-p>
+      <q class="section-title">챕터 삭제</q>
       <q-select
         v-model="atSubject3"
         :options="subjectOptions"
