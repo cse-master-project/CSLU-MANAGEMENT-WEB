@@ -60,7 +60,7 @@ const fetchQuiz = async () => {
   try {
     const response = await userApi.get(`/api/quiz/${quizId}`);
     quiz.value = response.data;
-    console.log('문제 :', quiz.value);
+    //console.log('문제 :', quiz.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는 데 실패했습니다.', error);
   }
@@ -71,10 +71,10 @@ const fetchQuizPermissionStatus = async () => {
     const response = await userApi.get('/api/v2/quiz/my');
     const quiz1 = response.data.find(item => item.quizId === quizId);
     quizPermissionStatus.value = quiz1 ? quiz1.permissionStatus : '알 수 없음';
-    console.log(
-      `Quiz ID ${quizId}의 permissionStatus:`,
-      quizPermissionStatus.value,
-    );
+    // console.log(
+    //   `Quiz ID ${quizId}의 permissionStatus:`,
+    //   quizPermissionStatus.value,
+    // );
   } catch (error) {
     console.error('퀴즈 승인 상태를 불러오는 데 실패했습니다.', error);
   }
@@ -87,7 +87,7 @@ const fetchRejectReasons = async () => {
     });
     rejectReasons.value = response.data;
 
-    console.log('반려 이유:', rejectReasons.value);
+    //console.log('반려 이유:', rejectReasons.value);
   } catch (error) {
     console.error('반려 이유를 불러오는 데 실패했습니다.', error);
   }
@@ -97,13 +97,13 @@ const fetchRejectReasons = async () => {
 const fetchImage = async () => {
   try {
     const response = await userApi.get(`/api/quiz/${quizId}/image`);
-    console.log('서버에 받아온것 : ', response);
+    //console.log('서버에 받아온것 : ', response);
 
     // base64 문자열 처리
     const base64String = response.data;
     imageUrl.value = `data:image/png;base64,${base64String}`;
   } catch (error) {
-    console.error('이미지 데이터를 불러오는 데 실패했습니다.', error);
+    //console.error('이미지 데이터를 불러오는 데 실패했습니다.', error);
   }
 };
 

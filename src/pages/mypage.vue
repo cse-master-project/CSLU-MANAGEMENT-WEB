@@ -41,7 +41,7 @@ onMounted(async () => {
 const fetchUserInfo = async () => {
   try {
     userInfo.value = await userInfoService.fetchInfo();
-    console.log('사용자 정보:', userInfo.value);
+    // console.log('사용자 정보:', userInfo.value);
   } catch (error) {
     console.error('사용자 정보 가져오기 실패:', error);
   }
@@ -54,10 +54,12 @@ const deactivate = async () => {
   try {
     await userInfoService.deactivateUser();
     alert('탈퇴 되었습니다.');
-    console.log('탈퇴 요청 성공');
+    // console.log('탈퇴 요청 성공');
     // 탈퇴 후 /home 페이지로 리디렉션
     router.push('/home');
   } catch (error) {
+    alert('탈퇴가 실패 되었습니다.');
+    router.push('/home');
     console.error('탈퇴 요청 실패:', error);
   }
 };
