@@ -34,6 +34,7 @@ import { useRouter } from 'vue-router';
 const props = defineProps({
   isDelete: Boolean,
   currentQuiz: Object,
+  quiz: String,
 });
 
 const emit = defineEmits(['update:isDelete']);
@@ -53,7 +54,9 @@ const quizDelete = async () => {
     await api.delete(`/api/management/quiz/${props.currentQuiz.quizId}`);
     // 삭제 성공 시 로직(alert말고 딴거 해야함.)
     alert('퀴즈가 삭제 되었습니다.');
-    router.push('/admin/adminManagement'); // 성공 후 페이지 이동
+    if (props.quiz === '승인된 제출자 문제')
+      router.push('/admin/adminUsermanagement'); // 성공 후 페이지 이동
+    if (props.quiz === '관리자 문제') router.push('/admin/adminManagement'); // 성공 후 페이지 이동
     emit('update:isDelete', false);
   } catch (error) {
     console.error('퀴즈 삭제에 실패했습니다.', error);
