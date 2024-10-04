@@ -64,6 +64,7 @@
 
     <DeleteQuizConfirmation
       v-if="isDelete"
+      :quiz="quiz"
       :is-delete="isDelete"
       :current-quiz="quizzes"
       @update:isDelete="isDelete = $event"
@@ -79,6 +80,8 @@ import {
   fetchQuizImage,
 } from 'src/services/quiz/adminQuizDetail.js';
 import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
+
+const quiz = '관리자 문제';
 
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
