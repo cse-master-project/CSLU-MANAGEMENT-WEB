@@ -50,11 +50,11 @@
 </template>
 
 <script setup>
-import { ref, defineAsyncComponent } from 'vue';
+import { shallowRef, ref, defineAsyncComponent } from 'vue';
 
 const currentSectionName = ref('view'); // 현재 활성화된 섹션 이름
 
-const currentSection = ref(
+const currentSection = shallowRef(
   defineAsyncComponent(() =>
     import('src/components/chapterManagement/ViewSection.vue'),
   ),
