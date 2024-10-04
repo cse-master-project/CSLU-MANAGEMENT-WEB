@@ -9,6 +9,7 @@
             v-model="subject"
             :options="subjectOptions"
             outlined
+            label="과목"
             dense
             @update:model-value="updateDetailSubjectOptions"
           />
@@ -17,8 +18,9 @@
           챕터
           <q-select
             v-model="chapter"
-            :options="filteredDetailSubjectOptions.reverse().slice()"
+            :options="filteredDetailSubjectOptions"
             outlined
+            label="챕터"
             dense
           />
         </div>
@@ -125,7 +127,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { fetchQuizzesFromApi } from 'src/services/quiz/adminQuiz.js'; // 퀴즈 서비스 호출
+import { fetchQuizzesFromApi } from 'src/services/quiz/adminQuiz.js';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import { useFilterStore } from 'src/stores/filter';
@@ -134,14 +136,15 @@ import useCategories from 'src/services/useCategories.js';
 const filterStore = useFilterStore();
 
 const quizzes = ref([]);
-const currentPage = ref(1); // 페이지네이션을 위한 초기 페이지 값 설정
-const pageSize = ref(20); // 페이지 크기
-const totalElements = ref(0); // 전체 퀴즈 수
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalElements = ref(0);
 
 const filteredQuizzes = ref([]);
 const subject = ref(filterStore.subject);
 const chapter = ref(filterStore.chapter);
 const quizType = ref(filterStore.quizType);
+
 const quizTypeOptions = [
   { value: 1, label: '4지선다형' },
   { value: 2, label: '단답형' },
@@ -150,56 +153,57 @@ const quizTypeOptions = [
   { value: 5, label: '빈칸 채우기형' },
 ];
 
-// 카테고리 조회 서비스 사용.
 const filteredDetailSubjectOptions = ref([]);
 const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
   useCategories();
+
 const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
+  // 챕터 역순
+  const detailSubjects = getDetailSubjectsBySubject(subject.value);
+  if (detailSubjects) {
+    filteredDetailSubjectOptions.value = [...detailSubjects].reverse();
+  }
 };
+
 watch(subject, newValue => {
-  chapter.value = '';
-  filteredDetailSubjectOptions.value = [];
+  chapter.value = ''; // 과목 변경 시 챕터 초기화
   updateDetailSubjectOptions();
   filterStore.setSubject(newValue);
 });
+
 watch(chapter, newValue => {
-  filterStore.setChapter(newValue); // setDetailSubject에서 setChapter로 변경
+  filterStore.setChapter(newValue);
 });
+
 watch(quizType, newValue => {
   filterStore.setQuizType(newValue);
 });
 
-// 서버에서 퀴즈 목록 들고 오기.
 const fetchQuizzes = async () => {
   try {
-    quizzes.value = await fetchQuizzesFromApi(); // 서비스 호출
-    // console.log('퀴즈목록', quizzes.value);
-    quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt)); // 날짜 기준 내림차순 정렬
-    filterQuizzes(); // 초기 필터링 및 페이지네이션 적용
-    totalElements.value = quizzes.value.length; // 전체 퀴즈 수 업데이트
+    quizzes.value = await fetchQuizzesFromApi();
+    quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
+    filterQuizzes();
+    totalElements.value = quizzes.value.length;
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
 
-// 페이지네이션된 퀴즈 데이터를 반환하는 계산 속성
 const paginatedQuizzes = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
   return filteredQuizzes.value.slice(start, end);
 });
 
-const totalPages = computed(() => {
-  return Math.ceil(filteredQuizzes.value.length / pageSize.value);
-});
+const totalPages = computed(() =>
+  Math.ceil(filteredQuizzes.value.length / pageSize.value),
+);
 
 const changePage = page => {
   if (page > 0 && page <= totalPages.value) {
     currentPage.value = page;
-    filterQuizzes(); // 페이지 변경 시 필터링 및 페이지네이션 적용
+    filterQuizzes();
   }
 };
 
@@ -208,20 +212,16 @@ const filterQuizzes = () => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
     const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
     const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value; // 객체에서 value 값을 추출하여 비교
+      !quizType.value || quiz.quizType === quizType.value.value;
     return subjectMatch && chapterMatch && quizTypeMatch;
   });
-  // 페이지네이션을 적용한 퀴즈 목록을 업데이트
-  console.log('Filtered Quizzes:', filteredQuizzes.value);
 };
 
-// 필터링 초기화 함수
 const resetFilters = () => {
   subject.value = '';
   chapter.value = '';
   quizType.value = '';
-
-  filterQuizzes(); // 필터링 및 페이지네이션 적용
+  filterQuizzes();
 };
 
 const router = useRouter();
@@ -243,15 +243,13 @@ const formatQuizType = quizType => {
   }
 };
 
-const formatDate = dateString => {
-  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
-};
+const formatDate = dateString =>
+  date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 
 const goToQuizDetail = quizId => {
   router.push(`/quizzes/${quizId}`);
 };
 
-// JSON 콘텐츠 파싱 함수
 const parsedContent = jsonContent => {
   try {
     return JSON.parse(jsonContent);
@@ -260,27 +258,32 @@ const parsedContent = jsonContent => {
     return null;
   }
 };
+
 const currentLayout = ref(1);
 
 const setLayout = layout => {
-  currentLayout.value = layout; // 주어진 레이아웃으로 설정
+  currentLayout.value = layout;
 };
 
 const getColumnClass = () => {
   switch (currentLayout.value) {
     case 1:
-      return 'col-12'; // 1열 레이아웃
+      return 'col-12';
     case 2:
-      return 'col-12 col-md-6'; // 2열 레이아웃
+      return 'col-12 col-md-6';
     case 3:
-      return 'col-12 col-md-3'; // 4열 레이아웃
+      return 'col-12 col-md-3';
     default:
       return 'col-12';
   }
 };
+
 onMounted(async () => {
   await fetchCategories();
   await fetchQuizzes();
+  if (subject.value) {
+    updateDetailSubjectOptions();
+  }
 });
 </script>
 
