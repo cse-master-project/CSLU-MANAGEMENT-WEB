@@ -8,7 +8,7 @@
         <!-- 과목과 챕터 선택 -->
         <q-card-section class="select-container">
           <div class="select-subject">
-            <q-label class="label-subject">과목 선택</q-label>
+            <label class="label-subject">과목 선택</label>
             <q-select
               class="select-box"
               v-model="subject"
@@ -19,7 +19,7 @@
             />
           </div>
           <div class="select-chapter">
-            <q-label class="label-chapter">챕터 선택</q-label>
+            <label class="label-chapter">챕터 선택</label>
             <q-select
               class="select-box"
               v-model="chapter"
@@ -48,7 +48,7 @@
 
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">질문</q-label>
+          <label class="label-quiz">질문</label>
           <q-input
             v-model="quiz"
             type="textarea"
@@ -88,7 +88,7 @@
         </q-card-section>
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
-          <q-label class="label-quiz">해설 </q-label>
+          <label class="label-quiz">해설 </label>
           <q-input
             v-model="commentary"
             type="textarea"

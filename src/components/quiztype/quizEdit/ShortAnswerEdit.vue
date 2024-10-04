@@ -10,7 +10,7 @@
       <!-- 문제 내용 -->
       <q-card-section class="bg-primary text-white q-pa-md">
         <div class="label-container">
-          <q-label class="label-quiz">Q. </q-label>
+          <label class="label-quiz">Q. </label>
           <q-input
             v-model="localQuizContent.quiz"
             outlined
@@ -26,7 +26,7 @@
       <!-- 정답 표시 -->
       <q-card-section class="answer-container">
         <div class="label-container">
-          <q-label class="label-answer">정답 : </q-label>
+          <label class="label-answer">정답 : </label>
           <div
             v-for="(answer, index) in localQuizContent.answer"
             :key="index"
@@ -51,7 +51,7 @@
       <!-- 해설 표시 -->
       <q-card-section>
         <div class="label-container">
-          <q-label class="label-commentary">해설 : </q-label>
+          <label class="label-commentary">해설 : </label>
 
           <q-input
             v-model="localQuizContent.commentary"
