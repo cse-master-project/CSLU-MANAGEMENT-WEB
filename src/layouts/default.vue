@@ -289,10 +289,7 @@ const drawerLeft = ref(false);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed; /* 페이지 하단에 고정 */
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  /* 푸터를 고정하지 않음 */
 }
 .toolbar {
   font-family: 'Toss Product Sans';
@@ -326,8 +323,8 @@ const drawerLeft = ref(false);
   margin: 0 auto; /* 항목 간 간격 추가 */
   transition: color 0.3s ease;
 }
-.toolbar-item.active::after,
-.toolbar-item:hover::after {
+.toolbar-items.active::after,
+.toolbar-items:hover::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -338,7 +335,7 @@ const drawerLeft = ref(false);
   transform: scaleX(1);
   transition: transform 0.3s ease;
 }
-.toolbar-item::after {
+.toolbar-items::after {
   content: '';
   position: absolute;
   bottom: 0;
