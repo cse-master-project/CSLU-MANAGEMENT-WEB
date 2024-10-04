@@ -51,7 +51,7 @@
           <div>
             <label for="file">
               <div class="upload-button">
-                <img src="/add-image.png" alt="Upload Image" />
+                <img src="/addimg.png" alt="Upload Image" />
               </div>
             </label>
             <input type="file" id="file" @change="fileInputHandler" />
