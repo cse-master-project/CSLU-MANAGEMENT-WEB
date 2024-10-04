@@ -1,7 +1,11 @@
 <template>
-  <p>신고된 문제 관리 페이지</p>
+  <q-page>
+    <ReportedQuizList />
+  </q-page>
 </template>
 
-<script setup></script>
+<script setup>
+import ReportedQuizList from 'src/pages/reportedQuizzes/[id]/components/ReportedQuizList.vue';
+</script>
 
 <style lang="scss" scoped></style>

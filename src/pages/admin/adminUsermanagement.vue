@@ -1,7 +1,11 @@
 <template>
-  <p>사용자 문제 관리 페이지</p>
+  <q-page>
+    <AllUserQuizList />
+  </q-page>
 </template>
 
-<script setup></script>
+<script setup>
+import AllUserQuizList from 'src/pages/allUserQuizzes/[id]/components/AllUserQuizList.vue';
+</script>
 
 <style lang="scss" scoped></style>

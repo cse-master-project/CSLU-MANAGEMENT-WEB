@@ -1,7 +1,11 @@
 <template>
-  <div>문제 관리</div>
+  <q-page>
+    <UserQuizList />
+  </q-page>
 </template>
 
-<script setup></script>
+<script setup>
+import UserQuizList from 'src/pages/userQuizzes/[id]/components/UserQuizList.vue';
+</script>
 
 <style lang="scss" scoped></style>

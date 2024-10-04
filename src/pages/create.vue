@@ -7,7 +7,7 @@
     />
     <!-- quizType에 따라 동적 컴포넌트를 표시. -->
     <component
-      :is="quizTypeViewForm[quizType]"
+      :is="quizTypeCreateForm[quizType]"
       @change-quiz-type="changeQuizType"
       v-if="quizType !== ''"
     />
@@ -25,21 +25,21 @@ const changeQuizType = mode => {
   quizType.value = mode;
 };
 // 동적컴포넌트 정의 (비동기적)
-const quizTypeViewForm = {
+const quizTypeCreateForm = {
   MultipleChoice: defineAsyncComponent(() =>
-    import('src/components/quiztype/MultipleChoice.vue'),
+    import('src/components/quiztype/quizCreate/UserMultipleChoice.vue'),
   ),
   ShortAnswer: defineAsyncComponent(() =>
-    import('src/components/quiztype/ShortAnswer.vue'),
+    import('src/components/quiztype/quizCreate/UserShortAnswer.vue'),
   ),
   Matching: defineAsyncComponent(() =>
-    import('src/components/quiztype/Matching.vue'),
+    import('src/components/quiztype/quizCreate/UserMatching.vue'),
   ),
   TrueOrFalse: defineAsyncComponent(() =>
-    import('src/components/quiztype/TrueOrFalse.vue'),
+    import('src/components/quiztype/quizCreate/UserTrueOrFalse.vue'),
   ),
   FillInTheBlank: defineAsyncComponent(() =>
-    import('src/components/quiztype/FillInTheBlank.vue'),
+    import('src/components/quiztype/quizCreate/UserFillInTheBlank.vue'),
   ),
 };
 </script>

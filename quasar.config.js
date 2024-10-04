@@ -9,6 +9,10 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require('quasar/wrappers');
+const dotenv = require('dotenv');
+
+// .env 파일을 로드
+dotenv.config();
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -53,7 +57,11 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        VUE_APP_API_URL: process.env.VUE_APP_API_URL,
+        VUE_APP_GOOGLE_SECRET_CODE: process.env.VUE_APP_GOOGLE_SECRET_CODE,
+        VUE_APP_GOOGLE_CLIENT_ID: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -106,7 +114,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ['Cookies', 'Notify'],
     },
 
     // animations: 'all', // --- includes all animations

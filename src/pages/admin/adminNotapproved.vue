@@ -1,7 +1,11 @@
 <template>
-  <p>미승인 문제 관리 페이지</p>
+  <q-page>
+    <NotApprovedQuizList />
+  </q-page>
 </template>
 
-<script setup></script>
+<script setup>
+import NotApprovedQuizList from 'src/pages/notApprovedQuizzes/[id]/components/NotApprovedQuizList.vue';
+</script>
 
 <style lang="scss" scoped></style>
