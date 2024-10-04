@@ -1,7 +1,17 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title">선긋기형</q-title>
+      <q-title class="title"
+        >선긋기형
+        <div class="guidecontainer">
+          <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
+          <q-tooltip style="font-size: 1rem; width: 300px"
+            >문제를 작성한 후, 왼쪽과 오른쪽 지문을 각각 입력하세요. 왼쪽 지문에
+            색상을 선택하여 오른쪽 지문과 매칭하세요. 해설을 입력한 후 "문제
+            등록" 버튼을 클릭하세요.</q-tooltip
+          >
+        </div></q-title
+      >
     </div>
     <div>
       <q-card>
@@ -397,6 +407,21 @@ const submitQuizForm = async () => {
 .title {
   font-size: 2rem;
   color: #0080ff;
+}
+//가이드 스타일
+.guidecontainer {
+  display: flex;
+  justify-content: space-evenly; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 50px;
+  height: 50px;
+  background-color: #ebf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: 0 1%;
 }
 
 // 과목 챕터 선택 스타일

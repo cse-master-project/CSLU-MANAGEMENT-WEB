@@ -1,7 +1,18 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title">빈칸 채우기형</q-title>
+      <q-title class="title"
+        >빈칸 채우기형
+        <div class="guidecontainer">
+          <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
+          <q-tooltip style="font-size: 1rem; width: 300px"
+            >문제를 작성한 후, 빈칸에 해당하는 부분을 '&lt;&lt;빈칸&gt;&gt;'으로
+            표시하면 자동으로 답안이 생성됩니다. 여러 정답이 있을 경우 쉼표(,)로
+            구분하세요. 해설을 입력한 후 "문제 등록" 버튼을
+            클릭하세요.</q-tooltip
+          >
+        </div>
+      </q-title>
     </div>
     <div>
       <q-card>
@@ -335,6 +346,21 @@ const submitQuizForm = async () => {
 .title {
   font-size: 2rem;
   color: #0080ff;
+}
+//가이드 스타일
+.guidecontainer {
+  display: flex;
+  justify-content: space-evenly; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 50px;
+  height: 50px;
+  background-color: #ebf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: 0 1%;
 }
 
 // 과목 챕터 선택 스타일
