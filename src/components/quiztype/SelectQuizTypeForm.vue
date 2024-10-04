@@ -168,7 +168,7 @@ const emitQuizType = () => {
 }
 @media (max-width: 430px) {
   .page {
-    height: 130vh;
+    height: 140vh;
   }
 }
 </style>

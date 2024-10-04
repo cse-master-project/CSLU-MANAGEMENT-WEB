@@ -1,7 +1,23 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title">4지선다형</q-title>
+      <q-title class="title"
+        >4지선다형
+        <div class="guidecontainer">
+          <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
+          <q-tooltip
+            style="
+              font-size: 1rem;
+              width: 300px;
+              background: #ebf0f1;
+              color: black;
+            "
+            >문제를 작성한 후 4개의 답안을 입력하고, 그중 하나의 정답을
+            선택하세요. 해설을 입력한 후 "문제 등록" 버튼을
+            클릭하세요.</q-tooltip
+          >
+        </div></q-title
+      >
     </div>
     <div>
       <q-card>
@@ -35,7 +51,7 @@
           <div>
             <label for="file">
               <div class="upload-button">
-                <img src="/add-image.png" alt="Upload Image" />
+                <img src="/addimg.png" alt="Upload Image" />
               </div>
             </label>
             <input type="file" id="file" @change="fileInputHandler" />
@@ -285,7 +301,21 @@ const submitQuizForm = async () => {
   font-size: 2rem;
   color: #0080ff;
 }
-
+//가이드 스타일
+.guidecontainer {
+  display: flex;
+  justify-content: space-evenly; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 60px;
+  height: 60px;
+  background-color: #ebf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: 0 1%;
+}
 // 과목 챕터 선택 스타일
 .select-container {
   display: flex;
@@ -333,17 +363,7 @@ input[type='file'] {
   align-items: center;
   cursor: pointer;
 }
-/* 파일 업로드 버튼 스타일 - 원형, 크기, 배경색, 글자색, 중앙 정렬 */
-// .upload-button {
-//   width: 50px;
-//   height: 50px;
-//   background-color: #42a5f5;
-//   color: white;
-//   font-size: 2rem;
-//   text-align: center;
-//   line-height: 50px;
-//   border-radius: 50%;
-// }
+
 .upload-button {
   width: 80px;
   height: 80px;
@@ -431,9 +451,27 @@ input[type='file'] {
 }
 .btn-back {
   background-color: rgb(213, 213, 213);
+  color: black;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.71429;
+  height: 40px;
+  font-family: 'Toss Product Sans';
+  box-shadow: rgba(39, 40, 40, 0.24) 0px 8px 16px 0px;
 }
 .btn-submit {
-  background-color: primary;
+  background-color: rgb(0, 154, 233);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.71429;
+  height: 40px;
+  font-family: 'Toss Product Sans';
+  box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
 }
 @media (max-width: 430px) {
   .select-container {
