@@ -2,8 +2,8 @@
   <q-page>
     <q-card class="q-pa-md q-mx-auto q-my-lg" flat bordered>
       <div class="text-center">
-        <q-title class="title q-mb-md"
-          >{{ userInfo.nickname }}님의 정보</q-title
+        <q-toolbar-title class="title q-mb-md"
+          >{{ userInfo.nickname }}님의 정보</q-toolbar-title
         >
         <q-separator dark class="q-my-md" />
         <q-card-section>

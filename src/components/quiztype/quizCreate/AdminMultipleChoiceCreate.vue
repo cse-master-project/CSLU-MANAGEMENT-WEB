@@ -1,7 +1,7 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title">4지선다형</q-title>
+      <q-toolbar-title class="title">4지선다형</q-toolbar-title>
     </div>
     <div>
       <q-card>

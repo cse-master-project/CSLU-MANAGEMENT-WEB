@@ -1,7 +1,7 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title"
+      <q-toolbar-title class="title"
         >빈칸 채우기형
         <div class="guidecontainer">
           <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
@@ -18,7 +18,7 @@
             클릭하세요.</q-tooltip
           >
         </div>
-      </q-title>
+      </q-toolbar-title>
     </div>
     <div>
       <q-card>

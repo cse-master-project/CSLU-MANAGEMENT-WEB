@@ -1,7 +1,7 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title"
+      <q-toolbar-title class="title"
         >o/x형
         <div class="guidecontainer">
           <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
@@ -15,7 +15,7 @@
             >문제를 작성한 후 O 또는 X 중 정답을 선택하세요. 해설을 입력한 후
             "문제 등록" 버튼을 클릭하세요.</q-tooltip
           >
-        </div></q-title
+        </div></q-toolbar-title
       >
     </div>
     <div>

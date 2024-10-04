@@ -1,7 +1,7 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title"
+      <q-toolbar-title class="title"
         >선긋기형
         <div class="guidecontainer">
           <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
@@ -16,7 +16,7 @@
             색상을 선택하여 오른쪽 지문과 매칭하세요. 해설을 입력한 후 "문제
             등록" 버튼을 클릭하세요.</q-tooltip
           >
-        </div></q-title
+        </div></q-toolbar-title
       >
     </div>
     <div>
