@@ -163,7 +163,7 @@
 
     <!-- Footer -->
     <q-footer class="footer">
-      <footerbar>CSLU © 2024 . All Rights Reserved.</footerbar>
+      <div>CSLU © 2024 . All Rights Reserved.</div>
     </q-footer>
 
     <!-- AdminLogout 모달 표시 -->
