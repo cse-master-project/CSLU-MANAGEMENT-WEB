@@ -5,7 +5,13 @@
         >단답형
         <div class="guidecontainer">
           <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
-          <q-tooltip style="font-size: 1rem; width: 300px"
+          <q-tooltip
+            style="
+              font-size: 1rem;
+              width: 300px;
+              background: #ebf0f1;
+              color: black;
+            "
             >문제를 작성한 후 정답을 입력하세요. 여러 정답을 입력할 경우
             쉼표(,)로 구분하세요. 해설을 입력한 후 "문제 등록" 버튼을
             클릭하세요.</q-tooltip
@@ -299,8 +305,8 @@ const submitQuizForm = async () => {
   display: flex;
   justify-content: space-evenly; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   background-color: #ebf0f1;
   display: flex;
   justify-content: center;
