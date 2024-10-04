@@ -63,7 +63,7 @@
 
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">질문</q-label>
+          <q-label class="label-quiz">문제</q-label>
           <q-input
             v-model="quiz"
             type="textarea"
