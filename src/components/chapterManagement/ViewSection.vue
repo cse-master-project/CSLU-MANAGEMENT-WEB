@@ -52,9 +52,7 @@ const filteredDetailSubjectOptions = ref([]);
 const updateDetailSubjectOptions = () => {
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects.length === 0) {
-
     filteredDetailSubjectOptions.value = ['챕터가 없습니다.'];
-
   } else {
     filteredDetailSubjectOptions.value = detailSubjects;
   }
@@ -122,5 +120,10 @@ onMounted(fetchCategories);
 .active-item {
   background-color: #c6daee; /* 선택된 항목의 배경색 변경 */
   font-weight: bold; /* 선택된 항목의 글자 두께를 굵게 설정 */
+}
+@media (max-width: 450px) {
+  .flex-container {
+    flex-direction: column;
+  }
 }
 </style>
