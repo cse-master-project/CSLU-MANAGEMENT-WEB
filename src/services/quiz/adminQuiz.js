@@ -26,7 +26,7 @@ export const submitQuizImage = async (quizId, base64String) => {
 
 export const deleteQuiz = async quizId => {
   try {
-    await api.delete(`/api/management/quiz/${quizId}`);
+    await api.delete(`/api/v2/management/quiz/${quizId}`);
   } catch (error) {
     throw error;
   }
