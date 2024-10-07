@@ -75,11 +75,10 @@ const submitSubject = async () => {
 const submitDetailSubject = async () => {
   const detailSubjectData = {
     subject: atSubject.value,
-    detailSubject: addDetailSubject.value,
-    sortIndex: 0,
+    chapter: addDetailSubject.value,
   };
   try {
-    await api.post('api/quiz/subject/detail', detailSubjectData);
+    await api.post('api/v2/quiz/subject/chapter', detailSubjectData);
     addDetailSubject.value = ''; // 입력 필드 초기화
     alert('챕터가 추가되었습니다.');
   } catch (error) {
