@@ -53,7 +53,7 @@ import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import {
   useCategorie,
-  useCategorieDelete,
+  useCategorieUpdate,
 } from 'src/services/quiz/useCategorie.js';
 
 // 서비스 불러오기
@@ -64,25 +64,20 @@ const {
   selectSubject,
   fetchChapters,
 } = useCategorie();
+const { updateSubject, updateChapter } = useCategorieUpdate();
 
 // 과목 수정 기능
 const atSubject = ref('');
 const subject = ref('');
 const submitsubject = async () => {
-  const subjectData = {
-    subject: atSubject.value,
-    newSubject: subject.value,
-  };
-  try {
-    await api.patch('api/v2/quiz/subject', subjectData);
+  const response = await updateSubject(atSubject.value, subject.value);
+  if (response.success) {
     alert('과목이 수정되었습니다.');
-    // 성공 시 입력 필드 초기화
     atSubject.value = '';
     subject.value = '';
     fetchSubjects(); // 과목 목록 갱신
-  } catch (error) {
-    console.error('에러 :', error);
-    alert('과목 수정 중 예상치 못한 오류가 발생했습니다.');
+  } else {
+    alert('과목 수정 중 오류가 발생했습니다.');
   }
 };
 
@@ -91,22 +86,18 @@ const atSubject2 = ref('');
 const atChapter = ref('');
 const chapter = ref('');
 const submitchapter = async () => {
-  const chapterData = {
-    subject: atSubject2.value,
-    chapter: atChapter.value,
-    newChapter: chapter.value,
-  };
-  console.log(chapterData);
-  try {
-    await api.patch('api/quiz/subject/chapter', chapterData);
+  const response = await updateChapter(
+    atSubject2.value,
+    atChapter.value,
+    chapter.value,
+  );
+  if (response.success) {
     alert('챕터가 수정되었습니다.');
-    // 성공 시 입력 필드 초기화
     atSubject2.value = '';
     atChapter.value = '';
     chapter.value = '';
-  } catch (error) {
-    console.error('에러 :', error);
-    alert('챕터 수정 중 예상치 못한 오류가 발생했습니다.');
+  } else {
+    alert('챕터 수정 중 오류가 발생했습니다.');
   }
 };
 

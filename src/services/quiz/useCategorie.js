@@ -72,6 +72,31 @@ export function useCategorieAdd() {
   return { addSubject, addChapter };
 }
 
+// [patch] : 카테고리 수정
+export function useCategorieUpdate() {
+  const updateSubject = async (subject, newSubject) => {
+    try {
+      const subjectData = { subject, newSubject };
+      await api.patch('/api/v2/quiz/subject', subjectData);
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating subject:', error);
+      return { success: false, error };
+    }
+  };
+  const updateChapter = async (subject, chapter, newChapter) => {
+    try {
+      const chapterData = { subject, chapter, newChapter };
+      await api.patch('/api/quiz/subject/chapter', chapterData);
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating chapter:', error);
+      return { success: false, error };
+    }
+  };
+  return { updateSubject, updateChapter };
+}
+
 // [delete] : 카테고리 삭제
 export function useCategorieDelete() {
   const deleteSubject = async subject => {
