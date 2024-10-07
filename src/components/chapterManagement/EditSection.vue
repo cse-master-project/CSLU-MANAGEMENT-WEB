@@ -4,7 +4,7 @@
       <q-p class="section-title">과목 수정</q-p>
       <q-select
         v-model="atSubject"
-        :options="subjectOptions"
+        :options="subjectOptions.map(s => s.subject)"
         label="과목"
         outlined
         class="q-mb-md select-box"
@@ -23,15 +23,14 @@
       <q-p class="section-title">챕터 수정</q-p>
       <q-select
         v-model="atSubject2"
-        :options="subjectOptions"
+        :options="subjectOptions.map(s => s.subject)"
         label="과목"
         outlined
         class="q-mb-md select-box"
-        @update:model-value="updateDetailSubjectOptions"
       />
       <q-select
         v-model="atChapter"
-        :options="filteredDetailSubjectOptions"
+        :options="chapterOptions"
         label="챕터"
         outlined
         class="q-mb-md select-box"
@@ -52,17 +51,19 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
-import useCategories from 'src/services/useCategories.js';
+import {
+  useCategorie,
+  useCategorieDelete,
+} from 'src/services/quiz/useCategorie.js';
 
-// 카테고리 조회 기능
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
-const filteredDetailSubjectOptions = ref([]);
-const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    atSubject2.value,
-  );
-};
+// 서비스 불러오기
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorie();
 
 // 과목 수정 기능
 const atSubject = ref('');
@@ -78,6 +79,7 @@ const submitsubject = async () => {
     // 성공 시 입력 필드 초기화
     atSubject.value = '';
     subject.value = '';
+    fetchSubjects(); // 과목 목록 갱신
   } catch (error) {
     console.error('에러 :', error);
     alert('과목 수정 중 예상치 못한 오류가 발생했습니다.');
@@ -94,7 +96,7 @@ const submitchapter = async () => {
     chapter: atChapter.value,
     newChapter: chapter.value,
   };
-  //console.log(chapterData);
+  console.log(chapterData);
   try {
     await api.patch('api/quiz/subject/chapter', chapterData);
     alert('챕터가 수정되었습니다.');
@@ -109,12 +111,15 @@ const submitchapter = async () => {
 };
 
 // 과목 변경 시 챕터 옵션 업데이트
-watch(atSubject2, () => {
-  atChapter.value = '';
-  updateDetailSubjectOptions();
+watch(atSubject2, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    atChapter.value = ''; // 과목 변경 시 챕터 초기화
+    chapter.value = ''; // 챕터 입력 필드 초기화
+  }
 });
 
-onMounted(fetchCategories);
+onMounted(fetchSubjects);
 </script>
 
 <style scoped>

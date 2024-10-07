@@ -84,6 +84,7 @@ const submitChapter = async () => {
 watch(atSubject, newSubject => {
   if (newSubject) {
     selectSubject(newSubject);
+    chapter.value = ''; // 과목 변경 시 챕터 초기화
   }
 });
 
