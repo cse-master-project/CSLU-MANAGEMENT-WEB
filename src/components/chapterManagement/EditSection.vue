@@ -75,7 +75,7 @@ const submitEditSubject = async () => {
     newSubject: editSubject.value,
   };
   try {
-    await api.patch('api/quiz/subject', EditSubjectData);
+    await api.patch('api/v2/quiz/subject', EditSubjectData);
     alert('과목이 수정되었습니다.');
     // 성공 시 입력 필드 초기화
     atEditSubject.value = '';
