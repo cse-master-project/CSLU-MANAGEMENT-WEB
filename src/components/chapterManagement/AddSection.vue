@@ -65,6 +65,7 @@ const submitSubject = async () => {
     // 삭제 성공 시 로직
     addSubject.value = ''; // 입력 필드 초기화
     alert('과목이 추가되었습니다.');
+    await fetchCategories(); // 과목 목록 갱신
   } catch (error) {
     console.error('에러 :', error);
     alert('과목 추가 중 예상치 못한 오류가 발생했습니다.');
