@@ -3,21 +3,21 @@
     <q-card-section class="card-section">
       <q-p class="section-title">과목 수정</q-p>
       <q-select
-        v-model="atEditSubject"
+        v-model="atSubject"
         :options="subjectOptions"
         label="과목"
         outlined
         class="q-mb-md select-box"
       />
       <q-input
-        v-model="editSubject"
+        v-model="subject"
         type="textarea"
         autogrow
         outlined
         placeholder="수정 과목을 입력해주세요."
         class="textbox"
       />
-      <q-btn @click="submitEditSubject" class="submit-btn">과목 수정</q-btn>
+      <q-btn @click="submitsubject" class="submit-btn">과목 수정</q-btn>
     </q-card-section>
     <q-card-section class="card-section">
       <q-p class="section-title">챕터 수정</q-p>
@@ -30,23 +30,21 @@
         @update:model-value="updateDetailSubjectOptions"
       />
       <q-select
-        v-model="atEditDetailSubject"
+        v-model="atChapter"
         :options="filteredDetailSubjectOptions"
         label="챕터"
         outlined
         class="q-mb-md select-box"
       />
       <q-input
-        v-model="editDetailSubject"
+        v-model="chapter"
         type="textarea"
         autogrow
         outlined
         placeholder="수정 챕터를 입력해주세요."
         class="textbox"
       />
-      <q-btn @click="submitEditDetailSubject" class="submit-btn"
-        >챕터 수정</q-btn
-      >
+      <q-btn @click="submitchapter" class="submit-btn">챕터 수정</q-btn>
     </q-card-section>
   </q-card>
 </template>
@@ -67,19 +65,19 @@ const updateDetailSubjectOptions = () => {
 };
 
 // 과목 수정 기능
-const atEditSubject = ref('');
-const editSubject = ref('');
-const submitEditSubject = async () => {
-  const EditSubjectData = {
-    subject: atEditSubject.value,
-    newSubject: editSubject.value,
+const atSubject = ref('');
+const subject = ref('');
+const submitsubject = async () => {
+  const subjectData = {
+    subject: atSubject.value,
+    newSubject: subject.value,
   };
   try {
-    await api.patch('api/v2/quiz/subject', EditSubjectData);
+    await api.patch('api/v2/quiz/subject', subjectData);
     alert('과목이 수정되었습니다.');
     // 성공 시 입력 필드 초기화
-    atEditSubject.value = '';
-    editSubject.value = '';
+    atSubject.value = '';
+    subject.value = '';
   } catch (error) {
     console.error('에러 :', error);
     alert('과목 수정 중 예상치 못한 오류가 발생했습니다.');
@@ -88,21 +86,22 @@ const submitEditSubject = async () => {
 
 // 챕터 수정 기능
 const atSubject2 = ref('');
-const atEditDetailSubject = ref('');
-const editDetailSubject = ref('');
-const submitEditDetailSubject = async () => {
-  const EditDetailSubjectData = {
+const atChapter = ref('');
+const chapter = ref('');
+const submitchapter = async () => {
+  const chapterData = {
     subject: atSubject2.value,
-    detailSubject: atEditDetailSubject.value,
-    newDetailSubject: editDetailSubject.value,
+    chapter: atChapter.value,
+    newChapter: chapter.value,
   };
+  //console.log(chapterData);
   try {
-    await api.patch('api/quiz/subject/detail', EditDetailSubjectData);
+    await api.patch('api/quiz/subject/chapter', chapterData);
     alert('챕터가 수정되었습니다.');
     // 성공 시 입력 필드 초기화
     atSubject2.value = '';
-    atEditDetailSubject.value = '';
-    editDetailSubject.value = '';
+    atChapter.value = '';
+    chapter.value = '';
   } catch (error) {
     console.error('에러 :', error);
     alert('챕터 수정 중 예상치 못한 오류가 발생했습니다.');
@@ -111,7 +110,7 @@ const submitEditDetailSubject = async () => {
 
 // 과목 변경 시 챕터 옵션 업데이트
 watch(atSubject2, () => {
-  atEditDetailSubject.value = '';
+  atChapter.value = '';
   updateDetailSubjectOptions();
 });
 
