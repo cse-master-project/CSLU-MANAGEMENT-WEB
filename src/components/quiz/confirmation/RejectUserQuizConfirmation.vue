@@ -66,7 +66,7 @@ const quizReject = async () => {
   //console.log(reason.value);
   try {
     await api.put(
-      `/api/management/quiz/${props.currentQuiz.quizId}/reject`,
+      `/api/v2/management/quiz/${props.currentQuiz.quizId}/reject`,
       reason.value,
     );
     // 삭제 성공 시 로직(alert말고 딴거 해야함.)
