@@ -138,7 +138,7 @@ const submitQuiz = async () => {
 
   try {
     const response = await api.patch(
-      `/api/management/quiz/${props.quizzes.quizId}`,
+      `/api/v2/management/quiz/${props.quizzes.quizId}`,
       quizData,
     );
     console.log('응답:', response.data); // 서버 응답 확인
