@@ -12,10 +12,9 @@
             <q-select
               class="select-box"
               v-model="subject"
-              :options="subjectOptions"
+              :options="subjectOptions.map(s => s.subject)"
               outlined
               dense
-              @update:model-value="updateDetailSubjectOptions"
             />
           </div>
           <div class="select-chapter">
@@ -23,7 +22,7 @@
             <q-select
               class="select-box"
               v-model="chapter"
-              :options="filteredDetailSubjectOptions.slice().reverse()"
+              :options="chapterOptions"
               outlined
               dense
             />
@@ -137,7 +136,7 @@ import {
   deleteQuiz,
 } from 'src/services/quiz/adminQuiz.js';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
-import useCategories from 'src/services/useCategories.js';
+import { useCategorie } from 'src/services/quiz/useCategorie.js';
 //반응형 데이터
 const subject = ref('과목을 선택 해주세요.');
 const chapter = ref('챕터를 선택 해주세요.');
@@ -178,11 +177,21 @@ const cancelFile = () => {
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
-// 과목,챕터 불러오기 로직
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
-
-onMounted(fetchCategories);
+// 과목, 챕터 불러오기 로직
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorie();
+onMounted(fetchSubjects);
+watch(subject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    chapter.value = ''; // 과목 변경 시 챕터 초기화
+  }
+});
 
 // 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
 const filteredDetailSubjectOptions = ref([]);
