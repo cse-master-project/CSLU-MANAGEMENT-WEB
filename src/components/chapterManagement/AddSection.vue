@@ -17,21 +17,21 @@
       <q-p class="section-title">챕터 추가</q-p>
       <q-select
         v-model="atSubject"
-        :options="subjectOptions"
+        :options="subjectOptions.map(s => s.subject)"
         label="과목"
         outlined
         class="q-mb-md select-box"
       />
       <q-input
-        v-model="addDetailSubject"
+        v-model="addChapter"
         type="textarea"
         autogrow
         outlined
         placeholder="챕터를 입력해주세요."
         class="textbox"
-        @keypress.enter.prevent="submitDetailSubject"
+        @keypress.enter.prevent="submitChapter"
       />
-      <q-btn @click="submitDetailSubject" class="submit-btn">챕터 추가</q-btn>
+      <q-btn @click="submitChapter" class="submit-btn">챕터 추가</q-btn>
     </q-card-section>
   </q-card>
 </template>
@@ -39,21 +39,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
-import useCategories from 'src/services/useCategories.js';
+import { useCategorie } from 'src/services/quiz/useCategorie.js';
 
-// 카테고리 조회 기능
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
 const atSubject = ref('');
 const addSubject = ref('');
-const addDetailSubject = ref('');
+const addChapter = ref('');
 
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
-const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    atSubject.value,
-  );
-};
+// 서비스 불러오기
+const { subjectOptions, fetchSubjects } = useCategorie();
 
 // 과목 추가 기능
 const submitSubject = async () => {
@@ -72,14 +65,14 @@ const submitSubject = async () => {
 };
 
 // 챕터 추가 기능
-const submitDetailSubject = async () => {
+const submitChapter = async () => {
   const detailSubjectData = {
     subject: atSubject.value,
-    chapter: addDetailSubject.value,
+    chapter: addChapter.value,
   };
   try {
     await api.post('api/v2/quiz/subject/chapter', detailSubjectData);
-    addDetailSubject.value = ''; // 입력 필드 초기화
+    addChapter.value = ''; // 입력 필드 초기화
     alert('챕터가 추가되었습니다.');
   } catch (error) {
     console.error('에러 :', error);
@@ -87,7 +80,7 @@ const submitDetailSubject = async () => {
   }
 };
 
-onMounted(fetchCategories);
+onMounted(fetchSubjects);
 </script>
 
 <style scoped>
