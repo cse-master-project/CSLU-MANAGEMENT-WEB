@@ -1,99 +1,94 @@
 <template>
   <q-card class="custom-card">
+    <!-- 과목 삭제 섹션 -->
     <q-card-section class="card-section">
       <q-p class="section-title">과목 삭제</q-p>
       <q-select
-        v-model="deleteSubject"
-        :options="subjectOptions"
+        v-model="subject"
+        :options="subjectOptions.map(s => s.subject)"
         label="과목"
         outlined
         class="q-mb-md select-box"
       />
-      <q-btn @click="submitDeleteSubject" class="submit-btn">과목 삭제</q-btn>
+      <q-btn @click="submitSubject" class="submit-btn">과목 삭제</q-btn>
     </q-card-section>
+
+    <!-- 챕터 삭제 섹션 -->
     <q-card-section class="card-section">
       <q-p class="section-title">챕터 삭제</q-p>
       <q-select
-        v-model="atSubject3"
-        :options="subjectOptions"
+        v-model="atSubject"
+        :options="subjectOptions.map(s => s.subject)"
         label="과목"
         outlined
         class="q-mb-md select-box"
-        @update:model-value="updateDetailSubjectOptions"
       />
       <q-select
-        v-model="deleteDetailSubject"
-        :options="filteredDetailSubjectOptions"
+        v-model="chapter"
+        :options="chapterOptions"
         label="챕터"
         outlined
         class="q-mb-md select-box"
       />
-      <q-btn @click="submitDeleteDetailSubject" class="submit-btn"
-        >챕터 삭제</q-btn
-      >
+      <q-btn @click="submitChapter" class="submit-btn">챕터 삭제</q-btn>
     </q-card-section>
   </q-card>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { api } from 'src/boot/axios';
-import useCategories from 'src/services/useCategories.js';
+import {
+  useCategorie,
+  useCategorieDelete,
+} from 'src/services/quiz/useCategorie.js';
 
-// 카테고리 조회 기능
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
-const filteredDetailSubjectOptions = ref([]);
+const subject = ref(''); // 선택된 과목
+const atSubject = ref(''); // 챕터 삭제용 선택된 과목
+const chapter = ref(''); // 선택된 챕터
+
+// 서비스 불러오기
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorie();
+const { deleteSubject, deleteChapter } = useCategorieDelete();
 
 // 과목 삭제 기능
-const deleteSubject = ref('');
-const submitDeleteSubject = async () => {
-  try {
-    await api.delete('api/quiz/subject', {
-      data: {
-        subject: deleteSubject.value,
-      },
-    });
+const submitSubject = async () => {
+  const response = await deleteSubject(subject.value);
+  if (response.success) {
     alert('과목이 삭제되었습니다.');
-    deleteSubject.value = ''; // 삭제 후 입력 필드 초기화
-  } catch (error) {
-    console.error('에러 :', error);
-    alert('과목 삭제 중 예상치 못한 오류가 발생했습니다.');
+    subject.value = ''; // 삭제 후 입력 필드 초기화
+    fetchSubjects(); // 과목 목록 갱신
+  } else {
+    alert('과목 삭제 중 오류가 발생했습니다.');
   }
 };
 
 // 챕터 삭제 기능
-const atSubject3 = ref('');
-const deleteDetailSubject = ref('');
-const submitDeleteDetailSubject = async () => {
-  try {
-    await api.delete('api/quiz/subject/detail', {
-      data: {
-        subject: atSubject3.value,
-        detailSubject: deleteDetailSubject.value,
-      },
-    });
+const submitChapter = async () => {
+  const response = await deleteChapter(atSubject.value, chapter.value);
+  if (response.success) {
     alert('챕터가 삭제되었습니다.');
-    deleteDetailSubject.value = ''; // 삭제 후 입력 필드 초기화
-  } catch (error) {
-    console.error('에러 :', error);
-    alert('챕터 삭제 중 예상치 못한 오류가 발생했습니다.');
+    chapter.value = ''; // 삭제 후 입력 필드 초기화
+    fetchChapters(atSubject.value); // 챕터 목록 갱신
+  } else {
+    alert('챕터 삭제 중 오류가 발생했습니다.');
   }
 };
 
-// 소분류 옵션 업데이트
-const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    atSubject3.value,
-  );
-};
-
-watch(atSubject3, () => {
-  deleteDetailSubject.value = '';
-  updateDetailSubjectOptions();
+// atSubject 변경될 때마다 해당 과목의 챕터 목록 조회
+watch(atSubject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+  }
 });
 
-onMounted(fetchCategories);
+// 컴포넌트가 마운트되면 과목 목록 조회
+onMounted(fetchSubjects);
 </script>
 
 <style scoped>

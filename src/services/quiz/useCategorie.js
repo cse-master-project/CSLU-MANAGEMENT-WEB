@@ -71,3 +71,32 @@ export function useCategorieAdd() {
   };
   return { addSubject, addChapter };
 }
+
+// [delete] : 카테고리 삭제
+export function useCategorieDelete() {
+  const deleteSubject = async subject => {
+    try {
+      await api.delete('/api/quiz/subject', {
+        data: { subject },
+      });
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting subject:', error);
+      return { success: false, error };
+    }
+  };
+
+  const deleteChapter = async (subject, chapter) => {
+    try {
+      await api.delete('/api/v2/quiz/subject/chapter', {
+        data: { subject, chapter },
+      });
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting chapter:', error);
+      return { success: false, error };
+    }
+  };
+
+  return { deleteSubject, deleteChapter };
+}

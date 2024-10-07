@@ -56,8 +56,9 @@ const { addSubject, addChapter } = useCategorieAdd();
 const submitSubject = async () => {
   const response = await addSubject(subject.value);
   if (response.success) {
-    subject.value = ''; // 입력 필드 초기화
     alert('과목이 추가되었습니다.');
+    subject.value = ''; // 입력 필드 초기화
+    fetchSubjects(); // 과목 목록 갱신
   } else {
     alert('과목 추가 중 오류가 발생했습니다.');
   }
