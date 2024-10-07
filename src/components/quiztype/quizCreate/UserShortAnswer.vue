@@ -57,7 +57,9 @@
           </div>
           <div v-if="filePreview" class="previewImage-container">
             <img :src="filePreview" alt="File Preview" class="preview-image" />
-            <div class="cancel-button" @click="cancelFile">X</div>
+            <div class="cancel-button" @click="cancelFile">
+              <q-icon name="close" />
+            </div>
           </div>
         </q-card-section>
         <!-- 문제 입력 -->
@@ -400,8 +402,12 @@ input[type='file'] {
   color: white;
   font-size: 1.5rem;
   text-align: center;
-  cursor: pointer;
+  line-height: 50px;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 // 문제 입력 스타일
