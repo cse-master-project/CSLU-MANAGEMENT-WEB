@@ -58,7 +58,7 @@ const imageUrl = ref(null);
 // 서버에서 퀴즈 데이터 가져오기.
 const fetchQuiz = async () => {
   try {
-    const response = await userApi.get(`/api/quiz/${quizId}`);
+    const response = await userApi.get(`/api/v2/quiz/${quizId}`);
     quiz.value = response.data;
     //console.log('문제 :', quiz.value);
   } catch (error) {
