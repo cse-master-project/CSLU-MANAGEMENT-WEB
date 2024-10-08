@@ -7,17 +7,16 @@
           과목
           <q-select
             v-model="subject"
-            :options="subjectOptions"
+            :options="subjectOptions.map(s => s.subject)"
             outlined
             dense
-            @update:model-value="filteredDetailSubjectOptions"
           />
         </div>
         <div class="col-12 col-md-4 q-my-md">
           챕터
           <q-select
-            v-model="detailSubject"
-            :options="filteredDetailSubjectOptions.slice().reverse()"
+            v-model="chapter"
+            :options="chapterOptions"
             outlined
             dense
           />
@@ -98,12 +97,12 @@ import { ref, onMounted, watch } from 'vue';
 import { fetchQuizzesFromApi } from 'src/services/quiz/allUserQuiz.js'; // 퀴즈 서비스 호출
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
-import useCategories from 'src/services/useCategories.js';
+import { useCategorie } from 'src/services/quiz/useCategorie.js';
 
 const quizzes = ref([]);
 const filteredQuizzes = ref([]);
 const subject = ref('');
-const detailSubject = ref('');
+const chapter = ref('');
 const quizType = ref('');
 const quizTypeOptions = [
   { value: 1, label: '4지선다형' },
@@ -114,19 +113,18 @@ const quizTypeOptions = [
 ];
 
 //카테고리 조회 서비스 사용.
-const filteredDetailSubjectOptions = ref([]);
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
-const updateDetailSubjectOptions = () => {
-  //과목에 따른 챕터 필터링 함수.
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
-};
-watch(subject, () => {
-  // 과목이 변경될 때마다 챕터 선택 초기화
-  chapter.value = '';
-  updateDetailSubjectOptions();
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorie();
+watch(subject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    chapter.value = ''; // 과목 변경 시 챕터 초기화
+  }
 });
 
 //서버에서 퀴즈 목록 들고 오기.
@@ -152,12 +150,11 @@ const resetFilters = () => {
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
-    const detailSubjectMatch =
-      !detailSubject.value || quiz.detailSubject === detailSubject.value;
+    const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
     const quizTypeMatch =
       !quizType.value || quiz.quizType === quizType.value.value;
 
-    return subjectMatch && detailSubjectMatch && quizTypeMatch;
+    return subjectMatch && chapterMatch && quizTypeMatch;
   });
 };
 
@@ -199,7 +196,7 @@ const goToQuizDetail = quizId => {
 };
 
 onMounted(async () => {
-  await fetchCategories();
+  await fetchSubjects();
   await fetchQuizzes();
 });
 </script>
