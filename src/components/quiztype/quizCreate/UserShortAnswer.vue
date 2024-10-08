@@ -28,10 +28,9 @@
             <q-select
               class="select-box"
               v-model="subject"
-              :options="subjectOptions"
+              :options="subjectOptions.map(s => s.subject)"
               outlined
               dense
-              @update:model-value="updateDetailSubjectOptions"
               style="width: 200px"
             />
           </div>
@@ -40,7 +39,7 @@
             <q-select
               class="select-box"
               v-model="chapter"
-              :options="filteredDetailSubjectOptions.slice().reverse()"
+              :options="chapterOptions"
               outlined
               dense
               style="width: 200px"
@@ -133,7 +132,7 @@ import {
   deleteQuiz,
 } from 'src/services/quiz/userQuiz.js';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
-import userUseCategories from 'src/services/userUseCategories.js';
+import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
 // 반응형 데이터
 const subject = ref('과목을 선택 해주세요.');
 const chapter = ref('챕터를 선택 해주세요.');
@@ -174,25 +173,20 @@ const cancelFile = () => {
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  userUseCategories();
-
-onMounted(fetchCategories);
-
-const filteredDetailSubjectOptions = ref([]);
-// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
-const updateDetailSubjectOptions = () => {
-  const detailSubjects = getDetailSubjectsBySubject(subject.value);
-  if (detailSubjects.length === 0) {
-    filteredDetailSubjectOptions.value = ['공백'];
-  } else {
-    filteredDetailSubjectOptions.value = detailSubjects;
+// 과목, 챕터 불러오기 로직
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorieUser();
+onMounted(fetchSubjects);
+watch(subject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    chapter.value = '챕터를 선택 해주세요.';
   }
-};
-watch(subject, () => {
-  // 과목이 변경될 때마다 챕터 선택 초기화
-  chapter.value = '챕터를 선택 해주세요.';
-  updateDetailSubjectOptions();
 });
 
 // 답안 정리 함수
