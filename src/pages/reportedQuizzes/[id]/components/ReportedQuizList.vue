@@ -114,8 +114,13 @@ watch(subject, newSubject => {
 //서버에서 퀴즈 목록 들고 오기.
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/v2/quiz/report');
-    quizzes.value = response.data; // 서버로부터 받아온 데이터를 quizzes에 저장
+    const response = await api.get('/api/v2/quiz/report', {
+      params: {
+        page: 0,
+        size: 1000,
+      },
+    });
+    quizzes.value = response.data.content; // 서버로부터 받아온 데이터를 quizzes에 저장
     console.log('신고된 문제 :', quizzes.value);
   } catch (error) {
     console.error('퀴즈 신고 데이터를 불러오는데 실패했습니다.', error);

@@ -89,7 +89,7 @@ const quizId = route.params.id; // 현재 퀴즈 찾기
 //서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get(`/api/quiz/${quizId}`);
+    const response = await api.get(`/api/v2/quiz/${quizId}`);
     quizzes.value = response.data;
     console.log('신고문제:', quizzes.value);
   } catch (error) {
@@ -105,8 +105,8 @@ const formatDate = dateString => {
 const reports = ref([]);
 const fetchReoports = async () => {
   try {
-    const response = await api.get(`/api/quiz/${quizId}/report`);
-    reports.value = response.data;
+    const response = await api.get(`/api/v2/quiz/${quizId}/report`);
+    reports.value = response.data.content;
     console.log('신고문제 이유 :', reports.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
