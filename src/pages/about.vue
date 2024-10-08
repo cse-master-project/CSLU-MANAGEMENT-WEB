@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md" style="font-family: 'Toss Product Sans'">
-    <div class="container" style="width: 90%">
+    <div class="container">
       <section
         v-for="(section, sectionIndex) in sections"
         :key="sectionIndex"
@@ -9,20 +9,17 @@
       >
         <!-- 타이틀 -->
         <q-card flat class="q-pa-md text-left" style="border: none">
-          <q-card-section>
-            <div class="section-title">
-              {{ section.title }}
-            </div>
+          <q-card-section class="section-title">
+            {{ section.title }}
           </q-card-section>
-          <q-card-section
-            style="font-size: 30px; font-weight: 700; white-space: pre-line"
-          >
+          <q-card-section class="section-content">
             {{ section.content }}
           </q-card-section>
 
           <!-- 사진 및 내용 -->
-          <q-card-section class="q-pt-none" style="margin: 3% 0; width: 100%">
+          <q-card-section class="q-pt-none">
             <div v-if="section.image" class="content-wrapper">
+              <!--첫번째 섹션-->
               <div v-if="sectionIndex === 0">
                 <q-carousel
                   v-model="currentImageIndex"
@@ -30,15 +27,12 @@
                   swipeable
                   infinite
                   class="slider"
-                  height="700px"
-                  style="width: 100%"
                 >
                   <q-carousel-slide
                     v-for="(img, imgIndex) in section.image"
                     :key="imgIndex"
                     :name="imgIndex"
                     class="slides"
-                    style="width: 840px"
                   >
                     <div class="image-text" style="color: black">
                       {{ img.text }}
@@ -47,7 +41,6 @@
                       :src="img.src"
                       class="screenimage"
                       alt="Section Image"
-                      style="width: 350px; height: 700px"
                     />
                   </q-carousel-slide>
                 </q-carousel>
@@ -69,6 +62,7 @@
                   />
                 </div>
               </div>
+              <!--나머지 섹션-->
               <div
                 v-else
                 class="image-text-wrapper"
@@ -76,7 +70,7 @@
                 :key="imgIndex"
                 :class="{ 'is-visible': imgIndex <= currentImageIndex }"
                 :style="{ '--i': imgIndex }"
-                style="max-width: 1200px"
+                style="width: 100%"
               >
                 <img :src="img.src" class="image" alt="Section Image" />
                 <div class="image-text">{{ img.text }}</div>
@@ -98,7 +92,7 @@ const sections = ref([
   {
     title: '문제 유형 선택',
     content:
-      '원하는 문제 유형을 선택하여 시작해 보세요!\n 아래와 같은 문제 유형이 있습니다.',
+      '원하는 문제 유형을 선택하여 시작해 보세요!\n 아래와 같은 문제 유형이 있습니다. ',
     image: [
       {
         src: '/quizimg/multiple.png',
@@ -113,7 +107,7 @@ const sections = ref([
   {
     title: '과목 및 챕터 선택',
     content:
-      '문제 유형을 선택하셨다면, 다음으로는 과목과 해당 과목의 챕터를 선택하세요.',
+      '문제 유형을 선택하셨다면, 다음으로는 과목과 해당 과목의 챕터를 선택하세요.\n또한 이미지가 필요하다면 문제 작성 전에 이미지를 업로드하세요.',
     image: [{ src: '/quizimg/lang.png', text: '' }],
   },
   {
@@ -182,7 +176,7 @@ const nextImage = () => {
 };
 </script>
 
-<style>
+<style scoped>
 @keyframes fadeInUp {
   0% {
     opacity: 0;
@@ -196,18 +190,50 @@ const nextImage = () => {
 
 .container {
   margin: 0 auto;
+  width: 90%;
+}
+.q-pt-none {
+  margin: 3% 0;
+  width: 100%;
 }
 .slider {
   display: flex;
   flex-direction: column;
-  width: 1080px;
+  width: 100%;
+  height: 700px;
 }
+
+.slides {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 850px;
+
+  justify-content: space-between;
+}
+.screenimage {
+  width: 350px;
+  height: 700px;
+}
+
 .section {
   margin-bottom: 50px;
   opacity: 0;
   animation: none;
   width: 100%;
   min-height: 800px;
+}
+
+.section-title {
+  font-size: 28px;
+  color: #3182f6;
+  font-weight: 700;
+}
+
+.section-content {
+  font-size: 30px;
+  font-weight: 700;
+  white-space: pre-line;
 }
 
 .section.active {
@@ -248,12 +274,6 @@ const nextImage = () => {
   font-size: 1.3rem;
 }
 
-.section-title {
-  font-size: 28px;
-  color: #3182f6;
-  font-weight: 700;
-}
-
 .button-container {
   display: flex;
   justify-content: space-between;
@@ -264,10 +284,8 @@ const nextImage = () => {
 .btn {
   background-color: #ededed;
 }
-.slides {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+
+.image {
+  width: 100%;
 }
 </style>
