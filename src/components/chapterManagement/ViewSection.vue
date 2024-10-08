@@ -23,7 +23,7 @@
           <q-item-label class="list-title">챕터</q-item-label>
           <q-list bordered class="custom-list">
             <q-item
-              v-for="option in filteredDetailSubjectOptions.slice().reverse()"
+              v-for="option in filteredDetailSubjectOptions"
               :key="option.value"
               clickable
               @click="selectDetailSubject(option)"

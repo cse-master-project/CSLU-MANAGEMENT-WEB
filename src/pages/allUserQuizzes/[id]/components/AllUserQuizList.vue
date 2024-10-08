@@ -10,14 +10,14 @@
             :options="subjectOptions"
             outlined
             dense
-            @update:model-value="filteredDetailSubjectOptions"
+            @update:model-value="updateDetailSubjectOptions"
           />
         </div>
         <div class="col-12 col-md-4 q-my-md">
           챕터
           <q-select
-            v-model="detailSubject"
-            :options="filteredDetailSubjectOptions.slice().reverse()"
+            v-model="chapter"
+            :options="filteredDetailSubjectOptions"
             outlined
             dense
           />
@@ -51,10 +51,14 @@
     </q-card>
 
     <!-- Quiz Cards -->
-    <div class="row q-col-gutter-md q-pt-md">
-      <div v-for="quiz in filteredQuizzes" :key="quiz.quizId" class="q-my-md">
+    <div class="row q-pt-md justify-between">
+      <div
+        v-for="quiz in filteredQuizzes"
+        :key="quiz.quizId"
+        class="col-12 col-md-6 q-my-md q-gutter-md"
+      >
         <q-card
-          class="my-card bg-white q-mb-md"
+          class="my-card"
           clickable
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
@@ -103,7 +107,7 @@ import useCategories from 'src/services/useCategories.js';
 const quizzes = ref([]);
 const filteredQuizzes = ref([]);
 const subject = ref('');
-const detailSubject = ref('');
+const chapter = ref('');
 const quizType = ref('');
 const quizTypeOptions = [
   { value: 1, label: '4지선다형' },
@@ -152,12 +156,10 @@ const resetFilters = () => {
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
-    const detailSubjectMatch =
-      !detailSubject.value || quiz.detailSubject === detailSubject.value;
-    const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value;
+    const chaptertMatch = !chapter.value || quiz.chapter === chapter.value;
+    const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
 
-    return subjectMatch && detailSubjectMatch && quizTypeMatch;
+    return subjectMatch && chaptertMatch && quizTypeMatch;
   });
 };
 
@@ -208,8 +210,7 @@ onMounted(async () => {
 .my-card {
   border-radius: 10px;
   overflow: hidden;
-  min-height: 300px; /* 최소 높이 설정 */
-  /* 또는 높이를 고정하고 싶다면 */
+  min-height: 300px;
   height: 300px;
 }
 

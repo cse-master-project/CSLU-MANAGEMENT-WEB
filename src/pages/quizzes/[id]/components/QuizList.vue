@@ -161,7 +161,7 @@ const updateDetailSubjectOptions = () => {
   // 챕터 역순
   const detailSubjects = getDetailSubjectsBySubject(subject.value);
   if (detailSubjects) {
-    filteredDetailSubjectOptions.value = [...detailSubjects].reverse();
+    filteredDetailSubjectOptions.value = [...detailSubjects];
   }
 };
 
@@ -211,8 +211,7 @@ const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
     const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
-    const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value;
+    const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
     return subjectMatch && chapterMatch && quizTypeMatch;
   });
 };

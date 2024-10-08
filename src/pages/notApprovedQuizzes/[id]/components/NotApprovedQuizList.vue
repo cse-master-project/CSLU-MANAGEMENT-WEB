@@ -10,13 +10,13 @@
             label="과목"
             outlined
             dense
-            @update:model-value="filteredDetailSubjectOptions"
+            @update:model-value="updateDetailSubjectOptions"
           />
         </div>
         <div class="col-12 col-md-4 q-my-md">
           <q-select
-            v-model="detailSubject"
-            :options="filteredDetailSubjectOptions.slice().reverse()"
+            v-model="chapter"
+            :options="filteredDetailSubjectOptions"
             label="챕터"
             outlined
             dense
@@ -113,7 +113,7 @@ import useCategories from 'src/services/useCategories.js';
 const quizzes = ref([]);
 const filteredQuizzes = ref([]);
 const subject = ref('');
-const detailSubject = ref('');
+const chapter = ref('');
 const quizType = ref('');
 
 const quizTypeOptions = [
@@ -141,7 +141,7 @@ const updateDetailSubjectOptions = () => {
 };
 watch(subject, () => {
   // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '';
+  chapter.value = '';
   updateDetailSubjectOptions();
 });
 
@@ -190,7 +190,7 @@ const parsedContent = jsonContent => {
 // 필터링 초기화 기능
 const resetFilters = () => {
   subject.value = '';
-  detailSubject.value = '';
+  chapter.value = '';
   quizType.value = '';
   filteredQuizzes.value = quizzes.value;
 };
@@ -199,12 +199,9 @@ const resetFilters = () => {
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
-    const detailSubjectMatch =
-      !detailSubject.value || quiz.detailSubject === detailSubject.value;
-    const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value;
-
-    return subjectMatch && detailSubjectMatch && quizTypeMatch;
+    const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
+    const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
+    return subjectMatch && chapterMatch && quizTypeMatch;
   });
 };
 
