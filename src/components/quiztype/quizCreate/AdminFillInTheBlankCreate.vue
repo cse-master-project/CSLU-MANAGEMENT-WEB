@@ -189,24 +189,9 @@ onMounted(fetchSubjects);
 watch(subject, newSubject => {
   if (newSubject) {
     selectSubject(newSubject);
-    chapter.value = ''; // 과목 변경 시 챕터 초기화
+    chapter.value = '챕터를 선택 해주세요.';
+    ssss;
   }
-});
-
-// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
-const filteredDetailSubjectOptions = ref([]);
-const updateDetailSubjectOptions = () => {
-  const detailSubjects = getDetailSubjectsBySubject(subject.value);
-  if (detailSubjects.length === 0) {
-    filteredDetailSubjectOptions.value = ['공백'];
-  } else {
-    filteredDetailSubjectOptions.value = detailSubjects;
-  }
-};
-watch(subject, () => {
-  // 과목이 변경될 때마다 챕터 선택 초기화
-  chapter.value = '챕터를 선택 해주세요.';
-  updateDetailSubjectOptions();
 });
 
 // 문제에 포함된 <<빈칸>>의 개수를 최대 3개로 제한하는 watch
