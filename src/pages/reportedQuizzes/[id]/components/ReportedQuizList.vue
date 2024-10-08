@@ -66,12 +66,9 @@
           <q-card-section>
             <div class="text-h6">퀴즈 ID: {{ quiz.quizId }}</div>
             <div class="text-caption text-reportAt">
-              신고일: {{ formatDate(report.reportAt) }}
+              신고일: {{ formatDate(quiz.reportAt) }}
             </div>
             <div class="text-subtitle2">신고 이유 : {{ quiz.content }}</div>
-            <div class="text-caption text-userId">
-              신고자 : {{ quiz.userNickname }}
-            </div>
           </q-card-section>
         </q-card>
       </div>
