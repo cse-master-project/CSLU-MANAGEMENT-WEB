@@ -71,7 +71,7 @@ const quizId = route.params.id; // 현재 퀴즈 찾기
 //서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get(`/api/quiz/${quizId}`);
+    const response = await api.get(`/api/v2/quiz/${quizId}`);
     quizzes.value = response.data;
     console.log('퀴즈value:', quizzes.value);
   } catch (error) {

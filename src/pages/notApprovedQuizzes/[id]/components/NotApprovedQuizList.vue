@@ -129,8 +129,13 @@ watch(subject, newSubject => {
 
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get('/api/v2/management/quiz/unapproved');
-    quizzes.value = response.data; // 서버로부터 받아온 데이터를 quizzes에 저장
+    const response = await api.get('/api/v2/management/quiz/unapproved', {
+      params: {
+        page: 0,
+        size: 1000,
+      },
+    });
+    quizzes.value = response.data.content; // 서버로부터 받아온 데이터를 quizzes에 저장
     filteredQuizzes.value = quizzes.value;
     console.log('미승인문제 :', quizzes.value);
   } catch (error) {
