@@ -11,7 +11,7 @@ export function useCategorieUser() {
     try {
       const response = await userApi.get('/api/v2/quiz/subject');
       subjectOptions.value = response.data;
-      console.log('과목 목록:', subjectOptions.value);
+      //console.log('과목 목록:', subjectOptions.value);
     } catch (error) {
       console.error('과목 목록을 불러오는 중 오류가 발생했습니다:', error);
     }
@@ -23,7 +23,7 @@ export function useCategorieUser() {
         params: { subject: subject }, // subject 파라미터 전달
       });
       chapterOptions.value = response.data.chapters || [];
-      console.log('챕터 목록:', chapterOptions.value);
+      //console.log('챕터 목록:', chapterOptions.value);
     } catch (error) {
       console.error('챕터 목록을 불러오는 중 오류가 발생했습니다:', error);
     }
