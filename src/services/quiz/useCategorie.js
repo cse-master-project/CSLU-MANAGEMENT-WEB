@@ -48,7 +48,7 @@ export function useCategorieAdd() {
   const addSubject = async subject => {
     try {
       const subjectData = { subject };
-      await api.post('api/quiz/subject', subjectData);
+      await api.post('api/v2/quiz/subject', subjectData);
       return { success: true };
     } catch (error) {
       console.error('Error adding subject:', error);
@@ -87,7 +87,7 @@ export function useCategorieUpdate() {
   const updateChapter = async (subject, chapter, newChapter) => {
     try {
       const chapterData = { subject, chapter, newChapter };
-      await api.patch('/api/quiz/subject/chapter', chapterData);
+      await api.patch('/api/v2/quiz/subject/chapter', chapterData);
       return { success: true };
     } catch (error) {
       console.error('Error updating chapter:', error);
@@ -101,7 +101,7 @@ export function useCategorieUpdate() {
 export function useCategorieDelete() {
   const deleteSubject = async subject => {
     try {
-      await api.delete('/api/quiz/subject', {
+      await api.delete('/api/v2/quiz/subject', {
         data: { subject },
       });
       return { success: true };
