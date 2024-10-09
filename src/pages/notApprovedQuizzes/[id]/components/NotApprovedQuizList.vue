@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page>
     <!-- Filters card -->
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
@@ -51,7 +51,7 @@
       <div
         v-for="quiz in quizzes"
         :key="quiz.quizId"
-        class="col-12 col-md-6 q-my-md"
+        class="col-12 col-md-12 q-my-md"
       >
         <q-card
           class="my-card bg-white q-mb-md"
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Pagination -->
-    <div class="row q-col-gutter-md q-pt-md justify-center">
+    <!-- <div class="row q-col-gutter-md q-pt-md justify-center">
       <q-pagination
         v-model="currentPage"
         :max="totalPages"
@@ -100,7 +100,7 @@
         boundary-numbers
         @update:model-value="changePage"
       />
-    </div>
+    </div> -->
   </q-page>
 </template>
 <script setup>

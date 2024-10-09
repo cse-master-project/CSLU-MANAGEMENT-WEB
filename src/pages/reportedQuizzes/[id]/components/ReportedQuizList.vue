@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page>
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
