@@ -69,7 +69,7 @@ const fetchQuiz = async () => {
 const fetchQuizPermissionStatus = async () => {
   try {
     const response = await userApi.get('/api/v2/quiz/my');
-    const quiz1 = response.data.find(item => item.quizId === quizId);
+    const quiz1 = response.data.content.find(item => item.quizId === quizId);
     quizPermissionStatus.value = quiz1 ? quiz1.permissionStatus : '알 수 없음';
     // console.log(
     //   `Quiz ID ${quizId}의 permissionStatus:`,
