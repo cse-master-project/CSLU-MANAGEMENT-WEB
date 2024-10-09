@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding>
     <!-- Filters card -->
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
@@ -10,7 +10,6 @@
             :options="subjectOptions.map(s => s.subject)"
             outlined
             dense
-            @update:model-value="updateDetailSubjectOptions"
           />
         </div>
         <div class="col-12 col-md-4 q-my-md">
@@ -52,11 +51,7 @@
 
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
-      <div
-        v-for="quiz in quizzes"
-        :key="quiz.quizId"
-        class="col-12 col-md-6 q-my-md"
-      >
+      <div v-for="quiz in filteredQuizzes" :key="quiz.quizId" class="q-my-md">
         <q-card
           class="my-card bg-white q-mb-md"
           clickable
@@ -94,17 +89,6 @@
         </q-card>
       </div>
     </div>
-
-    <!-- Pagination -->
-    <div class="row q-col-gutter-md q-pt-md justify-center">
-      <q-pagination
-        v-model="currentPage"
-        :max="totalPages"
-        max-pages="10"
-        boundary-numbers
-        @update:model-value="changePage"
-      />
-    </div>
   </q-page>
 </template>
 
@@ -129,19 +113,18 @@ const quizTypeOptions = [
 ];
 
 //카테고리 조회 서비스 사용.
-const filteredDetailSubjectOptions = ref([]);
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
-const updateDetailSubjectOptions = () => {
-  //과목에 따른 챕터 필터링 함수.
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
-};
-watch(subject, () => {
-  // 과목이 변경될 때마다 챕터 선택 초기화
-  detailSubject.value = '';
-  updateDetailSubjectOptions();
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorie();
+watch(subject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    chapter.value = ''; // 과목 변경 시 챕터 초기화
+  }
 });
 
 const fetchQuizzes = async () => {
@@ -208,26 +191,9 @@ const parsedContent = jsonContent => {
     return null;
   }
 };
-
-// 필터링 초기화 기능
-const resetFilters = () => {
-  subject.value = '';
-  detailSubject.value = '';
-  quizType.value = '';
-  filteredQuizzes.value = quizzes.value;
-};
-
-//필터링 기능
-const filterQuizzes = () => {
-  filteredQuizzes.value = quizzes.value.filter(quiz => {
-    const subjectMatch = !subject.value || quiz.subject === subject.value;
-    const detailSubjectMatch =
-      !detailSubject.value || quiz.detailSubject === detailSubject.value;
-    const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value;
-
-    return subjectMatch && detailSubjectMatch && quizTypeMatch;
-  });
+// 시간 알려주기.
+const formatDate = dateString => {
+  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 };
 
 // 상세조회.
