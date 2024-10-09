@@ -52,7 +52,7 @@ const quizApprove = async () => {
   try {
     console.log('승인 요청 보냄');
     const response = await api.put(
-      `/api/management/quiz/${props.currentQuiz.quizId}/approve`,
+      `/api/v2/management/quiz/${props.currentQuiz.quizId}/approve`,
     );
     console.log('서버 응답:', response.data);
     alert('퀴즈가 승인 되었습니다.');

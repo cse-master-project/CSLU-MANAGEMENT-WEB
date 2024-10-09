@@ -51,7 +51,7 @@ const router = useRouter();
 //퀴즈 삭제 기능.
 const quizDelete = async () => {
   try {
-    await api.delete(`/api/management/quiz/${props.currentQuiz.quizId}`);
+    await api.delete(`/api/v2/management/quiz/${props.currentQuiz.quizId}`);
     // 삭제 성공 시 로직(alert말고 딴거 해야함.)
     alert('퀴즈가 삭제 되었습니다.');
     if (props.quiz === '승인된 제출자 문제')

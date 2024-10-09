@@ -7,18 +7,17 @@
           과목
           <q-select
             v-model="subject"
-            :options="subjectOptions"
+            :options="subjectOptions.map(s => s.subject)"
             outlined
             label="과목"
             dense
-            @update:model-value="updateDetailSubjectOptions"
           />
         </div>
         <div class="col-12 col-md-3 q-my-md">
           챕터
           <q-select
             v-model="chapter"
-            :options="filteredDetailSubjectOptions"
+            :options="chapterOptions"
             outlined
             label="챕터"
             dense
@@ -131,7 +130,7 @@ import { fetchQuizzesFromApi } from 'src/services/quiz/adminQuiz.js';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import { useFilterStore } from 'src/stores/filter';
-import useCategories from 'src/services/useCategories.js';
+import { useCategorie } from 'src/services/quiz/useCategorie.js';
 
 const filterStore = useFilterStore();
 
@@ -153,28 +152,24 @@ const quizTypeOptions = [
   { value: 5, label: '빈칸 채우기형' },
 ];
 
-const filteredDetailSubjectOptions = ref([]);
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
-
-const updateDetailSubjectOptions = () => {
-  // 챕터 역순
-  const detailSubjects = getDetailSubjectsBySubject(subject.value);
-  if (detailSubjects) {
-    filteredDetailSubjectOptions.value = [...detailSubjects];
+//카테고리 조회 서비스 사용.
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorie();
+watch(subject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    chapter.value = ''; // 과목 변경 시 챕터 초기화
+    filterStore.setSubject(newSubject);
   }
-};
-
-watch(subject, newValue => {
-  chapter.value = ''; // 과목 변경 시 챕터 초기화
-  updateDetailSubjectOptions();
-  filterStore.setSubject(newValue);
 });
-
 watch(chapter, newValue => {
   filterStore.setChapter(newValue);
 });
-
 watch(quizType, newValue => {
   filterStore.setQuizType(newValue);
 });
@@ -278,11 +273,8 @@ const getColumnClass = () => {
 };
 
 onMounted(async () => {
-  await fetchCategories();
+  await fetchSubjects();
   await fetchQuizzes();
-  if (subject.value) {
-    updateDetailSubjectOptions();
-  }
 });
 </script>
 

@@ -1,29 +1,28 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title">빈칸 채우기형</q-title>
+      <q-toolbar-title class="title">빈칸 채우기형</q-toolbar-title>
     </div>
     <div>
       <q-card>
         <!-- 과목과 챕터 선택 -->
         <q-card-section class="select-container">
           <div class="select-subject">
-            <q-label class="label-subject">과목선택</q-label>
+            <label class="label-subject">과목선택</label>
             <q-select
               class="select-box"
               v-model="subject"
-              :options="subjectOptions"
+              :options="subjectOptions.map(s => s.subject)"
               outlined
               dense
-              @update:model-value="updateDetailSubjectOptions"
             />
           </div>
           <div class="select-chapter">
-            <q-label class="label-chapter">챕터선택</q-label>
+            <label class="label-chapter">챕터선택</label>
             <q-select
               class="select-box"
               v-model="chapter"
-              :options="filteredDetailSubjectOptions.slice().reverse()"
+              :options="chapterOptions"
               outlined
               dense
             />
@@ -50,7 +49,7 @@
 
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">질문</q-label>
+          <label class="label-quiz">질문</label>
           <q-input
             v-model="quiz"
             type="textarea"
@@ -71,7 +70,7 @@
 
         <!-- 빈칸 입력 동적 생성 -->
         <q-card-section class="answer-container">
-          <q-label class="label-answer">빈칸 답안</q-label>
+          <label class="label-answer">빈칸 답안</label>
           <div
             v-for="(blank, index) in blankInputs"
             :key="index"
@@ -101,7 +100,7 @@
 
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
-          <q-label class="label-quiz">해설 </q-label>
+          <label class="label-quiz">해설 </label>
           <q-input
             v-model="commentary"
             type="textarea"
@@ -139,7 +138,7 @@ import {
   deleteQuiz,
 } from 'src/services/quiz/adminQuiz.js';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
-import useCategories from 'src/services/useCategories.js';
+import { useCategorie } from 'src/services/quiz/useCategorie.js';
 //반응형 데이터
 const subject = ref('과목을 선택 해주세요.');
 const chapter = ref('챕터를 선택 해주세요.');
@@ -180,26 +179,21 @@ const cancelFile = () => {
   document.getElementById('file').value = ''; // 파일 입력 초기화
 };
 
-// 과목,챕터 불러오기 로직
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
-
-onMounted(fetchCategories);
-
-// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
-const filteredDetailSubjectOptions = ref([]);
-const updateDetailSubjectOptions = () => {
-  const detailSubjects = getDetailSubjectsBySubject(subject.value);
-  if (detailSubjects.length === 0) {
-    filteredDetailSubjectOptions.value = ['공백'];
-  } else {
-    filteredDetailSubjectOptions.value = detailSubjects;
+// 과목, 챕터 불러오기 로직
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorie();
+onMounted(fetchSubjects);
+watch(subject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    chapter.value = '챕터를 선택 해주세요.';
+    ssss;
   }
-};
-watch(subject, () => {
-  // 과목이 변경될 때마다 챕터 선택 초기화
-  chapter.value = '챕터를 선택 해주세요.';
-  updateDetailSubjectOptions();
 });
 
 // 문제에 포함된 <<빈칸>>의 개수를 최대 3개로 제한하는 watch

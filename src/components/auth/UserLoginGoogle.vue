@@ -51,6 +51,7 @@
             placeholder="닉네임"
             class="q-mb-md"
             maxlength="20"
+            counter
           >
             <q-tooltip
               anchor="top middle"
@@ -227,7 +228,7 @@ async function fetchInfo() {
 }
 
 .my-card {
-  height: 60%;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -245,10 +246,12 @@ async function fetchInfo() {
 }
 
 .google-login {
+  margin-top: 4%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  margin-bottom: 4%;
 }
 
 .google-img {
@@ -264,7 +267,7 @@ async function fetchInfo() {
 .signupbtn {
   background-color: rgba(0, 12, 30, 0.8);
   width: 100%;
-  margin: 4% auto;
+  margin: 8% auto;
   font-family: 'Toss Product Sans';
   font-weight: 600;
   color: white;

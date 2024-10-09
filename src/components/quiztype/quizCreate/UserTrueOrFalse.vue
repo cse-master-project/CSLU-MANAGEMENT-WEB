@@ -1,7 +1,7 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title"
+      <q-toolbar-title class="title"
         >o/x형
         <div class="guidecontainer">
           <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
@@ -15,7 +15,7 @@
             >문제를 작성한 후 O 또는 X 중 정답을 선택하세요. 해설을 입력한 후
             "문제 등록" 버튼을 클릭하세요.</q-tooltip
           >
-        </div></q-title
+        </div></q-toolbar-title
       >
     </div>
     <div>
@@ -27,10 +27,9 @@
             <q-select
               class="select-box"
               v-model="subject"
-              :options="subjectOptions"
+              :options="subjectOptions.map(s => s.subject)"
               outlined
               dense
-              @update:model-value="updateDetailSubjectOptions"
             />
           </div>
           <div class="select-chapter">
@@ -38,7 +37,7 @@
             <q-select
               class="select-box"
               v-model="chapter"
-              :options="filteredDetailSubjectOptions.slice().reverse()"
+              :options="chapterOptions"
               outlined
               dense
             />
@@ -65,7 +64,7 @@
 
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">질문</q-label>
+          <label class="label-quiz">문제</label>
           <q-input
             v-model="quiz"
             type="textarea"
@@ -90,7 +89,7 @@
 
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
-          <q-label class="label-quiz">해설 </q-label>
+          <label class="label-quiz">해설 </label>
           <q-input
             v-model="commentary"
             type="textarea"
@@ -125,7 +124,7 @@ import {
   deleteQuiz,
 } from 'src/services/quiz/userQuiz.js';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
-import userUseCategories from 'src/services/userUseCategories.js';
+import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
 // 반응형 데이터
 const options = [
   { label: 'O', value: 1 },
@@ -171,25 +170,19 @@ const cancelFile = () => {
 };
 
 // 과목, 챕터 불러오기 로직
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  userUseCategories();
-
-onMounted(fetchCategories);
-
-// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
-const filteredDetailSubjectOptions = ref([]);
-const updateDetailSubjectOptions = () => {
-  const detailSubjects = getDetailSubjectsBySubject(subject.value);
-  if (detailSubjects.length === 0) {
-    filteredDetailSubjectOptions.value = ['공백'];
-  } else {
-    filteredDetailSubjectOptions.value = detailSubjects;
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorieUser();
+onMounted(fetchSubjects);
+watch(subject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    chapter.value = '챕터를 선택 해주세요.';
   }
-};
-watch(subject, () => {
-  // 과목이 변경될 때마다 챕터 선택 초기화
-  chapter.value = '챕터를 선택 해주세요.';
-  updateDetailSubjectOptions();
 });
 
 // 서버 전송 여부
