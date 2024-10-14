@@ -5,12 +5,8 @@
       <q-card-section class="q-pa-md">
         <div>퀴즈 ID : {{ quiz.quizId }}</div>
         <div class="text-h6 q-mb-xs text-orange">과목 : {{ quiz.subject }}</div>
-        <div class="text-subtitle2 q-mt-sm">
-          챕터 : {{ quiz.detailSubject }}
-        </div>
-        <div class="text-caption text-createAt">
-          생성일 : {{ formatDate(quiz.createAt) }}
-        </div>
+        <div class="text-subtitle2 q-mt-sm">챕터 : {{ quiz.chapter }}</div>
+
         <!-- 이미지 표시 -->
         <div v-if="imageUrl" class="q-mt-md">
           <img
