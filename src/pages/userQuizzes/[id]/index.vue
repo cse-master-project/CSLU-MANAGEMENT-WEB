@@ -43,7 +43,12 @@ import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { userApi } from 'src/boot/userAxios';
 import { date } from 'quasar';
-import { fetchQuiz, fetchQuizImage } from 'src/services/quiz/userQuizDetail.js';
+import {
+  fetchQuiz,
+  fetchQuizImage,
+  fetchQuizPermissionStatus,
+  fetchQuizRejectReasons,
+} from 'src/services/quiz/userQuizDetail.js';
 
 const quiz = ref(null);
 
@@ -81,15 +86,9 @@ const fetchImage = async () => {
 };
 
 // 승인 여부 가져오기
-const fetchQuizPermissionStatus = async () => {
+const fetchPermissionStatus = async () => {
   try {
-    const response = await userApi.get('/api/v2/quiz/my');
-    const quiz1 = response.data.content.find(item => item.quizId === quizId);
-    quizPermissionStatus.value = quiz1 ? quiz1.permissionStatus : '알 수 없음';
-    // console.log(
-    //   `Quiz ID ${quizId}의 permissionStatus:`,
-    //   quizPermissionStatus.value,
-    // );
+    quizPermissionStatus.value = await fetchQuizPermissionStatus(quizId);
   } catch (error) {
     console.error('퀴즈 승인 상태를 불러오는 데 실패했습니다.', error);
   }
@@ -97,20 +96,13 @@ const fetchQuizPermissionStatus = async () => {
 // 반려 이유 가져오기
 const fetchRejectReasons = async () => {
   try {
-    const response = await userApi.get('/api/v2/quiz/my/reject', {
-      params: { quizId },
-    });
-    rejectReasons.value = response.data;
-
+    rejectReasons.value = await fetchQuizRejectReasons(quizId);
     //console.log('반려 이유:', rejectReasons.value);
   } catch (error) {
     console.error('반려 이유를 불러오는 데 실패했습니다.', error);
   }
 };
 
-const formatDate = dateString => {
-  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
-};
 // JSON 파싱.
 const quizContent = computed(() => {
   if (quizzes.value && quizzes.value.jsonContent) {
@@ -154,7 +146,7 @@ const quizTypeViewForm = quizType => {
 
 onMounted(() => {
   fetchQuizzes();
-  fetchQuizPermissionStatus();
+  fetchPermissionStatus();
   fetchRejectReasons();
 });
 </script>
