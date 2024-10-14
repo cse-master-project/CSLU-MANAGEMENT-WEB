@@ -31,22 +31,19 @@
 
         <!-- 챕터 -->
         <div style="flex: 1; position: relative">
-          <label for="detailSubject">챕터</label>
-          <button
-            class="custom-select"
-            @click="toggleDropdown('detailSubject')"
-          >
-            {{ detailSubjectLabel }}
+          <label for="chapter">챕터</label>
+          <button class="custom-select" @click="toggleDropdown('chapter')">
+            {{ chapterLabel }}
           </button>
           <ul
-            v-if="dropdowns.detailSubject"
+            v-if="dropdowns.chapter"
             class="listbox"
             style="max-height: 300px; overflow-y: auto"
           >
             <li
-              v-for="option in filteredDetailSubjectOptions.slice().reverse()"
+              v-for="option in filteredchapterOptions.slice().reverse()"
               :key="option"
-              @click="selectDetailSubject(option)"
+              @click="selectchapter(option)"
             >
               <button class="list">
                 {{ option }}
@@ -120,7 +117,7 @@
 
     <!-- 문제 개수 -->
     <div style="font-size: 1rem">
-      필터링된 개수 : <strong>{{ quizcount }}</strong>
+      퀴즈 개수 : <strong>{{ quizcount }}</strong>
     </div>
 
     <!-- Quiz Cards -->
@@ -184,16 +181,19 @@ import { date } from 'quasar';
 import userQuizlistCategories from 'src/services/userQuizlistCategoris';
 
 const quizzes = ref([]);
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalElements = ref(0);
+
 const filteredQuizzes = ref([]);
 const subject = ref('');
-const detailSubject = ref('');
+const chapter = ref('');
 const permssionStatus = ref('');
 const quizType = ref('');
 const quizcount = ref(0); //만든 문제 개수
-
 const dropdowns = ref({
   subject: false,
-  detailSubject: false,
+  chapter: false,
   permssionStatus: false,
   quizType: false,
 });
@@ -211,10 +211,10 @@ const quizTypeOptions = [
 ];
 
 const subjectLabel = ref('선택해주세요');
-const detailSubjectLabel = ref('선택해주세요');
+const chapterLabel = ref('선택해주세요');
 const permssionStatusLabel = ref('선택해주세요');
 const quizTypeLabel = ref('선택해주세요');
-const filteredDetailSubjectOptions = ref([]);
+const filteredchapterOptions = ref([]);
 
 onMounted(async () => {
   await fetchQuizzes();
@@ -222,19 +222,17 @@ onMounted(async () => {
   document.addEventListener('click', handleClickOutside);
 });
 
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
+const { subjectOptions, fetchCategories, getchaptersBySubject } =
   userQuizlistCategories();
 
-const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    subject.value,
-  );
+const updatechapterOptions = () => {
+  filteredchapterOptions.value = getchaptersBySubject(subject.value);
 };
 
 watch(subject, () => {
-  detailSubject.value = '';
-  detailSubjectLabel.value = '선택해주세요';
-  updateDetailSubjectOptions();
+  chapter.value = '';
+  chapterLabel.value = '선택해주세요';
+  updatechapterOptions();
 });
 
 const fetchQuizzes = async () => {
@@ -284,11 +282,11 @@ const parsedContent = jsonContent => {
 // 필터링 초기화 기능
 const resetFilters = () => {
   subject.value = '';
-  detailSubject.value = '';
+  chapter.value = '';
   permssionStatus.value = '';
   quizType.value = '';
   subjectLabel.value = '선택해주세요';
-  detailSubjectLabel.value = '선택해주세요';
+  chapterLabel.value = '선택해주세요';
   permssionStatusLabel.value = '선택해주세요';
   quizTypeLabel.value = '선택해주세요';
   filteredQuizzes.value = quizzes.value;
@@ -299,18 +297,14 @@ const resetFilters = () => {
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
-    const detailSubjectMatch =
-      !detailSubject.value || quiz.detailSubject === detailSubject.value;
+    const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
     const permssionStatusMatch =
       permssionStatus.value === '' ||
       quiz.permissionStatus === Number(permssionStatus.value);
     const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
 
     return (
-      subjectMatch &&
-      detailSubjectMatch &&
-      permssionStatusMatch &&
-      quizTypeMatch
+      subjectMatch && chapterMatch && permssionStatusMatch && quizTypeMatch
     );
   });
   quizcount.value = filteredQuizzes.value.length; // 필터링 하고 필터링된 퀴즈 수 업데이트하기
@@ -334,14 +328,14 @@ const selectSubject = option => {
   subject.value = option.value;
   subjectLabel.value = option.label;
   toggleDropdown('subject');
-  updateDetailSubjectOptions();
+  updatechapterOptions();
 };
 
 // 챕터 선택
-const selectDetailSubject = option => {
-  detailSubject.value = option;
-  detailSubjectLabel.value = option;
-  toggleDropdown('detailSubject');
+const selectchapter = option => {
+  chapter.value = option;
+  chapterLabel.value = option;
+  toggleDropdown('chapter');
 };
 
 // 승인 여부 선택
