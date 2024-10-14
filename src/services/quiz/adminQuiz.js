@@ -11,12 +11,30 @@ export const submitQuiz = async quizData => {
   }
 };
 
-export const submitQuizImage = async (quizId, base64String) => {
+// 이미지 전송 로직
+//1.  이미지 임시추가
+export const submitQuizImageTemp = async base64String => {
   try {
     const imageData = {
       base64String,
+    };
+    const response = await api.post('/api/v2/quiz/image/temp', imageData);
+    const uuid = response.data;
+    console.log('이미지 임시 추가 완료 uuid: ', uuid);
+    return uuid; //UUID 반환
+  } catch (error) {
+    alert('이미지 추가가 안됩니다.');
+    throw error;
+  }
+};
+// 2. 이미지 추가.
+export const submitQuizImage = async (quizId, uuid) => {
+  try {
+    const imageData = {
+      uuid,
       quizId,
     };
+    console.log('imageData ', imageData);
     await api.post('/api/v2/quiz/image', imageData);
     console.log('이미지 추가 완료');
   } catch (error) {
