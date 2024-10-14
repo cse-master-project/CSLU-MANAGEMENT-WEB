@@ -66,54 +66,78 @@
       퀴즈 개수 : <strong>{{ quizcount }}</strong>
     </div>
 
+    <!--레이아웃 변경-->
+    <div class="layoutbtn q-gutter-md" align="right">
+      <q-btn @click="setLayout(1)" class="layout-btn no-padding">
+        <img src="/1layout.png" alt="1열" class="layoutimg"
+      /></q-btn>
+      <q-btn @click="setLayout(2)" class="layout-btn no-padding">
+        <img src="/2layout.png" alt="2열" class="layoutimg"
+      /></q-btn>
+      <q-btn @click="setLayout(3)" class="layout-btn no-padding">
+        <img src="/3layout.png" alt="3열" class="layoutimg"
+      /></q-btn>
+    </div>
     <!-- Quiz Cards -->
-    <div class="row q-pt-md justify-between">
+    <div class="row q-col-gutter-md q-pt-md">
       <div
-        v-for="quiz in filteredQuizzes"
+        v-for="quiz in paginatedQuizzes"
         :key="quiz.quizId"
-        class="col-12 col-md-6 q-my-md q-gutter-md"
+        :class="getColumnClass()"
+        class="q-my-md"
       >
         <q-card
-          class="my-card-list"
+          class="my-card bg-white q-mb-md"
           clickable
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
-          style="cursor: pointer"
+          style="cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3)"
         >
           <q-card-section>
-            <div class="text-h6" style="font-weight: bold">
-              과목 : {{ quiz.subject }}
+            <div>퀴즈ID : {{ quiz.quizId }}</div>
+            <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
+            <div class="text-subtitle2 text-secondary">
+              챕터: {{ quiz.chapter }}
             </div>
-            <div class="text-subtitle2">챕터 : {{ quiz.chapter }}</div>
-            <div class="text-body2">
-              문제 유형 : {{ formatQuizType(quiz.quizType) }}
+            <div class="text-body2 text-dark">
+              문제 유형: {{ formatQuizType(quiz.quizType) }}
             </div>
-            <div class="text-caption text-createAt">
-              생성일 : {{ formatDate(quiz.createAt) }}
+            <div class="text-caption text-grey">
+              생성일: {{ formatDate(quiz.createAt) }}
             </div>
 
             <!-- 퀴즈 내용 파싱 및 표시 -->
             <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
               <div class="text-h6">
-                문제 : {{ parsedContent(quiz.jsonContent)?.quiz }}
+                문제: {{ parsedContent(quiz.jsonContent)?.quiz }}
               </div>
 
               <div class="text-body2">
-                정답 : {{ parsedContent(quiz.jsonContent)?.answer }}
+                정답: {{ parsedContent(quiz.jsonContent)?.answer }}
               </div>
               <div class="text-body2">
-                해설 : {{ parsedContent(quiz.jsonContent)?.commentary }}
+                해설: {{ parsedContent(quiz.jsonContent)?.commentary }}
               </div>
             </div>
           </q-card-section>
-
           <q-separator inset /><!--선-->
-
           <q-card-section>
             <QuizPermssionStatus :quiz="quiz" />
           </q-card-section>
         </q-card>
       </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row q-gutter-md q-pt-md justify-center">
+      <q-pagination
+        v-model="currentPage"
+        :max="totalPages"
+        max-pages="10"
+        boundary-numbers
+        @update:model-value="changePage"
+        class="bg-grey-2"
+      />
     </div>
   </q-page>
 </template>
@@ -121,12 +145,16 @@
 <script setup>
 import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
 import { fetchQuizzesFromApi } from 'src/services/quiz/userQuiz.js'; // 퀴즈 서비스 호출
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
 
 const quizzes = ref([]); // 퀴즈 전체 데이터
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalElements = ref(0);
+
 const filteredQuizzes = ref([]); // 필터링된 퀴즈 목록
 const quizcount = ref(0); //퀴즈 개수
 
@@ -173,6 +201,7 @@ const fetchQuizzes = async () => {
     filterQuizzes();
     // 필터링된 퀴즈 개수 업데이트
     quizcount.value = filteredQuizzes.value.length;
+    totalElements.value = quizzes.value.length;
   } catch (error) {
     alert('퀴즈 데이터를 불러오는데 실패했습니다.');
     // console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
@@ -197,6 +226,22 @@ const filterQuizzes = () => {
     );
   });
   quizcount.value = filteredQuizzes.value.length;
+};
+
+// 페이징 처리
+const paginatedQuizzes = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filteredQuizzes.value.slice(start, end);
+});
+const totalPages = computed(() =>
+  Math.ceil(filteredQuizzes.value.length / pageSize.value),
+);
+const changePage = page => {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page;
+    filterQuizzes();
+  }
 };
 
 // 필터링 초기화 기능
@@ -251,6 +296,23 @@ const getDotClass = value => {
   }
 };
 
+const currentLayout = ref(1);
+const setLayout = layout => {
+  currentLayout.value = layout;
+};
+const getColumnClass = () => {
+  switch (currentLayout.value) {
+    case 1:
+      return 'col-12';
+    case 2:
+      return 'col-12 col-md-6';
+    case 3:
+      return 'col-12 col-md-3';
+    default:
+      return 'col-12';
+  }
+};
+
 const router = useRouter();
 // 페이지 상세조회
 const goToQuizDetail = quizId => {
@@ -263,108 +325,62 @@ onMounted(async () => {
 });
 </script>
 
-<style>
-.filter-container > * {
-  margin: 1% 1%;
-}
-.btn-container > * {
-  margin: 1% 1%;
-}
-.searchbtn {
+<style scoped>
+.my-card {
   border-radius: 10px;
-  padding: 7px 11px;
-  font-size: 16px;
-  width: 100%;
-  background-color: #ced4da;
-}
-.resetbtn {
-  border-radius: 10px;
-  padding: 7px 11px;
-}
-.custom-select {
-  width: 100%;
-  border: 1px solid #c4c4c4;
-  box-sizing: border-box;
-  border-radius: 10px;
-  padding: 12px 13px;
-  font-size: 14px;
-  line-height: 16px;
-  background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M480-360%20280-560h400L480-360Z%22/%3E%3C/svg%3E')
-    93% no-repeat; /*화살표 이미지 삽입*/
-  appearance: none;
-  text-align: left;
-}
-.custom-select:focus {
-  box-sizing: border-box;
-  border-radius: 10px;
-  outline: 2px solid #b1dbf0;
-  border-radius: 10px;
-}
-.listbox {
-  width: 100%;
-  padding: 0 3%;
-  list-style: none;
-  background: #ffffff;
-  border: 1px solid #c4c4c4;
-  box-sizing: border-box;
-  box-shadow: 4px 4px 14px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-  margin-top: 9px;
-  position: absolute;
-  z-index: 1;
+  overflow: hidden;
+  min-height: 300px; /* 최소 높이 설정 */
 }
 
-.list {
-  border: none;
-  background-color: #ffffff;
-  font-size: 14px;
-  line-height: 16px;
-  padding: 7px 3%;
-  margin: 5px auto;
-  box-sizing: border-box;
-  width: 100%;
-  text-align: left;
+.q-card-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
 }
 
-.list:focus {
-  background: #99c6ec;
-  border-radius: 8px;
-  box-sizing: border-box;
-}
-.status-dot {
-  height: 10px;
-  width: 10px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 8px;
+.q-btn {
+  border-radius: 5px;
 }
 
-.dot-pending {
-  background-color: orange;
+.q-pagination {
+  border-radius: 5px;
 }
 
-.dot-approved {
-  background-color: #4caf50;
+.bg-primary {
+  background-color: #1976d2; /* Primary color */
 }
 
-.dot-rejected {
-  background-color: rgb(255, 0, 0);
-}
-.my-card-list {
-  border-radius: 10px;
-}
-.my-card-list:hover {
-  border: 2px solid #99c6ec;
+.text-primary {
+  color: #1976d2; /* Primary color */
 }
 
-/* 반응형 (모바일 사이즈) */
-@media (max-width: 500px) {
-  .filter-container {
-    flex-direction: column;
-  }
-  .btn-container {
-    flex-direction: column;
-    margin-top: 5%;
+.bg-grey-2 {
+  background-color: #f5f5f5;
+}
+
+.text-secondary {
+  color: #757575;
+}
+
+.text-dark {
+  color: #333;
+}
+
+.text-grey {
+  color: #9e9e9e;
+}
+.layoutimg {
+  width: 40px;
+  height: auto;
+  display: flex;
+}
+.layout2 {
+  width: 50px;
+}
+@media (max-width: 1100px) {
+  .layoutbtn {
+    display: none;
   }
 }
 </style>
