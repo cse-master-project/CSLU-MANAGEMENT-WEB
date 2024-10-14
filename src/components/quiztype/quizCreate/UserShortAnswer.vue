@@ -149,20 +149,23 @@ const goBack = () => {
 //이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
+//이미지 업로드 로직
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-    // 파일 타입이 이미지인지 확인
-    if (files[0].type.startsWith('image/')) {
+    const fileType = files[0].type;
+    // 파일 타입이 JPG 또는 JPEG 인지 확인
+    if (fileType === 'image/jpeg') {
       const reader = new FileReader();
       reader.onload = e => {
         filePreview.value = e.target.result;
       };
       reader.readAsDataURL(files[0]);
     } else {
-      alert('이미지 파일만 선택할 수 있습니다.');
+      alert('JPG 파일만 선택할 수 있습니다.');
       filePreview.value = null; // 파일 미리보기 초기화
+      document.getElementById('file').value = ''; // 파일 입력 초기화
     }
   }
 };
