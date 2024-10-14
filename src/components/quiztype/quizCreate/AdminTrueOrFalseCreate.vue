@@ -104,6 +104,7 @@ import { ref, onMounted, watch } from 'vue';
 import {
   submitQuiz,
   submitQuizImage,
+  submitQuizImageTemp,
   deleteQuiz,
 } from 'src/services/quiz/adminQuiz.js';
 import SubmitQuizSuccess from 'src/components/quiz/SubmitQuizSuccess.vue';
@@ -220,9 +221,12 @@ const submitQuizForm = async () => {
     // 문제 데이터 서버에 제출후 반환된 퀴즈 ID 저장.
     quizId.value = await submitQuiz(quizData);
 
-    // 이미지가 있다면 이미지 서버에 제출
+    // 이미지가 있다면
     if (filePreview.value) {
-      await submitQuizImage(quizId.value, filePreview.value);
+      //이미지 서버에  임시 제출
+      const uuid = await submitQuizImageTemp(filePreview.value);
+      //이미지 서버에 제출
+      await submitQuizImage(quizId.value, uuid);
     }
 
     submitQuizSuccess.value = true; // 퀴즈 제출 성공
