@@ -209,10 +209,10 @@ const fetchQuizzes = async () => {
 };
 //필터링 기능
 const filterQuizzes = () => {
-  console.log('필터링 퀴즈 value', quizzes.value);
+  //console.log('필터링 퀴즈 value', quizzes.value);
 
   filteredQuizzes.value = quizzes.value.filter(quiz => {
-    console.log('permissionStatus', quiz.permissionStatus);
+    //console.log('permissionStatus', quiz.permissionStatus);
     const subjectMatch = !subject.value || quiz.subject === subject.value;
     const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
     const quizTypeMatch =
