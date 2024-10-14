@@ -180,28 +180,35 @@ import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import userQuizlistCategories from 'src/services/userQuizlistCategoris';
 
-const quizzes = ref([]);
-const currentPage = ref(1);
-const pageSize = ref(20);
-const totalElements = ref(0);
+const quizzes = ref([]); // 퀴즈 전체 데이터
+const filteredQuizzes = ref([]); // 필터링된 퀴즈 목록
+const quizcount = ref(0); //퀴즈 개수
 
-const filteredQuizzes = ref([]);
-const subject = ref('');
-const chapter = ref('');
-const permssionStatus = ref('');
-const quizType = ref('');
-const quizcount = ref(0); //만든 문제 개수
+const subject = ref(''); // 선택된 과목
+const chapter = ref(''); // 선택된 챕터
+const permssionStatus = ref(''); // 선택된 승인 여부
+const quizType = ref(''); // 선택된 문제 유형
+
+// 드롭 다운.
 const dropdowns = ref({
   subject: false,
   chapter: false,
   permssionStatus: false,
   quizType: false,
 });
+// 드롭다운 라벨 초기값.
+const subjectLabel = ref('선택해주세요');
+const chapterLabel = ref('선택해주세요');
+const permssionStatusLabel = ref('선택해주세요');
+const quizTypeLabel = ref('선택해주세요');
+const filteredchapterOptions = ref([]);
+// 승인여부 옵션
 const approvalStatuses = [
   { value: 0, label: '승인 대기중' },
   { value: 1, label: '승인' },
   { value: -1, label: '반려' },
 ];
+// 퀴즈타입 옵션
 const quizTypeOptions = [
   { value: 1, label: '4지선다형' },
   { value: 2, label: '단답형' },
@@ -210,45 +217,40 @@ const quizTypeOptions = [
   { value: 5, label: '빈칸 채우기형' },
 ];
 
-const subjectLabel = ref('선택해주세요');
-const chapterLabel = ref('선택해주세요');
-const permssionStatusLabel = ref('선택해주세요');
-const quizTypeLabel = ref('선택해주세요');
-const filteredchapterOptions = ref([]);
-
 onMounted(async () => {
-  await fetchQuizzes();
-  fetchCategories();
-  document.addEventListener('click', handleClickOutside);
+  await fetchQuizzes(); // 퀴즈 목록
+  fetchCategories(); // 과목 및 챕터 불러오기
+  document.addEventListener('click', handleClickOutside); //드롭다운 외부 클릭시 닫기.
 });
 
+// 과목 및 챕터
 const { subjectOptions, fetchCategories, getchaptersBySubject } =
   userQuizlistCategories();
-
 const updatechapterOptions = () => {
   filteredchapterOptions.value = getchaptersBySubject(subject.value);
 };
-
 watch(subject, () => {
+  // 과목이 변경될 때 챕터 목록 업데이트
   chapter.value = '';
   chapterLabel.value = '선택해주세요';
   updatechapterOptions();
 });
 
+// 퀴즈 데이터를 서버에서 불러오기
 const fetchQuizzes = async () => {
   try {
     quizzes.value = await fetchQuizzesFromApi();
     // console.log('퀴즈목록', quizzes.value);
     quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt)); // 날짜 기준 내림차순 정렬
+    // 필터링된 퀴즈 목록을 불러온 퀴즈 데이터로 설정
     filteredQuizzes.value = quizzes.value;
+    // 필터링된 퀴즈 개수 업데이트
     quizcount.value = filteredQuizzes.value.length;
   } catch (error) {
     alert('퀴즈 데이터를 불러오는데 실패했습니다.');
     // console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
-
-const router = useRouter();
 
 const formatQuizType = quizType => {
   switch (quizType) {
@@ -278,81 +280,70 @@ const parsedContent = jsonContent => {
     return null;
   }
 };
+// 승인여부 상태
+const getDotClass = value => {
+  switch (value) {
+    case 0:
+      return 'dot-pending';
+    case 1:
+      return 'dot-approved';
+    case -1:
+      return 'dot-rejected';
+    default:
+      return '';
+  }
+};
 
 // 필터링 초기화 기능
 const resetFilters = () => {
+  // 필터 값 모두 초기화
   subject.value = '';
   chapter.value = '';
   permssionStatus.value = '';
   quizType.value = '';
+  // 드롭다운의 라벨도 초기화
   subjectLabel.value = '선택해주세요';
   chapterLabel.value = '선택해주세요';
   permssionStatusLabel.value = '선택해주세요';
   quizTypeLabel.value = '선택해주세요';
+  // 다시 원래 퀴즈 목록으로 설정
   filteredQuizzes.value = quizzes.value;
+  // 퀴즈 개수 업데이트
   quizcount.value = filteredQuizzes.value.length; // 초기화 하고 필터링된 퀴즈 개수 다시 초기화
 };
 
 // 필터링 기능
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
+    // 과목
     const subjectMatch = !subject.value || quiz.subject === subject.value;
+    // 챕터
     const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
+    // 승인여부
     const permssionStatusMatch =
       permssionStatus.value === '' ||
       quiz.permissionStatus === Number(permssionStatus.value);
+    // 문제 유형
     const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
 
     return (
       subjectMatch && chapterMatch && permssionStatusMatch && quizTypeMatch
     );
   });
+  // 필터링 퀴즈 개수 업데이트
   quizcount.value = filteredQuizzes.value.length; // 필터링 하고 필터링된 퀴즈 수 업데이트하기
-};
-
-// 페이지 상세조회
-const goToQuizDetail = quizId => {
-  router.push(`/userQuizzes/${quizId}`);
 };
 
 // 드롭다운 토글
 const toggleDropdown = dropdown => {
+  // 드롭다운 상태 여부
   dropdowns.value[dropdown] = !dropdowns.value[dropdown];
+  // 다른 드롭다운 모두 닫기
   Object.keys(dropdowns.value).forEach(key => {
     if (key !== dropdown) dropdowns.value[key] = false;
   });
 };
-
-// 과목 선택
-const selectSubject = option => {
-  subject.value = option.value;
-  subjectLabel.value = option.label;
-  toggleDropdown('subject');
-  updatechapterOptions();
-};
-
-// 챕터 선택
-const selectchapter = option => {
-  chapter.value = option;
-  chapterLabel.value = option;
-  toggleDropdown('chapter');
-};
-
-// 승인 여부 선택
-const selectPermssionStatus = option => {
-  permssionStatus.value = option.value;
-  permssionStatusLabel.value = option.label;
-  toggleDropdown('permssionStatus');
-};
-
-// 문제 유형 선택
-const selectQuizType = option => {
-  quizType.value = option.value;
-  quizTypeLabel.value = option.label;
-  toggleDropdown('quizType');
-};
-
-// 리스트 밖 누르면 닫히기
+// 드롭다운 외부를 클릭했을 때 드롭다운을 닫는 함수
 const handleClickOutside = event => {
   const dropdownElements = document.querySelectorAll(
     '.listbox, .custom-select',
@@ -371,18 +362,36 @@ const handleClickOutside = event => {
   }
 };
 
-// 승인여부 원
-const getDotClass = value => {
-  switch (value) {
-    case 0:
-      return 'dot-pending';
-    case 1:
-      return 'dot-approved';
-    case -1:
-      return 'dot-rejected';
-    default:
-      return '';
-  }
+// 과목 선택
+const selectSubject = option => {
+  subject.value = option.value;
+  subjectLabel.value = option.label;
+  toggleDropdown('subject');
+  updatechapterOptions();
+};
+// 챕터 선택
+const selectchapter = option => {
+  chapter.value = option;
+  chapterLabel.value = option;
+  toggleDropdown('chapter');
+};
+// 승인 여부 선택
+const selectPermssionStatus = option => {
+  permssionStatus.value = option.value;
+  permssionStatusLabel.value = option.label;
+  toggleDropdown('permssionStatus');
+};
+// 문제 유형 선택
+const selectQuizType = option => {
+  quizType.value = option.value;
+  quizTypeLabel.value = option.label;
+  toggleDropdown('quizType');
+};
+
+const router = useRouter();
+// 페이지 상세조회
+const goToQuizDetail = quizId => {
+  router.push(`/userQuizzes/${quizId}`);
 };
 </script>
 
