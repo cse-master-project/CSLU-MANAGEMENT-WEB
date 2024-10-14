@@ -7,7 +7,7 @@
       align-items: center;
     "
   >
-    <div class="background-slider">
+    <div ref="backgroundSlider" class="background-slider">
       <div
         class="row justify-center q-col-gutter-md"
         style="width: 1280px; height: 100vh; display: flex; align-items: center"
@@ -57,16 +57,18 @@ const images = [
 ];
 
 let currentImageIndex = 0;
+const backgroundSlider = ref(null);
 
 const changeBackgroundImage = () => {
-  const backgroundSlider = document.querySelector('.background-slider');
-  backgroundSlider.style.backgroundImage = `url(${images[currentImageIndex]})`;
-  currentImageIndex = (currentImageIndex + 1) % images.length;
+  if (backgroundSlider.value) {
+    backgroundSlider.value.style.backgroundImage = `url(${images[currentImageIndex]})`;
+    currentImageIndex = (currentImageIndex + 1) % images.length;
+  }
 };
 
 onMounted(() => {
   changeBackgroundImage();
-  setInterval(changeBackgroundImage, 5000); // Change image every 5 seconds
+  setInterval(changeBackgroundImage, 5000); // 5초마다 이미지 변경
 });
 </script>
 
