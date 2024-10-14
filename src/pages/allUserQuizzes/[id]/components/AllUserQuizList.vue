@@ -167,30 +167,13 @@ watch(subject, newSubject => {
 const fetchQuizzes = async () => {
   try {
     quizzes.value = await fetchQuizzesFromApi();
-    console.log(quizzes.value);
-    filteredQuizzes.value = quizzes.value;
+    quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
+    filterQuizzes();
+    totalElements.value = quizzes.value.length;
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
-
-const paginatedQuizzes = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return filteredQuizzes.value.slice(start, end);
-});
-
-const totalPages = computed(() =>
-  Math.ceil(filteredQuizzes.value.length / pageSize.value),
-);
-
-const changePage = page => {
-  if (page > 0 && page <= totalPages.value) {
-    currentPage.value = page;
-    filterQuizzes();
-  }
-};
-
 //필터링 기능
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
@@ -203,6 +186,22 @@ const filterQuizzes = () => {
   });
 };
 
+// 페이징 처리
+const paginatedQuizzes = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filteredQuizzes.value.slice(start, end);
+});
+const totalPages = computed(() =>
+  Math.ceil(filteredQuizzes.value.length / pageSize.value),
+);
+const changePage = page => {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page;
+    filterQuizzes();
+  }
+};
+
 // 필터링 초기화 기능
 const resetFilters = () => {
   subject.value = '';
@@ -210,8 +209,6 @@ const resetFilters = () => {
   quizType.value = '';
   filterQuizzes();
 };
-
-const router = useRouter();
 
 // 문제 형식에 따라 유형 알려주기.
 const formatQuizType = quizType => {
@@ -244,16 +241,10 @@ const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 };
 
-const goToQuizDetail = quizId => {
-  router.push(`/allUserQuizzes/${quizId}`);
-};
-
 const currentLayout = ref(1);
-
 const setLayout = layout => {
   currentLayout.value = layout;
 };
-
 const getColumnClass = () => {
   switch (currentLayout.value) {
     case 1:
@@ -265,6 +256,11 @@ const getColumnClass = () => {
     default:
       return 'col-12';
   }
+};
+
+const router = useRouter();
+const goToQuizDetail = quizId => {
+  router.push(`/allUserQuizzes/${quizId}`);
 };
 
 onMounted(async () => {
