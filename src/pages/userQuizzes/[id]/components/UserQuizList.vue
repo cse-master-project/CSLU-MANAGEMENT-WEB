@@ -36,9 +36,12 @@
           <q-select
             v-model="permissionStatus"
             :options="approvalStatuses"
+            option-value="value"
+            option-label="label"
             outlined
             dense
-          />
+          >
+          </q-select>
         </div>
       </div>
       <div class="row q-col-gutter-md q-pt-md">
