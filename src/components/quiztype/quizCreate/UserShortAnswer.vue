@@ -129,7 +129,7 @@ import { ref, onMounted, watch } from 'vue';
 import {
   submitQuiz,
   submitQuizImage,
-  deleteQuiz,
+  submitQuizImageTemp,
 } from 'src/services/quiz/userQuiz.js';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
 import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
@@ -254,19 +254,32 @@ const submitQuizForm = async () => {
   };
   //console.log('서버에 제출될 데이터:', quizData);
   try {
-    // 문제 데이터 서버에 제출후 반환된 퀴즈 ID 저장.
-    quizId.value = await submitQuiz(quizData);
-
-    // 이미지가 있다면 이미지 서버에 제출
+    // 이미지가 있는 경우
     if (filePreview.value) {
-      await submitQuizImage(quizId.value, filePreview.value);
-    }
+      // 이미지를 서버에 임시로 제출하고 UUID를 받음
+      const uuid = await submitQuizImageTemp(filePreview.value);
 
-    submitQuizSuccess.value = true; // 퀴즈 제출 성공
+      // 이미지가 제대로 제출되지 않으면 오류 처리
+      if (!uuid) {
+        throw new Error('이미지 업로드에 실패했습니다.');
+      }
+
+      // 문제 데이터를 서버에 제출 후 반환된 퀴즈 ID 저장
+      quizId.value = await submitQuiz(quizData);
+
+      // 문제 생성이 성공한 후에 이미지를 최종적으로 서버에 제출
+      await submitQuizImage(quizId.value, uuid);
+
+      submitQuizSuccess.value = true; // 퀴즈 제출 성공
+    } else {
+      // 이미지가 없으면 바로 문제 데이터를 서버에 제출
+      quizId.value = await submitQuiz(quizData);
+
+      submitQuizSuccess.value = true; // 퀴즈 제출 성공
+    }
   } catch (error) {
     if (error.response?.status === 400) {
       alert('오류가 발생했습니다. 다시 시도해주세요.');
-      await deleteQuiz(quizId.value); // 퀴즈 삭제 처리
     }
   }
 };
