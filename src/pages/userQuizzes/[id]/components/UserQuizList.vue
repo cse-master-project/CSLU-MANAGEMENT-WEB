@@ -146,11 +146,6 @@ const quizTypeOptions = [
   { value: 5, label: '빈칸 채우기형' },
 ];
 
-onMounted(async () => {
-  await fetchQuizzes(); // 퀴즈 목록
-  await fetchSubjects();
-});
-
 //카테고리 조회 서비스 사용.
 const {
   subjectOptions,
@@ -226,9 +221,6 @@ const formatQuizType = quizType => {
       return '알 수 없는 유형';
   }
 };
-const formatDate = dateString => {
-  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
-};
 // JSON 콘텐츠 파싱 함수
 const parsedContent = jsonContent => {
   try {
@@ -237,6 +229,10 @@ const parsedContent = jsonContent => {
     console.error('JSON 파싱 오류:', e);
     return null;
   }
+};
+// 시간 알려주기.
+const formatDate = dateString => {
+  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 };
 // 승인여부 상태
 const getDotClass = value => {
@@ -257,6 +253,11 @@ const router = useRouter();
 const goToQuizDetail = quizId => {
   router.push(`/userQuizzes/${quizId}`);
 };
+
+onMounted(async () => {
+  await fetchQuizzes(); // 퀴즈 목록
+  await fetchSubjects();
+});
 </script>
 
 <style>
