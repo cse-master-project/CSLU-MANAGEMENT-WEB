@@ -172,7 +172,7 @@
     <!-- 바닥 -->
     <q-footer class="q-footer footer-bar">
       <div class="footer-content">
-        <footerbar>CSLU © 2024 . All Rights Reserved.</footerbar>
+        <div>CSLU © 2024 . All Rights Reserved.</div>
         <q-btn flat dense class="footer-btn" to="/privacyPolicy">
           개인정보처리 방침
         </q-btn>
