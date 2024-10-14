@@ -3,26 +3,28 @@
     <!-- Filters card -->
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-4 q-my-md">
+        <div class="col-12 col-md-3 q-my-md">
           과목
           <q-select
             v-model="subject"
             :options="subjectOptions.map(s => s.subject)"
             outlined
+            label="과목"
             dense
           />
         </div>
-        <div class="col-12 col-md-4 q-my-md">
+        <div class="col-12 col-md-3 q-my-md">
           챕터
           <q-select
             v-model="chapter"
             :options="chapterOptions"
             outlined
+            label="챕터"
             dense
           />
         </div>
-        <div class="col-12 col-md-4 q-my-md">
-          문제 유형
+        <div class="col-12 col-md-3 q-my-md">
+          문제유형
           <q-select
             v-model="quizType"
             :options="quizTypeOptions"
@@ -49,9 +51,27 @@
       </div>
     </q-card>
 
+    <!--레이아웃 변경-->
+    <div class="layoutbtn q-gutter-md" align="right">
+      <q-btn @click="setLayout(1)" class="layout-btn no-padding">
+        <img src="/1layout.png" alt="1열" class="layoutimg"
+      /></q-btn>
+      <q-btn @click="setLayout(2)" class="layout-btn no-padding">
+        <img src="/2layout.png" alt="2열" class="layoutimg"
+      /></q-btn>
+      <q-btn @click="setLayout(3)" class="layout-btn no-padding">
+        <img src="/3layout.png" alt="3열" class="layoutimg"
+      /></q-btn>
+    </div>
+
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
-      <div v-for="quiz in filteredQuizzes" :key="quiz.quizId" class="q-my-md">
+      <div
+        v-for="quiz in paginatedQuizzes"
+        :key="quiz.quizId"
+        :class="getColumnClass()"
+        class="q-my-md"
+      >
         <q-card
           class="my-card bg-white q-mb-md"
           clickable
@@ -61,45 +81,61 @@
         >
           <q-card-section>
             <div>퀴즈ID : {{ quiz.quizId }}</div>
-            <div class="text-h6 text-primary">과목 : {{ quiz.subject }}</div>
+            <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
             <div class="text-subtitle2 text-secondary">
-              챕터 : {{ quiz.chapter }}
+              챕터: {{ quiz.chapter }}
             </div>
             <div class="text-body2 text-dark">
-              문제 유형 : {{ formatQuizType(quiz.quizType) }}
+              문제 유형: {{ formatQuizType(quiz.quizType) }}
             </div>
             <div class="text-caption text-grey">
-              생성일 : {{ formatDate(quiz.createAt) }}
+              생성일: {{ formatDate(quiz.createAt) }}
+            </div>
+
+            <!-- 퀴즈 내용 파싱 및 표시 -->
+            <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
+              <div class="text-h6">
+                문제: {{ parsedContent(quiz.jsonContent)?.quiz }}
+              </div>
+
+              <div class="text-body2">
+                정답: {{ parsedContent(quiz.jsonContent)?.answer }}
+              </div>
+              <div class="text-body2">
+                해설: {{ parsedContent(quiz.jsonContent)?.commentary }}
+              </div>
             </div>
           </q-card-section>
-
-          <!-- 퀴즈 내용 파싱 및 표시 -->
-          <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
-            <div class="text-h6">
-              문제: {{ parsedContent(quiz.jsonContent)?.quiz }}
-            </div>
-
-            <div class="text-body2">
-              정답: {{ parsedContent(quiz.jsonContent)?.answer }}
-            </div>
-            <div class="text-body2">
-              해설: {{ parsedContent(quiz.jsonContent)?.commentary }}
-            </div>
-          </div>
         </q-card>
       </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row q-gutter-md q-pt-md justify-center">
+      <q-pagination
+        v-model="currentPage"
+        :max="totalPages"
+        max-pages="10"
+        boundary-numbers
+        @update:model-value="changePage"
+        class="bg-grey-2"
+      />
     </div>
   </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { fetchQuizzesFromApi } from 'src/services/quiz/allUserQuiz.js'; // 퀴즈 서비스 호출
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import { useCategorie } from 'src/services/quiz/useCategorie.js';
 
 const quizzes = ref([]);
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalElements = ref(0);
+
 const filteredQuizzes = ref([]);
 const subject = ref('');
 const chapter = ref('');
@@ -138,12 +174,21 @@ const fetchQuizzes = async () => {
   }
 };
 
-// 필터링 초기화 기능
-const resetFilters = () => {
-  subject.value = '';
-  chapter.value = '';
-  quizType.value = '';
-  filteredQuizzes.value = quizzes.value;
+const paginatedQuizzes = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filteredQuizzes.value.slice(start, end);
+});
+
+const totalPages = computed(() =>
+  Math.ceil(filteredQuizzes.value.length / pageSize.value),
+);
+
+const changePage = page => {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page;
+    filterQuizzes();
+  }
 };
 
 //필터링 기능
@@ -156,6 +201,14 @@ const filterQuizzes = () => {
 
     return subjectMatch && chapterMatch && quizTypeMatch;
   });
+};
+
+// 필터링 초기화 기능
+const resetFilters = () => {
+  subject.value = '';
+  chapter.value = '';
+  quizType.value = '';
+  filterQuizzes();
 };
 
 const router = useRouter();
@@ -193,6 +246,25 @@ const formatDate = dateString => {
 
 const goToQuizDetail = quizId => {
   router.push(`/allUserQuizzes/${quizId}`);
+};
+
+const currentLayout = ref(1);
+
+const setLayout = layout => {
+  currentLayout.value = layout;
+};
+
+const getColumnClass = () => {
+  switch (currentLayout.value) {
+    case 1:
+      return 'col-12';
+    case 2:
+      return 'col-12 col-md-6';
+    case 3:
+      return 'col-12 col-md-3';
+    default:
+      return 'col-12';
+  }
 };
 
 onMounted(async () => {
