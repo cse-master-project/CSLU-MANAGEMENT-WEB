@@ -82,7 +82,7 @@ const fetchQuizPermissionStatus = async () => {
 
 const fetchRejectReasons = async () => {
   try {
-    const response = await userApi.get('/api/quiz/my/reject', {
+    const response = await userApi.get('/api/v2/quiz/my/reject', {
       params: { quizId },
     });
     rejectReasons.value = response.data;
