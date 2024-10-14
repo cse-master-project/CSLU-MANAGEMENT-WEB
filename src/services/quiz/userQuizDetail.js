@@ -1,8 +1,7 @@
 import { userApi } from 'src/boot/userAxios';
+// 제출자용 퀴즈
 
-// 제출자용
-
-// 퀴즈 상세 조회
+// [퀴즈 상세 조회]
 export const fetchQuiz = async quizId => {
   try {
     const response = await userApi.get(`/api/v2/quiz/${quizId}`);
@@ -13,7 +12,7 @@ export const fetchQuiz = async quizId => {
   }
 };
 
-// 퀴즈 이미지 상세 조회
+// [퀴즈 이미지 상세 조회]
 export const fetchQuizImage = async quizId => {
   try {
     const response = await userApi.get(`/api/v2/quiz/${quizId}/image`);

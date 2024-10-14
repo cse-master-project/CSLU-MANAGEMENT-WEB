@@ -1,7 +1,7 @@
 import { api } from 'src/boot/axios';
+// 관리자용 퀴즈
 
-// 관리자
-// 퀴즈 데이터를 가져오는 함수
+// [퀴즈 상세 조회]
 export const fetchQuiz = async quizId => {
   try {
     const response = await api.get(`/api/v2/quiz/${quizId}`);
@@ -11,7 +11,7 @@ export const fetchQuiz = async quizId => {
     throw error;
   }
 };
-// 퀴즈 이미지 데이터를 가져오는 함수
+// [퀴즈 이미지 상세 조회]
 export const fetchQuizImage = async quizId => {
   try {
     const response = await api.get(`/api/v2/quiz/${quizId}/image`);

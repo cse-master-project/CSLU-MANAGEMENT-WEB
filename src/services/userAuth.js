@@ -2,6 +2,7 @@ import axios from 'axios';
 import { googleSdkLoaded } from 'vue3-google-login'; // Google SDK 로드 함수
 import { userApi } from 'src/boot/userAxios';
 import { useUserAuthStore } from 'src/stores/userAuth';
+// 사용자용 계정
 
 // 구글 로그인 로직 (components/auth/UserLoginGopgle.vue)
 export const googleAuth = {

@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { userApi } from 'src/boot/userAxios';
+// 사용자용
 
 // [view] : 카테고리 조회
 export function useCategorieUser() {

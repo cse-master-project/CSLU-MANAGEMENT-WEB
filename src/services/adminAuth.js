@@ -1,5 +1,6 @@
 import { api } from 'src/boot/axios';
 import { useAdminAuthStore } from 'src/stores/adminAuth';
+// 관리자용 계정
 
 export const adminAuth = {
   // 로그인

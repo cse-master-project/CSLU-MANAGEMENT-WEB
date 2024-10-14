@@ -1,6 +1,7 @@
 import { api } from 'src/boot/axios';
+// 관리자용
 
-// 승인된 제출자 문제 목록 조회시 서버에 보내는 api
+// [문제 조회 : 승인된 사용자용 문제]
 export const fetchQuizzesFromApi = async () => {
   try {
     const response = await api.get('/api/v2/quiz/user', {
