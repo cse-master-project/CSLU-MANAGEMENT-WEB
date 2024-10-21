@@ -8,14 +8,20 @@
           <q-tooltip
             style="
               font-size: 1rem;
-              width: 300px;
+              width: 500px;
               background: #ebf0f1;
               color: black;
             "
-            >문제를 작성한 후, 빈칸에 해당하는 부분을 '&lt;&lt;빈칸&gt;&gt;'으로
-            표시하면 자동으로 답안이 생성됩니다. 여러 정답이 있을 경우 쉼표(,)로
-            구분하세요. 해설을 입력한 후 "문제 등록" 버튼을
-            클릭하세요.</q-tooltip
+          >
+            문제 작성 가이드 :<br />
+            1. <span class="span">*챕터</span>와
+            <span class="span">*과목</span>을 선택하세요.<br />
+            2. <span class="span">*문제</span>를 입력하세요.<br />
+            3. 빈칸 문제는 <span class="span">*&lt;&lt;빈칸&gt;&gt;</span>으로
+            표시하세요.<br />
+            4. 여러 <span class="span">*정답</span>은 쉼표(,)로 구분하세요.<br />
+            5. 문제 작성 후, <span class="span">*해설</span>을 입력하고 "문제
+            등록"을 클릭하세요.</q-tooltip
           >
         </div>
       </q-toolbar-title>
@@ -76,8 +82,10 @@
             counter
             class="input-quiz"
           /><q-icon name="help" class="help-icon1">
-            <q-tooltip style="background-color: black; font-size: medium">
-              빈칸 넣을 시 &lt;&lt;빈칸&gt;&gt; 작성 해주세요. <br />
+            <q-tooltip
+              style="background: #ebf0f1; color: black; font-size: medium"
+            >
+              &lt;&lt;빈칸&gt;&gt; 추가<br />
               예시 : 안녕하세요. 저는 &lt;&lt;빈칸&gt;&gt;입니다.
             </q-tooltip>
           </q-icon>
@@ -106,8 +114,10 @@
             />
             <!-- 도움말 아이콘과 툴팁 -->
             <q-icon name="help" class="help-icon2" style="margin-left: 12px">
-              <q-tooltip style="background-color: black; font-size: medium">
-                "답안을 입력해주세요. 답이 여러 개일 경우 쉼표(,)로 구분하세요."
+              <q-tooltip
+                style="background: #ebf0f1; color: black; font-size: medium"
+              >
+                답안 여러개 시, 쉼표(,)로 구분해주세요.
               </q-tooltip>
             </q-icon>
           </div>
@@ -379,7 +389,9 @@ const submitQuizForm = async () => {
   cursor: pointer;
   margin: 0 1%;
 }
-
+.span {
+  color: red;
+}
 // 과목 챕터 선택 스타일
 .select-container {
   display: flex;
