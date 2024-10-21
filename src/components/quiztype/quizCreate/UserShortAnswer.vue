@@ -102,6 +102,16 @@
               counter
             />
           </div>
+          <div>
+            <!-- 도움말 아이콘과 툴팁 -->
+            <q-icon name="help" class="help-icon2" style="margin-left: 12px">
+              <q-tooltip
+                style="background: #ebf0f1; color: black; font-size: medium"
+              >
+                답안 여러개 시, 쉼표(,)로 구분해주세요.
+              </q-tooltip>
+            </q-icon>
+          </div>
         </q-card-section>
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
@@ -459,6 +469,12 @@ input[type='file'] {
 }
 .input-answer {
   width: 70%;
+}
+.help-icon2 {
+  margin: 8px 8px;
+  font-size: 20px;
+  color: #999;
+  display: block;
 }
 
 // 해설 입력 스타일
