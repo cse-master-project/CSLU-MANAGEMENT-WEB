@@ -218,12 +218,12 @@ const deactivate = async () => {
 }
 
 .change-btn {
-  width: 100%;
+  width: 70%;
   margin-top: 15px;
 }
 
 .deactivate-btn {
-  width: 100%;
+  width: 70%;
   margin-top: 10px;
 }
 
