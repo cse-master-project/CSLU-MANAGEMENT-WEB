@@ -4,18 +4,15 @@ import { userApi } from 'src/boot/userAxios';
 import { useUserAuthStore } from 'src/stores/userAuth';
 // 사용자용 계정
 
-// 구글 로그인 로직 (components/auth/UserLoginGopgle.vue)
+// 구글 로그인 로직
 export const googleAuth = {
-  // Google SDK를 통해 인증 코드 요청
+  // 1-1. [구글 인증 코드 요청]
   async getAuthCode(clientId) {
     return new Promise((resolve, reject) => {
-      // 환경에 따른 redirect_uri 설정
       const redirectUri =
         process.env.NODE_ENV === 'production'
           ? 'https://cslu-studying-web.duckdns.org/callback'
           : 'http://localhost:9000/callback';
-
-      // Google SDK 로드가 완료된 후 인증 코드 요청
       googleSdkLoaded(google => {
         google.accounts.oauth2
           .initCodeClient({
@@ -34,26 +31,10 @@ export const googleAuth = {
       });
     });
   },
-  // 인증 코드를 Google 서버로 전송해 액세스 토큰 요청
-  async getAccessToken(code, clientId, clientSecret) {
-    try {
-      const response = await axios.post('https://oauth2.googleapis.com/token', {
-        code,
-        client_id: process.env.VUE_APP_GOOGLE_CLIENT_ID,
-        client_secret: process.env.VUE_APP_GOOGLE_SECRET_CODE,
-        redirect_uri: 'postmessage',
-        grant_type: 'authorization_code',
-      });
-      return response.data.access_token; // 액세스 토큰 반환
-    } catch (error) {
-      console.error('토큰 교환 실패:', error.response.data);
-      throw new Error('토큰 교환 실패');
-    }
-  },
-  // 액세스 토큰을 이용해 Google 사용자 정보 요청
+  // 1-2. [구글 사용자 정보 패치]
   async getUserInfo(accessToken) {
     try {
-      const response = await axios.get(
+      const response = await userApi.get(
         'https://www.googleapis.com/oauth2/v3/userinfo',
         {
           headers: {
@@ -67,7 +48,27 @@ export const googleAuth = {
       throw new Error('Google 사용자 정보 가져오기 실패');
     }
   },
-  // 사용자 등록 상태 확인
+  // 1-3. [구글 액세스 토큰 요청]
+  async getAccessToken(code, clientId, clientSecret) {
+    try {
+      const response = await userApi.post(
+        'https://oauth2.googleapis.com/token',
+        {
+          code,
+          client_id: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+          client_secret: process.env.VUE_APP_GOOGLE_SECRET_CODE,
+          redirect_uri: 'postmessage',
+          grant_type: 'authorization_code',
+        },
+      );
+      return response.data.access_token; // 액세스 토큰 반환
+    } catch (error) {
+      console.error('토큰 교환 실패:', error.response.data);
+      throw new Error('토큰 교환 실패');
+    }
+  },
+
+  // 3. [서버 : 사용자 등록 확안 ]
   async checkUserRegistration(accessToken) {
     try {
       const userData = { accessToken };
@@ -81,7 +82,7 @@ export const googleAuth = {
       throw new Error('사용자 등록 상태 확인 실패');
     }
   },
-  // 구글 로그인 처리 (등록된 사용자인 경우)
+  // 4-1. [서버 : 로그인 처리 (기존유저 O)]
   async loginUser(accessToken) {
     try {
       const response = await userApi.post(
@@ -96,7 +97,7 @@ export const googleAuth = {
       throw new Error('로그인 실패');
     }
   },
-  // 구글 계정으로 회원가입 처리
+  // 4-2. [서버 : 회원가입 처리 (신유저 O )]
   async signUpGoogle(accessToken, nickname) {
     try {
       const userData = {
@@ -115,7 +116,7 @@ export const googleAuth = {
       throw new Error('회원가입 실패');
     }
   },
-  // 로그인 후 사용자 정보 가져오기
+  // 5. [서버 : 로그인 후 정보 fecth]
   async fetchUserInfo() {
     try {
       const response = await userApi.get('/api/v2/user/info');
@@ -127,7 +128,7 @@ export const googleAuth = {
   },
 };
 
-// 로그아웃 로직 (components/auth/UserLogout.vue)
+// 로그아웃 로직
 export const userAuth = {
   // 로그아웃 함수
   async logoutUser() {
