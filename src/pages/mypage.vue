@@ -15,7 +15,7 @@
           </p>
         </q-card-section>
 
-        <q-separator dark class="q-my-md" />
+        <q-separator />
 
         <q-card-actions align="center" class="q-mt-md">
           <q-card-section v-if="change">
@@ -42,7 +42,7 @@
           </q-card-section>
 
           <q-btn
-            v-if="!change"
+            v-if="!change && !leave"
             color="primary"
             class="change-btn"
             @click="change = true"
@@ -52,12 +52,42 @@
         </q-card-actions>
 
         <q-card-actions align="center" v-if="!change">
-          <q-btn color="negative" class="deactivate-btn" @click="deactivate">
+          <q-card-section v-if="leave">
+            <p>
+              탈퇴를 하시게 되면 더 이상 저희 서비스의 모든 기능을 이용하실 수
+              없습니다. <br />
+              탈퇴 후에는 회원으로서의 모든 혜택이 사라지며, 그동안의 이용 기록
+              및 설정, 맞춤형 추천, 저장된 데이터가 영구적으로 삭제됩니다.
+              <br />
+              또한, 다시 회원가입을 하더라도 기존의 데이터를 복구할 수 없으며,
+              저희가 제공하는 다양한 업데이트 및 혜택도 더 이상 받을 수 없게
+              됩니다. <br />
+              저희 서비스는 회원님께 보다 나은 경험을 제공하기 위해 노력하고
+              있으니, 한 번 더 신중하게 결정해주시길 바랍니다. <br />
+              정말로 탈퇴를 진행하시겠습니까?
+            </p>
+            <div class="button-group">
+              <q-btn color="primary" class="cancel-btn" @click="leave = false">
+                취소
+              </q-btn>
+              <q-btn color="negative" class="save-btn" @click="deactivate">
+                탈퇴
+              </q-btn>
+            </div>
+          </q-card-section>
+
+          <q-btn
+            v-if="!leave"
+            color="negative"
+            class="deactivate-btn"
+            @click="leave = true"
+          >
             탈퇴하기
           </q-btn>
         </q-card-actions>
       </div>
     </q-card>
+    <q-card></q-card>
   </q-page>
 </template>
 
@@ -68,9 +98,6 @@ import { useRouter } from 'vue-router'; // 라우터 가져오기
 
 const userInfo = ref({});
 const daysSinceJoined = ref(null);
-
-const change = ref(false);
-const newUserNickName = ref('');
 
 onMounted(async () => {
   await fetchUserInfo(); // 사용자 정보 가져오기
@@ -94,6 +121,8 @@ const calculateDaysSinceJoined = () => {
 };
 
 // 사용자 닉네임 변경 로직
+const change = ref(false);
+const newUserNickName = ref('');
 const changeNickname = async () => {
   try {
     change.value = true;
@@ -111,6 +140,7 @@ const changeNickname = async () => {
 
 const router = useRouter(); // 라우터 사용 준비
 // 탈퇴 요청 로직
+const leave = ref(false);
 const deactivate = async () => {
   // 사용자에게 탈퇴 경고 메시지를 표시
   const confirmation = confirm(
