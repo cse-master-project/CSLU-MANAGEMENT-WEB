@@ -20,27 +20,25 @@
         <q-card-actions align="center" class="q-mt-md">
           <q-card-section v-if="change">
             <div class="nickname-change-section">
-              <label>변경할 닉네임</label>
+              <label class="nickname-label">변경할 닉네임</label>
               <input
                 v-model="newUserNickName"
                 class="nickname-input"
                 placeholder="새 닉네임 입력"
               />
             </div>
-            <q-btn
-              color="primary"
-              class="save-btn q-mt-sm"
-              @click="changeNickname"
-            >
-              저장
-            </q-btn>
-            <q-btn
-              color="negative"
-              class="cancel-btn q-mt-sm"
-              @click="change = false"
-            >
-              취소
-            </q-btn>
+            <div class="button-group">
+              <q-btn color="primary" class="save-btn" @click="changeNickname">
+                저장
+              </q-btn>
+              <q-btn
+                color="negative"
+                class="cancel-btn"
+                @click="change = false"
+              >
+                취소
+              </q-btn>
+            </div>
           </q-card-section>
 
           <q-btn
@@ -154,6 +152,13 @@ const deactivate = async () => {
   align-items: center;
 }
 
+.nickname-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
 .nickname-input {
   width: 100%;
   padding: 10px;
@@ -161,6 +166,13 @@ const deactivate = async () => {
   border-radius: 5px;
   margin-top: 5px;
   box-sizing: border-box;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px; /* 버튼 간격을 조정 */
+  width: 100%;
 }
 
 .save-btn,
