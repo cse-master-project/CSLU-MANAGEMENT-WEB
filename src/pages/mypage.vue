@@ -54,17 +54,23 @@
         <q-card-actions align="center" v-if="!change">
           <q-card-section v-if="leave">
             <p>
-              탈퇴를 하시게 되면 더 이상 저희 서비스의 모든 기능을 이용하실 수
-              없습니다. <br />
-              탈퇴 후에는 회원으로서의 모든 혜택이 사라지며, 그동안의 이용 기록
-              및 설정, 맞춤형 추천, 저장된 데이터가 영구적으로 삭제됩니다.
-              <br />
-              또한, 다시 회원가입을 하더라도 기존의 데이터를 복구할 수 없으며,
-              저희가 제공하는 다양한 업데이트 및 혜택도 더 이상 받을 수 없게
-              됩니다. <br />
-              저희 서비스는 회원님께 보다 나은 경험을 제공하기 위해 노력하고
-              있으니, 한 번 더 신중하게 결정해주시길 바랍니다. <br />
-              정말로 탈퇴를 진행하시겠습니까?
+              탈퇴를 하시게 되면<br />
+              더 이상 저희 서비스의 모든 기능을 이용하실 수 없습니다. <br />
+              탈퇴 후에는 회원으로서의 혜택과 이용 기록이 일시적으로
+              비활성화됩니다.<br /><br />
+
+              저희 서비스에서는 회원님께만 제공되는 다양한 기능과 <br />
+              맞춤형 경험을 제공하고 있습니다. <br />
+              탈퇴 후에도 언제든지 다시 가입하여 현재까지의 기록을 복원하고<br />
+              계속해서 혜택을 누리실 수 있습니다.<br /><br />
+
+              혹시 서비스 이용 중 불편한 점이 있었나요? <br />
+              개선이 필요한 부분이 있다면, 저희가 도와드릴 수 있습니다. <br />
+              회원님의 의견을 듣고 더 나은 서비스를 제공할 수 있도록
+              노력하겠습니다.<br /><br />
+
+              한 번 더 신중하게 결정해주시길 바랍니다. <br />
+              정말로 탈퇴를 진행하시겠습니까?<br /><br />
             </p>
             <div class="button-group">
               <q-btn color="primary" class="cancel-btn" @click="leave = false">
@@ -163,14 +169,7 @@ const deactivate = async () => {
 
 <style scoped>
 .profile-card {
-  max-width: 500px;
-  background-color: #f5f5f5;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.profile-card {
-  max-width: 400px;
+  max-width: 600px;
   background-color: #f5f5f5;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -218,12 +217,12 @@ const deactivate = async () => {
 }
 
 .change-btn {
-  width: 70%;
+  width: 50%;
   margin-top: 15px;
 }
 
 .deactivate-btn {
-  width: 70%;
+  width: 50%;
   margin-top: 10px;
 }
 
