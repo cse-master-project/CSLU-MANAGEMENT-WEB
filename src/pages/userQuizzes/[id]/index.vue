@@ -41,8 +41,7 @@
 import QuizPermissionStatus2 from 'src/components/quiz/QuizPermissionStatus2.vue';
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { userApi } from 'src/boot/userAxios';
-import { date } from 'quasar';
+
 import {
   fetchQuiz,
   fetchQuizImage,
