@@ -66,9 +66,6 @@
         </q-card-section>
       </q-card-actions>
     </q-card>
-
-    <!-- GoogleLogin 컴포넌트 (콜백 처리) -->
-    <GoogleLogin :callback="callback" />
   </q-dialog>
 </template>
 
