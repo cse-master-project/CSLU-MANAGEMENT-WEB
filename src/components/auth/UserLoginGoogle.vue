@@ -171,9 +171,7 @@ async function LoginGoogle() {
       // 3-2. 신유저 회웝가입 처리
       signUpVisible.value = true;
     }
-  } catch (error) {
-    console.error('구글 로그인 실패:', error);
-  }
+  } catch (error) {}
 }
 // 3-2. 신유저 회원가입 처리
 async function signUpGoogle() {
@@ -189,9 +187,7 @@ async function signUpGoogle() {
       position: 'top',
     });
     closeDialog(); // 다이얼로그 닫기
-  } catch (error) {
-    console.error('회원가입 실패:', error);
-  }
+  } catch (error) {}
 }
 </script>
 
