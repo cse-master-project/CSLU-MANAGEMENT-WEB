@@ -8,14 +8,24 @@
           <q-tooltip
             style="
               font-size: 1rem;
-              width: 300px;
+              width: 500px;
               background: #ebf0f1;
               color: black;
             "
-            >문제를 작성한 후, 왼쪽과 오른쪽 지문을 각각 입력하세요. 왼쪽 지문에
-            색상을 선택하여 오른쪽 지문과 매칭하세요. 해설을 입력한 후 "문제
-            등록" 버튼을 클릭하세요.</q-tooltip
           >
+            문제 작성 가이드:<br />
+            1. <span class="span">*챕터</span>와
+            <span class="span">*과목</span>을 선택하세요.<br />
+            2. <span class="span">*문제</span>를 입력하세요.<br />
+            3. <span class="span">*왼쪽</span>과
+            <span class="span">*오른쪽</span> 지문을 각각 입력하세요.<br />
+            4. 왼쪽 지문에 색상을 선택하여 오른쪽 지문 색상과
+            <span class="span">*매칭</span>하세요.<br />
+            5. <span class="span">*해설</span>을 입력한 후, "문제 등록" 버튼을
+            클릭하세요.<br />
+            6. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
+            첨부 가능합니다.
+          </q-tooltip>
         </div></q-toolbar-title
       >
     </div>
@@ -87,9 +97,10 @@
                   <q-tooltip
                     anchor="top right"
                     self="top left"
-                    style="background-color: black; font-size: medium"
+                    style="background: #ebf0f1; color: black; font-size: medium"
                   >
-                    왼쪽 지문, 오른쪽 지문 입력시 답안을 색으로 매칭 시켜주세요.
+                    왼쪽 지문에 색상을 선택하여 오른쪽 지문 색상과
+                    매칭하세요.<br />
                   </q-tooltip>
                 </q-icon>
               </div>
@@ -438,6 +449,9 @@ const submitQuizForm = async () => {
   border-radius: 50%;
   cursor: pointer;
   margin: 0 1%;
+}
+.span {
+  color: red;
 }
 
 // 과목 챕터 선택 스타일

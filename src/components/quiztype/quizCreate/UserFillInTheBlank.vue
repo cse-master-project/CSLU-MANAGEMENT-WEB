@@ -19,10 +19,13 @@
             2. <span class="span">*문제</span>를 입력하세요.<br />
             3. 빈칸 문제는 <span class="span">*&lt;&lt;빈칸&gt;&gt;</span>으로
             표시하세요.<br />
-            4. 여러 <span class="span">*정답</span>은 쉼표(,)로 구분하세요.<br />
+            4. 여러 <span class="span">*정답</span>이 있을 경우, 쉼표(,)로
+            구분하세요.<br />
             5. 문제 작성 후, <span class="span">*해설</span>을 입력하고 "문제
-            등록"을 클릭하세요.</q-tooltip
-          >
+            등록"을 클릭하세요.<br />
+            6. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
+            첨부 가능합니다.
+          </q-tooltip>
         </div>
       </q-toolbar-title>
     </div>

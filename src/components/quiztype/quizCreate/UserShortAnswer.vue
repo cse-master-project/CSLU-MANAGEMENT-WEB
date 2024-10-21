@@ -8,13 +8,21 @@
           <q-tooltip
             style="
               font-size: 1rem;
-              width: 300px;
+              width: 500px;
               background: #ebf0f1;
               color: black;
             "
-            >문제를 작성한 후 정답을 입력하세요. 여러 정답을 입력할 경우
-            쉼표(,)로 구분하세요. 해설을 입력한 후 "문제 등록" 버튼을
-            클릭하세요.</q-tooltip
+            >문제 작성 가이드:<br />
+            1. <span class="span">*챕터</span>와
+            <span class="span">*과목</span>을 선택하세요.<br />
+            2. <span class="span">*문제</span>를 입력하세요.<br />
+
+            3. 여러 <span class="span">*정답</span>이 있을 경우, 쉼표(,)로
+            구분하세요.<br />
+            4.<span class="span">*해설</span>을 입력한 후, "문제 등록" 버튼을
+            클릭하세요.<br />
+            5. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
+            첨부 가능합니다.</q-tooltip
           >
         </div></q-toolbar-title
       >
@@ -324,6 +332,9 @@ const submitQuizForm = async () => {
   border-radius: 50%;
   cursor: pointer;
   margin: 0 1%;
+}
+.span {
+  color: red;
 }
 
 // 과목 챕터 선택 스타일
