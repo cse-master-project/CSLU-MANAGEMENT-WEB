@@ -53,7 +53,7 @@ import {
 const quiz = ref(null);
 
 const quizzes = ref([]);
-const quizPermissionStatus = ref(null);
+const quizPermissionStatus = ref(0);
 const rejectReasons = ref([]);
 const route = useRoute();
 const quizId = Number(route.params.id); // 현재 퀴즈 ID 가져오기
