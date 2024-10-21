@@ -27,6 +27,8 @@ export const googleAuth = {
                 Notify.create({
                   message: 'Google 인증에 실패했습니다. 다시 시도해주세요.',
                   color: 'negative',
+                  position: 'center', // 중앙 띄우기
+                  timeout: 500, // 1초
                 });
                 reject(new Error('Google 인증 실패'));
               }
@@ -53,6 +55,8 @@ export const googleAuth = {
       Notify.create({
         message: 'Google 인증에 실패했습니다. 다시 시도해주세요.',
         color: 'negative',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
       });
       throw new Error('Google 사용자 정보 가져오기 실패');
     }
@@ -76,6 +80,8 @@ export const googleAuth = {
       Notify.create({
         message: 'Google 인증에 실패했습니다. 다시 시도해주세요.',
         color: 'negative',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
       });
       throw new Error('토큰 교환 실패');
     }
@@ -95,6 +101,8 @@ export const googleAuth = {
       Notify.create({
         message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
         color: 'negative',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
       });
       throw new Error('사용자 등록 상태 확인 실패');
     }
@@ -114,6 +122,8 @@ export const googleAuth = {
       Notify.create({
         message: '로그인에 실패했습니다. 다시 시도해주세요.',
         color: 'negative',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
       });
       throw new Error('로그인 실패');
     }
@@ -138,11 +148,15 @@ export const googleAuth = {
         Notify.create({
           message: '이미 있는 닉네임입니다.',
           color: 'negative',
+          position: 'center', // 중앙 띄우기
+          timeout: 500, // 1초
         });
       } else {
         Notify.create({
           message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
           color: 'negative',
+          position: 'center', // 중앙 띄우기
+          timeout: 500, // 1초
         });
       }
 
@@ -159,6 +173,8 @@ export const googleAuth = {
       Notify.create({
         message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
         color: 'negative',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
       });
       throw new Error('사용자 정보 가져오기 실패');
     }
@@ -187,6 +203,8 @@ export const userAuth = {
       Notify.create({
         message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
         color: 'negative',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
       });
       throw new Error('로그아웃 실패');
     }
@@ -204,6 +222,8 @@ export const userInfoService = {
       Notify.create({
         message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
         color: 'negative',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
       });
       throw error;
     }
@@ -228,9 +248,24 @@ export const userInfoService = {
       const response = await userApi.put('/api/v2/user/info/nickname', {
         nickname: newNickname,
       });
-      console.log(response);
     } catch (error) {
-      console.error(error);
+      // 로그인 실패 알림
+      if (error.status == 400) {
+        Notify.create({
+          message: '이미 있는 닉네임입니다.',
+          color: 'negative',
+          position: 'center', // 중앙 띄우기
+          timeout: 500, // 1초
+        });
+      } else {
+        Notify.create({
+          message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
+          color: 'negative',
+          position: 'center', // 중앙 띄우기
+          timeout: 500, // 1초
+        });
+      }
+      throw error;
     }
   },
   // 2. [사용자 탈퇴]

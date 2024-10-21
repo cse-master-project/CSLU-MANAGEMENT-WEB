@@ -100,6 +100,7 @@
 import { ref, onMounted } from 'vue';
 import { userInfoService } from 'src/services/userAuth'; // 분리한 서비스 파일
 import { useRouter } from 'vue-router'; // 라우터 가져오기
+import { Notify } from 'quasar';
 
 const userInfo = ref({});
 const daysSinceJoined = ref(null);
@@ -138,9 +139,7 @@ const changeNickname = async () => {
       change.value = false;
       fetchUserInfo();
     }
-  } catch (error) {
-    console.error(error);
-  }
+  } catch (error) {}
 };
 
 const router = useRouter(); // 라우터 사용 준비
