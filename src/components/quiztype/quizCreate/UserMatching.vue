@@ -81,7 +81,7 @@
             outlined
             dense
             placeholder="문제를 입력하세요"
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-quiz"
           />
@@ -165,7 +165,7 @@
             outlined
             placeholder="해설을 입력하세요"
             dense
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-commentary"
           />

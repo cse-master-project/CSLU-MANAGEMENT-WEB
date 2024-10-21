@@ -81,7 +81,7 @@
             outlined
             dense
             placeholder="문제를 입력해주세요."
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-quiz"
           /><q-icon name="help" class="help-icon1">
@@ -111,7 +111,7 @@
               outlined
               dense
               :placeholder="`( ${index + 1} ) 의 답안을 입력해주세요.`"
-              maxlength="300"
+              maxlength="400"
               counter
               style="flex-grow: 1"
             />
@@ -136,7 +136,7 @@
             outlined
             placeholder="해설을 입력하세요"
             dense
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-commentary"
           />
