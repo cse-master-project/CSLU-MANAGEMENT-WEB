@@ -88,7 +88,6 @@ const props = defineProps({
 
 // 다이얼로그의 표시 여부를 관리하는 상태
 const visible = ref(props.isLogin);
-
 // 회원가입 화면 표시 여부 상태
 const signUpVisible = ref(false);
 
@@ -97,7 +96,6 @@ const googleacAcessToken = ref(null);
 
 // 회원가입 시 입력된 닉네임
 const nickname = ref(null);
-
 // 사용자 정보 저장 변수
 const userInfo = ref({});
 
@@ -107,11 +105,6 @@ const emit = defineEmits(['update:isLogin']);
 // Google 클라이언트 ID 및 비밀 키 (clientSecret은 환경 변수로 가져옴)
 const clientId = process.env.VUE_APP_GOOGLE_CLIENT_ID;
 const clientSecret = process.env.VUE_APP_GOOGLE_SECRET_CODE;
-
-// 컴포넌트가 마운트될 때 사용자 정보 가져오기
-onMounted(async () => {
-  await fetchInfo();
-});
 
 // props의 isLogin 값이 변경될 때 다이얼로그 상태 갱신
 watch(
@@ -123,7 +116,6 @@ watch(
     }
   },
 );
-
 // 다이얼로그가 닫히면 상태 초기화 및 부모에 로그인 상태 업데이트 알림
 watch(
   () => visible.value,
@@ -150,31 +142,22 @@ function closeDialog() {
 // Google 로그인 처리 함수
 async function LoginGoogle() {
   try {
-    // Google SDK를 통해 인증 코드 요청
+    // 1-1. Google SDK를 통해 인증 코드 요청
     const code = await googleAuth.getAuthCode(clientId);
-
-    // 인증 코드를 통해 액세스 토큰 요청
+    // 1-2. 인증 코드를 통해 액세스 토큰 요청
     googleacAcessToken.value = await googleAuth.getAccessToken(
       code,
       clientId,
       clientSecret,
     );
-
-    // Google 사용자 정보 가져오기
-    const googleUserInfo = await googleAuth.getUserInfo(
-      googleacAcessToken.value,
-    );
-
-    // 사용자 등록 상태 확인
+    // 2. 사용자 등록 상태 확인
     const registered = await googleAuth.checkUserRegistration(
       googleacAcessToken.value,
     );
-
+    // 3-1. 기존유저 로그인 처리
     if (registered) {
-      // 등록된 사용자일 경우 로그인 처리
       await googleAuth.loginUser(googleacAcessToken.value);
       userInfo.value = await googleAuth.fetchUserInfo();
-
       // 로그인 알림
       Notify.create({
         message: `${userInfo.value.nickname}님, 환영합니다!`,
@@ -183,34 +166,31 @@ async function LoginGoogle() {
         timeout: 1500,
         position: 'top',
       });
-
       closeDialog(); // 다이얼로그 닫기
     } else {
-      // 등록되지 않은 사용자일 경우 회원가입 화면 표시
+      // 3-2. 신유저 회웝가입 처리
       signUpVisible.value = true;
     }
   } catch (error) {
     console.error('구글 로그인 실패:', error);
   }
 }
-
-// 회원가입 처리 함수
+// 3-2. 신유저 회원가입 처리
 async function signUpGoogle() {
   try {
-    // Google 회원가입 처리
     await googleAuth.signUpGoogle(googleacAcessToken.value, nickname.value);
-    closeDialog(); // 회원가입 후 다이얼로그 닫기
+    userInfo.value = await googleAuth.fetchUserInfo();
+    // 로그인 알림
+    Notify.create({
+      message: `${userInfo.value.nickname}님, 환영합니다!`,
+      textColor: 'white',
+      classes: 'custom-notify',
+      timeout: 1500,
+      position: 'top',
+    });
+    closeDialog(); // 다이얼로그 닫기
   } catch (error) {
     console.error('회원가입 실패:', error);
-  }
-}
-
-// 사용자 정보 가져오기 함수
-async function fetchInfo() {
-  try {
-    userInfo.value = await googleAuth.fetchUserInfo();
-  } catch (error) {
-    console.error('사용자 정보 가져오기 실패:', error);
   }
 }
 </script>
