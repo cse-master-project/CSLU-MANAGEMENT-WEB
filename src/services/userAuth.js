@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { googleSdkLoaded } from 'vue3-google-login'; // Google SDK 로드 함수
 import { userApi } from 'src/boot/userAxios';
 import { useUserAuthStore } from 'src/stores/userAuth';
 import { Notify } from 'quasar';
 // 사용자용 계정
 
-// 구글 로그인 로직
+// <구글 로그인 로직>
 export const googleAuth = {
   // 1-1. [구글 인증 코드 요청]
   async getAuthCode(clientId) {
@@ -166,15 +165,13 @@ export const googleAuth = {
   },
 };
 
-// 로그아웃 로직
+// <로그아웃>
 export const userAuth = {
-  // 로그아웃 함수
+  // 1. [로그아웃]
   async logoutUser() {
     const userStore = useUserAuthStore(); // 스토어 인스턴스
     const accessToken = userStore.accessToken; // 스토어에서 accessToken 가져오기
-
     try {
-      // 로그아웃 요청을 서버로 전송
       await userApi.post(
         '/api/v2/user/auth/google/logout',
         {},
@@ -184,10 +181,9 @@ export const userAuth = {
           },
         },
       );
-      // 사용자 인증 정보 초기화
+      // 2. [다 로그아웃]
       userStore.logout(); // Pinia 스토어에서 로그아웃 처리
     } catch (error) {
-      // 사용자 정보 가져오기 실패 알림
       Notify.create({
         message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
         color: 'negative',
@@ -197,19 +193,47 @@ export const userAuth = {
   },
 };
 
-// 사용자 정보 로직(pages/myPage)
+// <사용자 계정관리>
 export const userInfoService = {
-  // 사용자 정보 가져오는 함수
+  // 1. [사용자 정보 조회]
   async fetchInfo() {
     try {
       const response = await userApi.get('/api/v2/user/info');
       return response.data;
     } catch (error) {
-      console.error('사용자 정보 가져오기 실패:', error);
+      Notify.create({
+        message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
+        color: 'negative',
+      });
       throw error;
     }
   },
-  // 탈퇴 요청 함수
+  // 1-1. [사용자 가입일 계산]
+  calculateDaysSinceJoined(createAt) {
+    if (!createAt) {
+      return null;
+    }
+    const joinedDate = new Date(createAt); // 서버에서 받은 날짜를 Date 객체로 변환
+    const currentDate = new Date(); // 현재 날짜를 가져옴
+    const differenceInTime = currentDate - joinedDate; // 두 날짜의 차이를 밀리초 단위로 계산
+    // 밀리초 단위를 일 단위로 변환
+    const differenceInDays = Math.ceil(
+      differenceInTime / (1000 * 60 * 60 * 24),
+    );
+    return differenceInDays;
+  },
+  // 2. [사용자 닉네임 변경]
+  async changeNicknameUser(newNickname) {
+    try {
+      const response = await userApi.put('/api/v2/user/info/nickname', {
+        nickname: newNickname,
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  // 2. [사용자 탈퇴]
   async deactivateUser() {
     try {
       // 1. 탈퇴 요청 (로그아웃 전)
@@ -222,23 +246,5 @@ export const userInfoService = {
       console.error('탈퇴 요청 실패:', error);
       throw error;
     }
-  },
-  // 가입한지 며칠 지났는지 계산하는 함수
-  calculateDaysSinceJoined(createAt) {
-    if (!createAt) {
-      console.error('createAt 값이 없습니다.');
-      return null;
-    }
-    // 서버에서 받은 날짜를 Date 객체로 변환
-    const joinedDate = new Date(createAt);
-    // 현재 날짜를 가져옴
-    const currentDate = new Date();
-    // 두 날짜의 차이를 밀리초 단위로 계산
-    const differenceInTime = currentDate - joinedDate;
-    // 밀리초 단위를 일 단위로 변환
-    const differenceInDays = Math.ceil(
-      differenceInTime / (1000 * 60 * 60 * 24),
-    );
-    return differenceInDays;
   },
 };
