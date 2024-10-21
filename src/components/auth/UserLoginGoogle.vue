@@ -61,11 +61,7 @@
             </q-tooltip>
           </q-input>
           <q-btn rounded @click="signUpGoogle" class="signupbtn">
-            <img
-              src="public/signup.png"
-              alt="adduser"
-              style="height: 16px; width: auto; filter: invert(1)"
-            />SIGN UP
+            SIGN UP
           </q-btn>
         </q-card-section>
       </q-card-actions>
