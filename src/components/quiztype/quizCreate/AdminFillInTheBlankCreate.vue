@@ -193,7 +193,6 @@ watch(subject, newSubject => {
   if (newSubject) {
     selectSubject(newSubject);
     chapter.value = '챕터를 선택 해주세요.';
-    ssss;
   }
 });
 
@@ -355,7 +354,24 @@ const submitQuizForm = async () => {
   font-size: 2rem;
   color: #0080ff;
 }
-
+//가이드 스타일
+.guidecontainer {
+  display: flex;
+  justify-content: space-evenly; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 60px;
+  height: 60px;
+  background-color: #ebf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: 0 1%;
+}
+.span {
+  color: red;
+}
 // 과목 챕터 선택 스타일
 .select-container {
   display: flex;
@@ -514,9 +530,27 @@ input[type='file'] {
 }
 .btn-back {
   background-color: rgb(213, 213, 213);
+  color: black;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.71429;
+  height: 40px;
+  font-family: 'Toss Product Sans';
+  box-shadow: rgba(39, 40, 40, 0.24) 0px 8px 16px 0px;
 }
 .btn-submit {
-  background-color: primary;
+  background-color: rgb(0, 154, 233);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.71429;
+  height: 40px;
+  font-family: 'Toss Product Sans';
+  box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
 }
 
 .tooltip {

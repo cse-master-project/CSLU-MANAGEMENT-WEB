@@ -304,6 +304,23 @@ const submitQuizForm = async () => {
   font-size: 2rem;
   color: #0080ff;
 }
+.guidecontainer {
+  display: flex;
+  justify-content: space-evenly; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 60px;
+  height: 60px;
+  background-color: #ebf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: 0 1%;
+}
+.span {
+  color: red;
+}
 
 // 과목 챕터 선택 스타일
 .select-container {
@@ -317,11 +334,13 @@ const submitQuizForm = async () => {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
+  margin-right: 10px;
 }
 .select-chapter {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
+  margin-left: 10px;
 }
 .label-subject,
 .label-chapter {
@@ -331,7 +350,7 @@ const submitQuizForm = async () => {
   font-weight: bold;
 }
 .select-box {
-  width: 220px;
+  max-width: 400px;
 }
 
 //이미지 업로드 스타일
@@ -368,16 +387,6 @@ input[type='file'] {
   max-width: 60%;
   max-height: 60%;
 }
-// .upload-button {
-//   width: 50px;
-//   height: 50px;
-//   background-color: #42a5f5;
-//   color: white;
-//   font-size: 2rem;
-//   text-align: center;
-//   line-height: 50px;
-//   border-radius: 50%;
-// }
 /* 파일 미리보기 스타일 */
 .previewImage-container {
   margin-top: 10px;
@@ -401,7 +410,7 @@ input[type='file'] {
   color: white;
   font-size: 1.5rem;
   text-align: center;
-  line-height: 50px;
+  cursor: pointer;
   border-radius: 50%;
 }
 
@@ -436,6 +445,12 @@ input[type='file'] {
 .input-answer {
   width: 70%;
 }
+.help-icon2 {
+  margin: 8px 8px;
+  font-size: 20px;
+  color: #999;
+  display: block;
+}
 
 // 해설 입력 스타일
 .comment-container {
@@ -456,15 +471,26 @@ input[type='file'] {
 }
 .btn-back {
   background-color: rgb(213, 213, 213);
+  color: black;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.71429;
+  height: 40px;
+  font-family: 'Toss Product Sans';
+  box-shadow: rgba(39, 40, 40, 0.24) 0px 8px 16px 0px;
 }
 .btn-submit {
-  background-color: primary;
-}
-@media (max-width: 430px) {
-  .select-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-  }
+  background-color: rgb(0, 154, 233);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.71429;
+  height: 40px;
+  font-family: 'Toss Product Sans';
+  box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
 }
 </style>
