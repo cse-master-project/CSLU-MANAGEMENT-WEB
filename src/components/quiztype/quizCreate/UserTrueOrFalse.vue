@@ -125,7 +125,11 @@ import {
   submitQuizImageTemp,
 } from 'src/services/quiz/userQuiz.js';
 import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
-import { Notify } from 'quasar';
+import {
+  quizSuccessNotification,
+  quizErrorNotification,
+  errorNotification,
+} from 'src/services/quiz/notifications.js';
 
 // 반응형 데이터
 const subject = ref('과목을 선택 해주세요.');
@@ -258,49 +262,24 @@ const submitQuizForm = async () => {
         await submitQuizImage(quizId.value, uuid);
 
         // 성공
-        Notify.create({
-          message: '문제가 성공적으로 등록되었습니다.',
-          color: 'primary',
-          position: 'center', // 중앙 띄우기
-          timeout: 500, // 1초
-        });
+        quizSuccessNotification();
         router.push(`/userQuizzes/${quizId.value}`);
       } else {
         // 이미지 없을 시 바로 제출
         quizId.value = await submitQuiz(quizData);
         // 성공
-        Notify.create({
-          message: '문제가 성공적으로 등록되었습니다.',
-          color: 'positive',
-          position: 'center', // 중앙 띄우기
-          timeout: 3000, // 1초
-        });
+        quizSuccessNotification();
         router.push(`/userQuizzes/${quizId.value}`);
       }
     } catch (error) {
       if (error.response?.status === 400) {
-        Notify.create({
-          message: '입력 값을 확인해주세요.',
-          color: 'negative',
-          position: 'center', // 중앙 띄우기
-          timeout: 1000, // 1초
-        });
+        quizErrorNotification();
       } else {
-        Notify.create({
-          message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
-          color: 'negative',
-          position: 'center', // 중앙 띄우기
-          timeout: 3000, // 1초
-        });
+        errorNotification();
       }
     }
   } catch (error) {
-    Notify.create({
-      message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
-      color: 'negative',
-      position: 'center', // 중앙 띄우기
-      timeout: 3000, // 1초
-    });
+    errorNotification();
   }
 };
 </script>
