@@ -201,7 +201,6 @@ const router = useRouter();
 
 // 서버에 문제 제출
 const submitQuizForm = async () => {
-  // 사용자에게 탈퇴 경고 메시지를 표시
   const confirmation = confirm('문제를 등록하시겠습니까? ');
   if (!confirmation) {
     return;
