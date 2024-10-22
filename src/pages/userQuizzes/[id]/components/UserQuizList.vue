@@ -2,7 +2,7 @@
   <q-page padding style="width: 90%; margin: 0 auto">
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-3 q-my-md bold-text">
           과목
           <q-select
             v-model="subject"
@@ -12,7 +12,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-3 q-my-md bold-text">
           챕터
           <q-select
             v-model="chapter"
@@ -22,7 +22,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-3 q-my-md bold-text">
           문제유형
           <q-select
             v-model="quizType"
@@ -31,7 +31,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-3 q-my-md bold-text">
           승인여부
           <q-select
             v-model="permissionStatus"
@@ -48,14 +48,14 @@
         <div class="col-12 col-md-6 q-my-md">
           <q-btn
             label="초기화"
-            class="full-width bg-grey-2 text-primary"
+            class="full-width bg-grey-2 text-primary bold-text"
             @click="resetFilters"
           />
         </div>
         <div class="col-12 col-md-6 q-my-md">
           <q-btn
             label="검색"
-            class="full-width bg-primary text-white"
+            class="full-width bg-primary text-white bold-text"
             @click="filterQuizzes"
           />
         </div>
