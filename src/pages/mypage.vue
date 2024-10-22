@@ -134,7 +134,12 @@ const changeNickname = async () => {
     change.value = true;
     if (newUserNickName.value) {
       await userInfoService.changeNicknameUser(newUserNickName.value);
-      alert('닉네임이 변경 되었습니다.');
+      Notify.create({
+        message: '닉네임이 변경되었습니다.',
+        color: 'primary',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
+      });
       newUserNickName.value = '';
       change.value = false;
       fetchUserInfo();
@@ -156,12 +161,10 @@ const deactivate = async () => {
   }
   try {
     await userInfoService.deactivateUser();
-    alert('탈퇴 되었습니다.');
+
     router.push('/home');
   } catch (error) {
-    alert('탈퇴가 실패 되었습니다.');
     router.push('/home');
-    console.error('탈퇴 요청 실패:', error);
   }
 };
 </script>

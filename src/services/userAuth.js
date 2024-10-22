@@ -273,12 +273,22 @@ export const userInfoService = {
     try {
       // 1. 탈퇴 요청 (로그아웃 전)
       const response = await userApi.post('/api/v2/user/deactivate');
-      console.log('탈퇴 요청 성공:', response.data);
+      Notify.create({
+        message: '탈퇴가 되었습니다.',
+        color: 'primary',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
+      });
       // 2. 로그아웃 처리 (탈퇴 후)
       await userAuth.logoutUser(); // 로그아웃 로직 호출
       return response.data;
     } catch (error) {
-      console.error('탈퇴 요청 실패:', error);
+      Notify.create({
+        message: '지금 서버에 문제가 있습니다. 잠시후 이용해주세요.',
+        color: 'negative',
+        position: 'center', // 중앙 띄우기
+        timeout: 500, // 1초
+      });
       throw error;
     }
   },
