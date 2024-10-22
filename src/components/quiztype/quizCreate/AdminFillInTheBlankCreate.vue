@@ -34,7 +34,7 @@
           <div>
             <label for="file">
               <div class="upload-button">
-                <img src="/add-image.png" alt="Upload Image" />
+                <img src="/addimg.png" alt="Upload Image" />
               </div>
             </label>
             <input type="file" id="file" @change="fileInputHandler" />
@@ -55,7 +55,7 @@
             outlined
             dense
             placeholder="문제를 입력해주세요."
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-quiz"
           /><q-icon name="help" class="help-icon1">
@@ -83,7 +83,7 @@
               outlined
               dense
               :placeholder="`( ${index + 1} ) 의 답안을 입력해주세요.`"
-              maxlength="300"
+              maxlength="400"
               counter
               style="flex-grow: 1"
             />
@@ -106,7 +106,7 @@
             outlined
             placeholder="해설을 입력하세요"
             dense
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-commentary"
           />
