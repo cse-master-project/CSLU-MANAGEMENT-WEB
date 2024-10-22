@@ -93,8 +93,12 @@
           @click="goToQuizDetail(quiz.quizId)"
           style="cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3)"
         >
+          <!-- 퀴즈 승인여부 -->
           <q-card-section>
-            <div>퀴즈ID : {{ quiz.quizId }}</div>
+            <QuizPermssionStatus :quiz="quiz" />
+          </q-card-section>
+          <q-separator inset /><!--선-->
+          <q-card-section>
             <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
             <div class="text-subtitle2 text-secondary">
               챕터: {{ quiz.chapter }}
@@ -108,21 +112,22 @@
 
             <!-- 퀴즈 내용 파싱 및 표시 -->
             <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
-              <div class="text-h6">
-                문제: {{ parsedContent(quiz.jsonContent)?.quiz }}
+              <div class="text-h6 quiz-content">
+                문제:
+                {{ truncateText(parsedContent(quiz.jsonContent)?.quiz, 100) }}
               </div>
 
-              <div class="text-body2">
-                정답: {{ parsedContent(quiz.jsonContent)?.answer }}
+              <div class="text-body2 quiz-content">
+                정답:
+                {{ truncateText(parsedContent(quiz.jsonContent)?.answer, 50) }}
               </div>
-              <div class="text-body2">
-                해설: {{ parsedContent(quiz.jsonContent)?.commentary }}
+              <div class="text-body2 quiz-content">
+                해설:
+                {{
+                  truncateText(parsedContent(quiz.jsonContent)?.commentary, 100)
+                }}
               </div>
             </div>
-          </q-card-section>
-          <q-separator inset /><!--선-->
-          <q-card-section>
-            <QuizPermssionStatus :quiz="quiz" />
           </q-card-section>
         </q-card>
       </div>
@@ -278,6 +283,13 @@ const parsedContent = jsonContent => {
     return null;
   }
 };
+//  내용 줄임표
+const truncateText = (text, length) => {
+  if (text && text.length > length) {
+    return text.substring(0, length) + '...';
+  }
+  return text;
+};
 // 시간 알려주기.
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
@@ -330,13 +342,14 @@ onMounted(async () => {
   border-radius: 10px;
   overflow: hidden;
   min-height: 300px; /* 최소 높이 설정 */
+  /* 또는 높이를 고정하고 싶다면 */
+  height: 300px;
 }
 
 .q-card-section {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  flex-grow: 1;
 }
 
 .q-btn {
@@ -382,5 +395,11 @@ onMounted(async () => {
   .layoutbtn {
     display: none;
   }
+}
+
+.quiz-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
