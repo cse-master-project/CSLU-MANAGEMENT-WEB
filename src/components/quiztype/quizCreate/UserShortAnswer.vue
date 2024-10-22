@@ -231,39 +231,37 @@ const router = useRouter();
 
 // 서버에 문제 제출
 const submitQuizForm = async () => {
-  // 사용자에게 탈퇴 경고 메시지를 표시
+  //답안 정리
+  const normalizedAnswers = normalizeAnswers(answers.value);
+
+  //입력값 검증
+  let hasError = false;
+  let errorMessage = '';
+  if (subject.value === '과목을 선택 해주세요.') {
+    errorMessage = '과목을 선택해 주세요.';
+    hasError = true;
+  } else if (chapter.value === '챕터를 선택 해주세요.') {
+    errorMessage = '챕터를 선택해 주세요.';
+    hasError = true;
+  } else if (quiz.value.trim() === '') {
+    errorMessage = '문제를 입력해 주세요.';
+    hasError = true;
+  } else if (normalizedAnswers.length === 0) {
+    errorMessage = '답을 입력해 주세요.';
+    hasError = true;
+  } else if (commentary.value.trim() === '') {
+    errorMessage = '해설을 입력해 주세요.';
+    hasError = true;
+  }
+  if (hasError) {
+    alert(errorMessage);
+    return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
+  }
   const confirmation = confirm('문제를 등록하시겠습니까? ');
   if (!confirmation) {
     return;
   }
   try {
-    //답안 정리
-    const normalizedAnswers = normalizeAnswers(answers.value);
-
-    //입력값 검증
-    let hasError = false;
-    let errorMessage = '';
-    if (subject.value === '과목을 선택 해주세요.') {
-      errorMessage = '과목을 선택해 주세요.';
-      hasError = true;
-    } else if (chapter.value === '챕터를 선택 해주세요.') {
-      errorMessage = '챕터를 선택해 주세요.';
-      hasError = true;
-    } else if (quiz.value.trim() === '') {
-      errorMessage = '문제를 입력해 주세요.';
-      hasError = true;
-    } else if (normalizedAnswers.length === 0) {
-      errorMessage = '답을 입력해 주세요.';
-      hasError = true;
-    } else if (commentary.value.trim() === '') {
-      errorMessage = '해설을 입력해 주세요.';
-      hasError = true;
-    }
-    if (hasError) {
-      alert(errorMessage);
-      return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
-    }
-
     //서버에 보낼 퀴즈 데이터
     const quizData = {
       subject: subject.value,

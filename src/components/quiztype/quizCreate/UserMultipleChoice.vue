@@ -220,38 +220,37 @@ const router = useRouter();
 
 // 서버에 문제 제출.
 const submitQuizForm = async () => {
+  // 입력값 검증
+  let hasError = false;
+  let errorMessage = '';
+  if (subject.value === '과목을 선택 해주세요.') {
+    errorMessage = '과목을 선택해 주세요.';
+    hasError = true;
+  } else if (chapter.value === '챕터를 선택 해주세요.') {
+    errorMessage = '챕터를 선택해 주세요.';
+    hasError = true;
+  } else if (quiz.value.trim() === '') {
+    errorMessage = '문제를 입력해 주세요.';
+    hasError = true;
+  } else if (option.value.some(choice => choice.label.trim() === '')) {
+    errorMessage = '모든 지문을 입력해 주세요.';
+    hasError = true;
+  } else if (selectedAnswer.value === null) {
+    errorMessage = '정답을 선택해 주세요.';
+    hasError = true;
+  } else if (commentary.value.trim() === '') {
+    errorMessage = '해설을 입력해 주세요.';
+    hasError = true;
+  }
+  if (hasError) {
+    alert(errorMessage);
+    return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
+  }
   const confirmation = confirm('문제를 등록하시겠습니까? ');
   if (!confirmation) {
     return;
   }
   try {
-    // 입력값 검증
-    let hasError = false;
-    let errorMessage = '';
-    if (subject.value === '과목을 선택 해주세요.') {
-      errorMessage = '과목을 선택해 주세요.';
-      hasError = true;
-    } else if (chapter.value === '챕터를 선택 해주세요.') {
-      errorMessage = '챕터를 선택해 주세요.';
-      hasError = true;
-    } else if (quiz.value.trim() === '') {
-      errorMessage = '문제를 입력해 주세요.';
-      hasError = true;
-    } else if (option.value.some(choice => choice.label.trim() === '')) {
-      errorMessage = '모든 지문을 입력해 주세요.';
-      hasError = true;
-    } else if (selectedAnswer.value === null) {
-      errorMessage = '정답을 선택해 주세요.';
-      hasError = true;
-    } else if (commentary.value.trim() === '') {
-      errorMessage = '해설을 입력해 주세요.';
-      hasError = true;
-    }
-    if (hasError) {
-      alert(errorMessage);
-      return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
-    }
-
     //서버에 제출될 데이터
     const quizData = {
       subject: subject.value,

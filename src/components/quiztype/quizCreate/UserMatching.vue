@@ -317,50 +317,49 @@ const router = useRouter();
 
 // 서버에 문제 제출
 const submitQuizForm = async () => {
+  // 답안 정리
+  const formattedAnswers = answers.value.map(answer => {
+    return answer;
+  });
+  //console.log('answers', formattedAnswers);
+
+  // 입력값 검증
+  let hasError = false;
+  let errorMessage = '';
+  if (subject.value === '과목을 선택 해주세요.') {
+    errorMessage = '과목을 선택해 주세요.';
+    hasError = true;
+  } else if (chapter.value === '챕터를 선택 해주세요.') {
+    errorMessage = '챕터를 선택해 주세요.';
+    hasError = true;
+  } else if (quiz.value.trim() === '') {
+    errorMessage = '문제를 입력해 주세요.';
+    hasError = true;
+  } else if (leftOptions.value.some(option => option.trim() === '')) {
+    errorMessage = '왼쪽 옵션을 모두 입력해 주세요.';
+    hasError = true;
+  } else if (rightOptions.value.some(option => option.trim() === '')) {
+    errorMessage = '오른쪽 옵션을 모두 입력해 주세요.';
+    hasError = true;
+  } else if (
+    answers.value.length === 0 ||
+    answers.value.some(answer => answer.trim() === '')
+  ) {
+    errorMessage = '답을 매칭해 주세요.';
+    hasError = true;
+  } else if (commentary.value.trim() === '') {
+    errorMessage = '해설을 입력해 주세요.';
+    hasError = true;
+  }
+  if (hasError) {
+    alert(errorMessage);
+    return; // 오류가 있을 경우 제출을 중단합니다.
+  }
   const confirmation = confirm('문제를 등록하시겠습니까? ');
   if (!confirmation) {
     return;
   }
   try {
-    // 답안 정리
-    const formattedAnswers = answers.value.map(answer => {
-      return answer;
-    });
-    //console.log('answers', formattedAnswers);
-
-    // 입력값 검증
-    let hasError = false;
-    let errorMessage = '';
-    if (subject.value === '과목을 선택 해주세요.') {
-      errorMessage = '과목을 선택해 주세요.';
-      hasError = true;
-    } else if (chapter.value === '챕터를 선택 해주세요.') {
-      errorMessage = '챕터를 선택해 주세요.';
-      hasError = true;
-    } else if (quiz.value.trim() === '') {
-      errorMessage = '문제를 입력해 주세요.';
-      hasError = true;
-    } else if (leftOptions.value.some(option => option.trim() === '')) {
-      errorMessage = '왼쪽 옵션을 모두 입력해 주세요.';
-      hasError = true;
-    } else if (rightOptions.value.some(option => option.trim() === '')) {
-      errorMessage = '오른쪽 옵션을 모두 입력해 주세요.';
-      hasError = true;
-    } else if (
-      answers.value.length === 0 ||
-      answers.value.some(answer => answer.trim() === '')
-    ) {
-      errorMessage = '답을 매칭해 주세요.';
-      hasError = true;
-    } else if (commentary.value.trim() === '') {
-      errorMessage = '해설을 입력해 주세요.';
-      hasError = true;
-    }
-    if (hasError) {
-      alert(errorMessage);
-      return; // 오류가 있을 경우 제출을 중단합니다.
-    }
-
     //서버에 보낼 퀴즈 데이터
     const quizData = {
       subject: subject.value,
