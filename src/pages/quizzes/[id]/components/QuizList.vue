@@ -134,6 +134,7 @@ import { useCategorie } from 'src/services/quiz/useCategorie.js';
 
 const filterStore = useFilterStore();
 
+// 퀴즈
 const quizzes = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(20);
@@ -143,7 +144,6 @@ const filteredQuizzes = ref([]);
 const subject = ref(filterStore.subject);
 const chapter = ref(filterStore.chapter);
 const quizType = ref(filterStore.quizType);
-
 const quizTypeOptions = [
   { value: 1, label: '4지선다형' },
   { value: 2, label: '단답형' },
@@ -174,6 +174,7 @@ watch(quizType, newValue => {
   filterStore.setQuizType(newValue);
 });
 
+//서버에서 퀴즈 목록 들고 오기.
 const fetchQuizzes = async () => {
   try {
     quizzes.value = await fetchQuizzesFromApi();
@@ -184,24 +185,7 @@ const fetchQuizzes = async () => {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
-
-const paginatedQuizzes = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return filteredQuizzes.value.slice(start, end);
-});
-
-const totalPages = computed(() =>
-  Math.ceil(filteredQuizzes.value.length / pageSize.value),
-);
-
-const changePage = page => {
-  if (page > 0 && page <= totalPages.value) {
-    currentPage.value = page;
-    filterQuizzes();
-  }
-};
-
+//필터링 기능
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
@@ -211,6 +195,23 @@ const filterQuizzes = () => {
   });
 };
 
+// 페이징 처리
+const paginatedQuizzes = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filteredQuizzes.value.slice(start, end);
+});
+const totalPages = computed(() =>
+  Math.ceil(filteredQuizzes.value.length / pageSize.value),
+);
+const changePage = page => {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page;
+    filterQuizzes();
+  }
+};
+
+// 필터링 초기화 기능
 const resetFilters = () => {
   subject.value = '';
   chapter.value = '';
@@ -218,8 +219,7 @@ const resetFilters = () => {
   filterQuizzes();
 };
 
-const router = useRouter();
-
+// 문제 형식에 따라 유형 알려주기.
 const formatQuizType = quizType => {
   switch (quizType) {
     case 1:
@@ -236,14 +236,7 @@ const formatQuizType = quizType => {
       return '알 수 없는 유형';
   }
 };
-
-const formatDate = dateString =>
-  date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
-
-const goToQuizDetail = quizId => {
-  router.push(`/quizzes/${quizId}`);
-};
-
+// JSON 콘텐츠 파싱 함수
 const parsedContent = jsonContent => {
   try {
     return JSON.parse(jsonContent);
@@ -252,13 +245,14 @@ const parsedContent = jsonContent => {
     return null;
   }
 };
+// 시간 알려주기.
+const formatDate = dateString =>
+  date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 
 const currentLayout = ref(1);
-
 const setLayout = layout => {
   currentLayout.value = layout;
 };
-
 const getColumnClass = () => {
   switch (currentLayout.value) {
     case 1:
@@ -270,6 +264,11 @@ const getColumnClass = () => {
     default:
       return 'col-12';
   }
+};
+
+const router = useRouter();
+const goToQuizDetail = quizId => {
+  router.push(`/quizzes/${quizId}`);
 };
 
 onMounted(async () => {

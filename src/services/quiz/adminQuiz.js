@@ -1,6 +1,7 @@
 import { api } from 'src/boot/axios';
+// 관리자용
 
-// 관리자 문제 생성시 서버에 보내는 api
+// [문제 생성]
 export const submitQuiz = async quizData => {
   try {
     // 문제 데이터 서버에 제출
@@ -10,13 +11,30 @@ export const submitQuiz = async quizData => {
     throw error;
   }
 };
-
-export const submitQuizImage = async (quizId, base64String) => {
+// 이미지 전송 로직
+// 1.  이미지 임시추가
+export const submitQuizImageTemp = async base64String => {
   try {
     const imageData = {
       base64String,
+    };
+    const response = await api.post('/api/v2/quiz/image/temp', imageData);
+    const uuid = response.data;
+    console.log('이미지 임시 추가 완료 uuid: ', uuid);
+    return uuid; //UUID 반환
+  } catch (error) {
+    alert('이미지 추가가 안됩니다.');
+    throw error;
+  }
+};
+// 2. 이미지 추가.
+export const submitQuizImage = async (quizId, uuid) => {
+  try {
+    const imageData = {
+      uuid,
       quizId,
     };
+    console.log('imageData ', imageData);
     await api.post('/api/v2/quiz/image', imageData);
     console.log('이미지 추가 완료');
   } catch (error) {
@@ -24,6 +42,7 @@ export const submitQuizImage = async (quizId, base64String) => {
   }
 };
 
+// [문제 삭제]
 export const deleteQuiz = async quizId => {
   try {
     await api.delete(`/api/v2/management/quiz/${quizId}`);
@@ -32,7 +51,7 @@ export const deleteQuiz = async quizId => {
   }
 };
 
-// 관리자 목록 조회시 서버에 보내는 api
+// [문제 조회 : 관리자용 문제]
 export const fetchQuizzesFromApi = async () => {
   try {
     const response = await api.get('/api/v2/quiz/default', {

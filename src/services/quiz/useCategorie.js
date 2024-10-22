@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { api } from 'src/boot/axios';
+// 관리자용
 
 // [view] : 카테고리 조회
 export function useCategorie() {

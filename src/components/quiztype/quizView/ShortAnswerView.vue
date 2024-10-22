@@ -8,7 +8,7 @@
 
     <q-card flat bordered>
       <!-- 문제 내용 -->
-      <q-card-section class="bg-primary text-white q-pa-md">
+      <q-card-section class="bg-primary text-white q-pa-md content-section">
         <div class="text-subtitle1">Q. {{ quizcontent.quiz }}</div>
       </q-card-section>
 
@@ -16,7 +16,7 @@
 
       <!-- 정답 표시 -->
       <q-card-section>
-        <div class="text-weight-medium">
+        <div class="text-weight-medium content-section">
           정답 :
           <span class="text-positive">{{ quizcontent.answer.join(', ') }}</span>
         </div>
@@ -26,7 +26,7 @@
 
       <!-- 해설 표시 -->
       <q-card-section>
-        <div class="text-weight-medium">
+        <div class="text-weight-medium content-section">
           해설 : {{ quizcontent.commentary }}
         </div>
       </q-card-section>
@@ -62,5 +62,10 @@ defineProps({
 
 .text-positive {
   color: #43a047;
+}
+
+.content-section {
+  word-break: break-word; /* 긴 단어를 적절히 줄바꿈 */
+  white-space: pre-wrap; /* 공백과 줄바꿈을 그대로 유지 */
 }
 </style>

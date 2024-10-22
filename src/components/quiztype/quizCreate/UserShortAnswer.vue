@@ -8,13 +8,21 @@
           <q-tooltip
             style="
               font-size: 1rem;
-              width: 300px;
+              width: 500px;
               background: #ebf0f1;
               color: black;
             "
-            >문제를 작성한 후 정답을 입력하세요. 여러 정답을 입력할 경우
-            쉼표(,)로 구분하세요. 해설을 입력한 후 "문제 등록" 버튼을
-            클릭하세요.</q-tooltip
+            >문제 작성 가이드:<br />
+            1. <span class="span">*챕터</span>와
+            <span class="span">*과목</span>을 선택하세요.<br />
+            2. <span class="span">*문제</span>를 입력하세요.<br />
+
+            3. 여러 <span class="span">*정답</span>이 있을 경우, 쉼표(,)로
+            구분하세요.<br />
+            4.<span class="span">*해설</span>을 입력한 후, "문제 등록" 버튼을
+            클릭하세요.<br />
+            5. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
+            첨부 가능합니다.</q-tooltip
           >
         </div></q-toolbar-title
       >
@@ -72,7 +80,7 @@
             outlined
             dense
             placeholder="문제를 입력하세요"
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-quiz"
           />
@@ -91,9 +99,19 @@
               outlined
               dense
               placeholder="답안 입력해주세요. "
-              maxlength="300"
+              maxlength="400"
               counter
             />
+          </div>
+          <div>
+            <!-- 도움말 아이콘과 툴팁 -->
+            <q-icon name="help" class="help-icon2" style="margin-left: 12px">
+              <q-tooltip
+                style="background: #ebf0f1; color: black; font-size: medium"
+              >
+                답안 여러개 시, 쉼표(,)로 구분해주세요.
+              </q-tooltip>
+            </q-icon>
           </div>
         </q-card-section>
         <!-- 해설 입력 -->
@@ -106,7 +124,7 @@
             outlined
             placeholder="해설을 입력하세요."
             dense
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-commentary"
         /></q-card-section>
@@ -117,23 +135,23 @@
       </q-card>
     </div>
   </q-form>
-  <!-- 문제 생성 성공 컴포넌트 -->
-  <UserSubmitQuizSuccess
-    v-if="submitQuizSuccess"
-    :submit-quiz-success="submitQuizSuccess"
-    :quiz-id="quizId"
-  />
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   submitQuiz,
   submitQuizImage,
-  deleteQuiz,
+  submitQuizImageTemp,
 } from 'src/services/quiz/userQuiz.js';
-import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
 import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
+import {
+  quizSuccessNotification,
+  quizErrorNotification,
+  errorNotification,
+} from 'src/services/quiz/notifications.js';
+
 // 반응형 데이터
 const subject = ref('과목을 선택 해주세요.');
 const chapter = ref('챕터를 선택 해주세요.');
@@ -150,20 +168,23 @@ const goBack = () => {
 //이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
+//이미지 업로드 로직
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-    // 파일 타입이 이미지인지 확인
-    if (files[0].type.startsWith('image/')) {
+    const fileType = files[0].type;
+    // 파일 타입이 JPG 또는 JPEG 인지 확인
+    if (fileType === 'image/jpeg') {
       const reader = new FileReader();
       reader.onload = e => {
         filePreview.value = e.target.result;
       };
       reader.readAsDataURL(files[0]);
     } else {
-      alert('이미지 파일만 선택할 수 있습니다.');
+      alert('JPG 파일만 선택할 수 있습니다.');
       filePreview.value = null; // 파일 미리보기 초기화
+      document.getElementById('file').value = ''; // 파일 입력 초기화
     }
   }
 };
@@ -204,11 +225,10 @@ const normalizeAnswers = answers => {
     .filter(answer => answer); // 빈 값 제거
 };
 
-// 서버 전송 여부
-const submitQuizSuccess = ref(false);
-
 // 서버에서 받아온 퀴즈 아이디
 const quizId = ref('');
+
+const router = useRouter();
 
 // 서버에 문제 제출
 const submitQuizForm = async () => {
@@ -218,7 +238,6 @@ const submitQuizForm = async () => {
   //입력값 검증
   let hasError = false;
   let errorMessage = '';
-
   if (subject.value === '과목을 선택 해주세요.') {
     errorMessage = '과목을 선택해 주세요.';
     hasError = true;
@@ -235,40 +254,63 @@ const submitQuizForm = async () => {
     errorMessage = '해설을 입력해 주세요.';
     hasError = true;
   }
-
   if (hasError) {
     alert(errorMessage);
     return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
   }
-
-  //서버에 보낼 퀴즈 데이터
-  const quizData = {
-    subject: subject.value,
-    chapter: chapter.value,
-    quizType: '2',
-    jsonContent: JSON.stringify({
-      quiz: quiz.value,
-      answer: normalizedAnswers,
-      commentary: commentary.value,
-    }),
-    hasImage: !!filePreview.value,
-  };
-  //console.log('서버에 제출될 데이터:', quizData);
+  const confirmation = confirm('문제를 등록하시겠습니까? ');
+  if (!confirmation) {
+    return;
+  }
   try {
-    // 문제 데이터 서버에 제출후 반환된 퀴즈 ID 저장.
-    quizId.value = await submitQuiz(quizData);
+    //서버에 보낼 퀴즈 데이터
+    const quizData = {
+      subject: subject.value,
+      chapter: chapter.value,
+      quizType: '2',
+      jsonContent: JSON.stringify({
+        quiz: quiz.value,
+        answer: normalizedAnswers,
+        commentary: commentary.value,
+      }),
+      hasImage: !!filePreview.value,
+    };
+    //console.log('서버에 제출될 데이터:', quizData);
+    try {
+      // 이미지가 있는 경우
+      if (filePreview.value) {
+        // 이미지 임시로 제출
+        const uuid = await submitQuizImageTemp(filePreview.value);
+        // 이미지 오류 처리
+        if (!uuid) {
+          throw new Error('이미지 업로드에 실패했습니다.');
+        }
 
-    // 이미지가 있다면 이미지 서버에 제출
-    if (filePreview.value) {
-      await submitQuizImage(quizId.value, filePreview.value);
+        quizId.value = await submitQuiz(quizData);
+        // console.log(quizId.value);
+
+        // 이미지 진짜 제출
+        await submitQuizImage(quizId.value, uuid);
+
+        // 성공
+        quizSuccessNotification();
+        router.push(`/userQuizzes/${quizId.value}`);
+      } else {
+        // 이미지 없을 시 바로 제출
+        quizId.value = await submitQuiz(quizData);
+        // 성공
+        quizSuccessNotification();
+        router.push(`/userQuizzes/${quizId.value}`);
+      }
+    } catch (error) {
+      if (error.response?.status === 400) {
+        quizErrorNotification();
+      } else {
+        errorNotification();
+      }
     }
-
-    submitQuizSuccess.value = true; // 퀴즈 제출 성공
   } catch (error) {
-    if (error.response?.status === 400) {
-      alert('오류가 발생했습니다. 다시 시도해주세요.');
-      await deleteQuiz(quizId.value); // 퀴즈 삭제 처리
-    }
+    errorNotification();
   }
 };
 </script>
@@ -309,6 +351,9 @@ const submitQuizForm = async () => {
   border-radius: 50%;
   cursor: pointer;
   margin: 0 1%;
+}
+.span {
+  color: red;
 }
 
 // 과목 챕터 선택 스타일
@@ -435,6 +480,12 @@ input[type='file'] {
 }
 .input-answer {
   width: 70%;
+}
+.help-icon2 {
+  margin: 8px 8px;
+  font-size: 20px;
+  color: #999;
+  display: block;
 }
 
 // 해설 입력 스타일

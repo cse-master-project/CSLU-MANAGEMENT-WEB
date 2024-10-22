@@ -44,9 +44,7 @@ const logout = async () => {
 
     // 로그아웃 성공 후 홈 페이지로 리디렉션
     router.push('/home');
-  } catch (error) {
-    alert('로그아웃 실패.');
-  }
+  } catch (error) {}
 };
 
 // 다이얼로그 닫기
