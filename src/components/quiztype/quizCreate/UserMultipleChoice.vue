@@ -131,16 +131,11 @@
       </q-card>
     </div>
   </q-form>
-  <!-- 문제 생성 성공 컴포넌트 -->
-  <UserSubmitQuizSuccess
-    v-if="submitQuizSuccess"
-    :submit-quiz-success="submitQuizSuccess"
-    :quiz-id="quizId"
-  />
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   submitQuiz,
   submitQuizImage,
@@ -148,6 +143,12 @@ import {
 } from 'src/services/quiz/userQuiz.js';
 import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
 import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
+import {
+  quizSuccessNotification,
+  quizErrorNotification,
+  errorNotification,
+} from 'src/services/quiz/notifications.js';
+
 // 반응형 데이터
 const subject = ref('과목을 선택 해주세요.');
 const chapter = ref('챕터를 선택 해주세요.');
@@ -213,85 +214,95 @@ watch(subject, newSubject => {
   }
 });
 
-// 서버 전송 여부
-const submitQuizSuccess = ref(false);
-
 // 서버에서 받아온 퀴즈 아이디
 const quizId = ref('');
 
+const router = useRouter();
+
 // 서버에 문제 제출.
 const submitQuizForm = async () => {
-  // 입력값 검증
-  let hasError = false;
-  let errorMessage = '';
-
-  if (subject.value === '과목을 선택 해주세요.') {
-    errorMessage = '과목을 선택해 주세요.';
-    hasError = true;
-  } else if (chapter.value === '챕터를 선택 해주세요.') {
-    errorMessage = '챕터를 선택해 주세요.';
-    hasError = true;
-  } else if (quiz.value.trim() === '') {
-    errorMessage = '문제를 입력해 주세요.';
-    hasError = true;
-  } else if (option.value.some(choice => choice.label.trim() === '')) {
-    errorMessage = '모든 지문을 입력해 주세요.';
-    hasError = true;
-  } else if (selectedAnswer.value === null) {
-    errorMessage = '정답을 선택해 주세요.';
-    hasError = true;
-  } else if (commentary.value.trim() === '') {
-    errorMessage = '해설을 입력해 주세요.';
-    hasError = true;
+  // 사용자에게 탈퇴 경고 메시지를 표시
+  const confirmation = confirm('문제를 등록하시겠습니까? ');
+  if (!confirmation) {
+    return;
   }
-
-  if (hasError) {
-    alert(errorMessage);
-    return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
-  }
-
-  //서버에 제출될 데이터
-  const quizData = {
-    subject: subject.value,
-    chapter: chapter.value,
-    quizType: '1',
-    jsonContent: JSON.stringify({
-      quiz: quiz.value,
-      option: option.value.map(choice => choice.label),
-      answer: selectedAnswer.value + 1, // 선택된 답의 인덱스를 +1 해서 서버에 보냄
-      commentary: commentary.value,
-    }),
-    hasImage: !!filePreview.value,
-  };
-  //console.log('서버에 제출될 데이터:', quizData);
   try {
-    // 이미지가 있는 경우
-    if (filePreview.value) {
-      // 이미지를 서버에 임시로 제출하고 UUID를 받음
-      const uuid = await submitQuizImageTemp(filePreview.value);
+    // 입력값 검증
+    let hasError = false;
+    let errorMessage = '';
+    if (subject.value === '과목을 선택 해주세요.') {
+      errorMessage = '과목을 선택해 주세요.';
+      hasError = true;
+    } else if (chapter.value === '챕터를 선택 해주세요.') {
+      errorMessage = '챕터를 선택해 주세요.';
+      hasError = true;
+    } else if (quiz.value.trim() === '') {
+      errorMessage = '문제를 입력해 주세요.';
+      hasError = true;
+    } else if (option.value.some(choice => choice.label.trim() === '')) {
+      errorMessage = '모든 지문을 입력해 주세요.';
+      hasError = true;
+    } else if (selectedAnswer.value === null) {
+      errorMessage = '정답을 선택해 주세요.';
+      hasError = true;
+    } else if (commentary.value.trim() === '') {
+      errorMessage = '해설을 입력해 주세요.';
+      hasError = true;
+    }
+    if (hasError) {
+      alert(errorMessage);
+      return; // 입력값이 유효하지 않으면 서버 요청을 중단합니다.
+    }
 
-      // 이미지가 제대로 제출되지 않으면 오류 처리
-      if (!uuid) {
-        throw new Error('이미지 업로드에 실패했습니다.');
+    //서버에 제출될 데이터
+    const quizData = {
+      subject: subject.value,
+      chapter: chapter.value,
+      quizType: '1',
+      jsonContent: JSON.stringify({
+        quiz: quiz.value,
+        option: option.value.map(choice => choice.label),
+        answer: selectedAnswer.value + 1, // 선택된 답의 인덱스를 +1 해서 서버에 보냄
+        commentary: commentary.value,
+      }),
+      hasImage: !!filePreview.value,
+    };
+    //console.log('서버에 제출될 데이터:', quizData);
+    try {
+      // 이미지가 있는 경우
+      if (filePreview.value) {
+        // 이미지 임시로 제출
+        const uuid = await submitQuizImageTemp(filePreview.value);
+        // 이미지 오류 처리
+        if (!uuid) {
+          throw new Error('이미지 업로드에 실패했습니다.');
+        }
+
+        quizId.value = await submitQuiz(quizData);
+        // console.log(quizId.value);
+
+        // 이미지 진짜 제출
+        await submitQuizImage(quizId.value, uuid);
+
+        // 성공
+        quizSuccessNotification();
+        router.push(`/userQuizzes/${quizId.value}`);
+      } else {
+        // 이미지 없을 시 바로 제출
+        quizId.value = await submitQuiz(quizData);
+        // 성공
+        quizSuccessNotification();
+        router.push(`/userQuizzes/${quizId.value}`);
       }
-
-      // 문제 데이터를 서버에 제출 후 반환된 퀴즈 ID 저장
-      quizId.value = await submitQuiz(quizData);
-
-      // 문제 생성이 성공한 후에 이미지를 최종적으로 서버에 제출
-      await submitQuizImage(quizId.value, uuid);
-
-      submitQuizSuccess.value = true; // 퀴즈 제출 성공
-    } else {
-      // 이미지가 없으면 바로 문제 데이터를 서버에 제출
-      quizId.value = await submitQuiz(quizData);
-
-      submitQuizSuccess.value = true; // 퀴즈 제출 성공
+    } catch (error) {
+      if (error.response?.status === 400) {
+        quizErrorNotification();
+      } else {
+        errorNotification();
+      }
     }
   } catch (error) {
-    if (error.response?.status === 400) {
-      alert('오류가 발생했습니다. 다시 시도해주세요.');
-    }
+    errorNotification();
   }
 };
 </script>
