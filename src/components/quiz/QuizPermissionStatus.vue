@@ -3,7 +3,7 @@
     v-if="quiz.permissionStatus === 0"
     color="orange"
     text-color="white"
-    class="badge-style"
+    class="badge-style bold-text"
   >
     승인 대기 중
   </q-badge>
@@ -12,7 +12,7 @@
     v-else-if="quiz.permissionStatus === 1"
     color="green"
     text-color="white"
-    class="badge-style"
+    class="badge-style bold-text"
   >
     승인
   </q-badge>
@@ -21,7 +21,7 @@
     v-else-if="quiz.permissionStatus === -1"
     color="red"
     text-color="white"
-    class="badge-style"
+    class="badge-style bold-text"
   >
     반려 {{ quiz.reason }}
   </q-badge>
@@ -38,7 +38,8 @@ defineProps({
 
 <style scoped>
 .badge-style {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
+  font-weight: bold; /* 굵게 표시 */
   padding: 6px 16px;
   min-width: 100px;
   display: inline-flex;

@@ -66,18 +66,19 @@
       퀴즈 개수 : <strong>{{ quizcount }}</strong>
     </div>
 
-    <!--레이아웃 변경-->
+    <!-- 레이아웃 변경 -->
     <div class="layoutbtn q-gutter-md" align="right">
       <q-btn @click="setLayout(1)" class="layout-btn no-padding">
-        <img src="/1layout.png" alt="1열" class="layoutimg"
-      /></q-btn>
+        <img src="/1layout.png" alt="1열" class="layoutimg" />
+      </q-btn>
       <q-btn @click="setLayout(2)" class="layout-btn no-padding">
-        <img src="/2layout.png" alt="2열" class="layoutimg"
-      /></q-btn>
+        <img src="/2layout.png" alt="2열" class="layoutimg" />
+      </q-btn>
       <q-btn @click="setLayout(3)" class="layout-btn no-padding">
-        <img src="/3layout.png" alt="3열" class="layoutimg"
-      /></q-btn>
+        <img src="/3layout.png" alt="3열" class="layoutimg" />
+      </q-btn>
     </div>
+
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
@@ -87,20 +88,22 @@
         class="q-my-md"
       >
         <q-card
-          class="my-card bg-white q-mb-md"
+          class="my-card q-mb-md"
           clickable
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
-          style="cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3)"
+          style="cursor: pointer"
         >
           <!-- 퀴즈 승인여부 -->
           <q-card-section>
             <QuizPermssionStatus :quiz="quiz" />
           </q-card-section>
-          <q-separator inset /><!--선-->
+          <q-separator inset /><!-- 선 -->
           <q-card-section>
-            <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
-            <div class="text-subtitle2 text-secondary">
+            <div class="text-subtitle1 bold-text text-primary">
+              과목: {{ quiz.subject }}
+            </div>
+            <div class="text-subtitle1 text-secondary">
               챕터: {{ quiz.chapter }}
             </div>
             <div class="text-body2 text-dark">
@@ -112,7 +115,7 @@
 
             <!-- 퀴즈 내용 파싱 및 표시 -->
             <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
-              <div class="text-h6 quiz-content">
+              <div class="text-body2 bold-text quiz-content">
                 문제:
                 {{ truncateText(parsedContent(quiz.jsonContent)?.quiz, 100) }}
               </div>
@@ -341,9 +344,8 @@ onMounted(async () => {
 .my-card {
   border-radius: 10px;
   overflow: hidden;
-  min-height: 300px; /* 최소 높이 설정 */
-  /* 또는 높이를 고정하고 싶다면 */
-  height: 300px;
+  min-height: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* 살짝 더 부드러운 그림자 */
 }
 
 .q-card-section {
@@ -354,6 +356,7 @@ onMounted(async () => {
 
 .q-btn {
   border-radius: 5px;
+  font-size: 0.9rem; /* 버튼 폰트 사이즈 조정 */
 }
 
 .q-pagination {
@@ -361,11 +364,11 @@ onMounted(async () => {
 }
 
 .bg-primary {
-  background-color: #1976d2; /* Primary color */
+  background-color: #1976d2;
 }
 
 .text-primary {
-  color: #1976d2; /* Primary color */
+  color: #1976d2;
 }
 
 .bg-grey-2 {
@@ -373,33 +376,36 @@ onMounted(async () => {
 }
 
 .text-secondary {
-  color: #757575;
+  color: #6c757d; /* 더 부드러운 회색 */
 }
 
 .text-dark {
-  color: #333;
+  color: #495057; /* 살짝 밝은 어두운 색상 */
 }
 
 .text-grey {
-  color: #9e9e9e;
+  color: #adb5bd; /* 부드러운 회색 */
 }
+
 .layoutimg {
   width: 40px;
   height: auto;
   display: flex;
-}
-.layout2 {
-  width: 50px;
-}
-@media (max-width: 1100px) {
-  .layoutbtn {
-    display: none;
-  }
 }
 
 .quiz-content {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (max-width: 1100px) {
+  .layoutbtn {
+    display: none;
+  }
+}
+
+.bold-text {
+  font-weight: bold; /* 굵게 표시 */
 }
 </style>
