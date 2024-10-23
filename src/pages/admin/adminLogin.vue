@@ -41,7 +41,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAdminAuthStore } from 'src/stores/adminAuth';
-import { adminAuth } from 'src/services/adminAuth';
+import { adminAuth } from 'src/services/auth/adminAuth';
 import { Notify } from 'quasar';
 
 // 아이디와 패스워드 상태 관리

@@ -137,11 +137,11 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { fetchQuizzesFromApi } from 'src/services/quiz/adminQuiz.js';
+import { fetchQuizzesFromApi } from 'src/services/quiz/admin/adminQuiz.js';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import { useFilterStore } from 'src/stores/filter';
-import { useCategorie } from 'src/services/quiz/useCategorie.js';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 const filterStore = useFilterStore();
 

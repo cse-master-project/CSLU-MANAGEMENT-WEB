@@ -42,7 +42,7 @@ import { api } from 'src/boot/axios';
 import {
   useCategorie,
   useCategorieAdd,
-} from 'src/services/quiz/useCategorie.js';
+} from 'src/services/quiz/admin/useCategorie.js';
 
 const atSubject = ref('');
 const subject = ref('');

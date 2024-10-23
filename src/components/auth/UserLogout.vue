@@ -26,7 +26,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { userAuth } from 'src/services/userAuth'; // 로그아웃 서비스 가져오기
+import { userAuth } from 'src/services/auth/userAuth'; // 로그아웃 서비스 가져오기
 
 const props = defineProps({
   isLogout: Boolean,

@@ -81,7 +81,7 @@ import { ref, onMounted, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
-import { useCategorie } from 'src/services/quiz/useCategorie.js';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 const quizzes = ref([]);
 const filteredQuizzes = ref([]);

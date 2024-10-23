@@ -137,10 +137,10 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { fetchQuizzesFromApi } from 'src/services/quiz/allUserQuiz.js'; // 퀴즈 서비스 호출
+import { fetchQuizzesFromApi } from 'src/services/quiz/admin/allUserQuiz.js'; // 퀴즈 서비스 호출
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
-import { useCategorie } from 'src/services/quiz/useCategorie.js';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 const quizzes = ref([]);
 const currentPage = ref(1);

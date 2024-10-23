@@ -44,7 +44,7 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { useCategorie } from 'src/services/quiz/useCategorie.js';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 // 서비스 불러오기
 const {

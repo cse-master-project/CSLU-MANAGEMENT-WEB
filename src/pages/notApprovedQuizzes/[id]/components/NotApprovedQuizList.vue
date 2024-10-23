@@ -137,10 +137,10 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { fetchQuizzesFromApi } from 'src/services/quiz/notApprovedQuiz.js';
+import { fetchQuizzesFromApi } from 'src/services/quiz/admin/notApprovedQuiz.js';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
-import { useCategorie } from 'src/services/quiz/useCategorie.js';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 const quizzes = ref([]);
 const currentPage = ref(1);

@@ -98,7 +98,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { userInfoService } from 'src/services/userAuth'; // 분리한 서비스 파일
+import { userInfoService } from 'src/services/auth/userAuth'; // 분리한 서비스 파일
 import { useRouter } from 'vue-router'; // 라우터 가져오기
 import { Notify } from 'quasar';
 

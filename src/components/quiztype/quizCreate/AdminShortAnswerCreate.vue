@@ -110,8 +110,8 @@ import {
   submitQuizImageTemp,
   submitQuizImage,
   deleteQuiz,
-} from 'src/services/quiz/adminQuiz.js';
-import { useCategorie } from 'src/services/quiz/useCategorie.js';
+} from 'src/services/quiz/admin/adminQuiz.js';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 import {
   quizSuccessNotification,
   quizErrorNotification,

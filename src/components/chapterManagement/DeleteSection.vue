@@ -40,7 +40,7 @@ import { ref, onMounted, watch } from 'vue';
 import {
   useCategorie,
   useCategorieDelete,
-} from 'src/services/quiz/useCategorie.js';
+} from 'src/services/quiz/admin/useCategorie.js';
 
 const subject = ref(''); // 선택된 과목
 const atSubject = ref(''); // 챕터 삭제용 선택된 과목
