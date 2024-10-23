@@ -72,11 +72,12 @@
         </div>
       </q-card-section>
 
-      <q-card-section class="btn-container">
+      <q-card-section class="button-container">
         <q-btn
           flat
           color="negative"
           class="my-btn small-btn"
+          icon="close"
           @click="editCancle"
         >
           수정 취소
@@ -239,7 +240,7 @@ const submitQuiz = async () => {
   width: auto;
 }
 
-.btn-container {
+.button-container {
   display: flex;
   flex-direction: row; /* 버튼을 수평으로 정렬 */
   justify-content: center; /* 버튼을 가운데 정렬 */
