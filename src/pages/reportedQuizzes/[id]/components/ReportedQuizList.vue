@@ -186,6 +186,7 @@ const pageSize = ref(20);
 const totalElements = ref(0);
 
 const filteredQuizzes = ref([]);
+const openSingleDatePicker = ref(false); // 또는 적절한 논리로 정의
 const startDate = ref(''); // Start date for range filter
 const endDate = ref(''); // End date for range filter
 const singleDate = ref(''); // Single date filter

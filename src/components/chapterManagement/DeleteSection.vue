@@ -2,7 +2,7 @@
   <q-card class="custom-card">
     <!-- 과목 삭제 섹션 -->
     <q-card-section class="card-section">
-      <q-p class="section-title">과목 삭제</q-p>
+      <p class="section-title">과목 삭제</p>
       <q-select
         v-model="subject"
         :options="subjectOptions.map(s => s.subject)"
@@ -15,7 +15,7 @@
 
     <!-- 챕터 삭제 섹션 -->
     <q-card-section class="card-section">
-      <q-p class="section-title">챕터 삭제</q-p>
+      <p class="section-title">챕터 삭제</p>
       <q-select
         v-model="atSubject"
         :options="subjectOptions.map(s => s.subject)"

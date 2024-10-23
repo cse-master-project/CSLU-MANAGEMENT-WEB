@@ -1,7 +1,7 @@
 <template>
   <q-card class="custom-card">
     <q-card-section class="card-section">
-      <q-p class="section-title">과목 수정</q-p>
+      <p class="section-title">과목 수정</p>
       <q-select
         v-model="atSubject"
         :options="subjectOptions.map(s => s.subject)"
@@ -20,7 +20,7 @@
       <q-btn @click="submitsubject" class="submit-btn">과목 수정</q-btn>
     </q-card-section>
     <q-card-section class="card-section">
-      <q-p class="section-title">챕터 수정</q-p>
+      <p class="section-title">챕터 수정</p>
       <q-select
         v-model="atSubject2"
         :options="subjectOptions.map(s => s.subject)"
