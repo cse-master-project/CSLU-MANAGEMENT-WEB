@@ -89,7 +89,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { api } from 'src/boot/axios';
+import { quizPactchApi } from 'src/services/quiz/quizManagement.js';
 
 // 데이터 받기.(다른 컴포넌트 -> 현재 컴포넌트)
 const props = defineProps({
@@ -137,16 +137,11 @@ const submitQuiz = async () => {
   };
 
   try {
-    const response = await api.patch(
-      `/api/v2/management/quiz/${props.quizzes.quizId}`,
-      quizData,
-    );
-    console.log('응답:', response.data); // 서버 응답 확인
+    await quizPactchApi(props.quizzes.quizId, quizData);
     alert('수정이 완료되었습니다 ^_^');
-
     // 수정된 데이터를 부모 컴포넌트에 전달
     emit('update:quizcontent', localQuizContent.value);
-    emit('update:isEditing');
+    emit('update:isEditing', false);
   } catch (error) {
     if (error.response && error.response.status === 400) {
       alert('바뀐게 없습니다 .. ㅜㅠ');

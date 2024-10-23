@@ -125,7 +125,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { api } from 'src/boot/axios';
+import { quizPactchApi } from 'src/services/quiz/quizManagement.js';
 
 const props = defineProps({
   quizcontent: Object,
@@ -222,13 +222,8 @@ const submitQuiz = async () => {
   };
 
   try {
-    const response = await api.patch(
-      `/api/v2/management/quiz/${props.quizzes.quizId}`,
-      quizData,
-    );
-    console.log('응답:', response.data); // 서버 응답 확인
+    await quizPactchApi(props.quizzes.quizId, quizData);
     alert('수정이 완료되었습니다 ^_^');
-
     emit('update:quizcontent', localQuizContent.value);
     emit('update:isEditing', false);
   } catch (error) {

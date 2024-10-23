@@ -191,7 +191,7 @@ const submitQuiz = async () => {
     alert('수정이 완료되었습니다 ^_^');
     // 수정된 데이터를 부모 컴포넌트에 전달
     emit('update:quizcontent', localQuizContent.value);
-    emit('update:isEditing');
+    emit('update:isEditing', false);
   } catch (error) {
     if (error.response && error.response.status === 400) {
       alert('바뀐게 없습니다 .. ㅜㅠ');
