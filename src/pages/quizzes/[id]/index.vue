@@ -224,7 +224,7 @@ const isDelete = ref(false);
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
   padding: 14px 24px; /* 버튼 패딩을 키워서 버튼 크기를 늘림 */
   font-size: 1.1rem; /* 버튼 글자 크기를 키움 */
-  width: auto;
+  width: 200;
 }
 
 .button-container {
