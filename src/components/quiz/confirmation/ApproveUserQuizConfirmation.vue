@@ -108,11 +108,11 @@ const quizApprove = async () => {
 
 .go-btn {
   color: white;
-  background-color: blue;
+  background-color: #3682f4;
   border-radius: 6px;
 }
 
 .go-btn:hover {
-  background-color: rgb(68, 68, 252);
+  background-color: #2f60d3;
 }
 </style>
