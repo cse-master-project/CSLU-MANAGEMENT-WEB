@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { api } from 'src/boot/axios';
+
 import { useRouter } from 'vue-router';
 import { quizApproveApi } from 'src/services/quiz/quizManagement.js';
 

@@ -27,7 +27,6 @@
 
 <script setup>
 import { ref } from 'vue';
-
 import { useRouter } from 'vue-router';
 import { quizDeleteApi } from 'src/services/quiz/quizManagement.js';
 
