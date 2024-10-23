@@ -179,7 +179,7 @@ const submitQuiz = async () => {
   };
   // 서버로 데이터 전송
   try {
-    quizPactchApi(props.quizzes.quizId, quizData);
+    await quizPactchApi(props.quizzes.quizId, quizData);
     // 수정된 데이터를 부모 컴포넌트에 전달
     emit('update:quizcontent', localQuizContent.value);
     emit('update:isEditing');
