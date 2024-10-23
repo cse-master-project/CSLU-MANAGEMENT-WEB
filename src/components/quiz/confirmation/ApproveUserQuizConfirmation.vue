@@ -1,26 +1,26 @@
 <template>
   <q-dialog v-model="visible" persistent>
-    <q-card>
-      <q-card-section>
+    <q-card class="dialog">
+      <q-card-section class="dialog-header">
         <div class="text-h6">퀴즈를 승인하겠습니까 ?</div>
       </q-card-section>
 
-      <q-card-actions align="center" class="q-px-sm q-py-sm buttons-container">
+      <q-card-actions class="dialog-actions">
         <q-btn
           flat
-          color="red"
+          color="grey-8"
           label="취소"
           @click="approveCancle"
-          style="border: 1px solid red"
+          class="dialog-button cancle-btn"
         />
 
         <q-btn
           flat
-          color="primary"
-          label="승인"
+          color="whithe"
           @click="quizApprove"
-          :style="`border: 1px solid var(--q-primary)`"
-        />
+          class="dialog-button go-btn"
+          >승인</q-btn
+        >
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -64,11 +64,55 @@ const quizApprove = async () => {
 </script>
 
 <style scoped>
-.buttons-container {
-  justify-content: center;
+.dialog {
+  width: 300px;
+  height: 150px;
+  background-color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.buttons-container .q-btn {
-  margin: 01% 0; /* 버튼 사이 간격 조정 */
+.dialog-header {
+  text-align: center;
+  padding: 20px 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 20px; /* 버튼을 하단으로 밀기 위한 패딩 */
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.dialog-button {
+  min-width: 90px;
+  margin: 0 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 16px;
+}
+
+.cancle-btn {
+  color: #757575;
+  background-color: #f5f5f5;
+}
+
+.cancle-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.go-btn {
+  color: white;
+  background-color: blue;
+  border-radius: 6px;
+}
+
+.go-btn:hover {
+  background-color: rgb(68, 68, 252);
 }
 </style>

@@ -1,23 +1,23 @@
 <template>
   <q-dialog v-model="visible" persistent>
-    <q-card class="delete-dialog">
-      <q-card-section class="delete-dialog-header">
+    <q-card class="dialog">
+      <q-card-section class="dialog-header">
         <div class="text-h6">퀴즈를 폐기하시겠습니까?</div>
       </q-card-section>
 
-      <q-card-actions class="delete-dialog-actions">
+      <q-card-actions class="dialog-actions">
         <q-btn
           flat
           color="grey-8"
           @click="deleteCancle"
-          class="delete-dialog-button deleteCancle-btn"
+          class="dialog-button cancle-btn"
           >취소</q-btn
         >
         <q-btn
           flat
           color="whithe"
           @click="quizDelete"
-          class="delete-dialog-button delete-btn"
+          class="dialog-button go-btn"
           >폐기</q-btn
         >
       </q-card-actions>
@@ -66,14 +66,14 @@ const quizDelete = async () => {
 </script>
 
 <style scoped>
-.delete-dialog {
+.dialog {
   width: 300px;
   height: 150px;
   background-color: #fff;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.delete-dialog-header {
+.dialog-header {
   text-align: center;
   padding: 20px 15px;
   font-size: 1.1rem;
@@ -81,7 +81,7 @@ const quizDelete = async () => {
   color: #333;
 }
 
-.delete-dialog-actions {
+.dialog-actions {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -91,7 +91,7 @@ const quizDelete = async () => {
   width: 100%;
 }
 
-.delete-dialog-button {
+.dialog-button {
   min-width: 90px;
   margin: 0 10px;
   font-size: 0.9rem;
@@ -99,22 +99,22 @@ const quizDelete = async () => {
   padding: 8px 16px;
 }
 
-.deleteCancle-btn {
+.cancle-btn {
   color: #757575;
   background-color: #f5f5f5;
 }
 
-.deleteCancle-btn:hover {
+.cancle-btn:hover {
   background-color: #e0e0e0;
 }
 
-.delete-btn {
+.go-btn {
   color: white;
   background-color: #f44336;
   border-radius: 6px;
 }
 
-.delete-btn:hover {
+.go-btn:hover {
   background-color: #d32f2f;
 }
 </style>
