@@ -112,8 +112,16 @@ const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
 // localQuizContent에 props의 quizcontent 데이터를 복사
 const localQuizContent = ref({
   ...props.quizcontent,
-  answer: [...props.quizcontent.answer.map(group => group.join(', '))],
+  answer: Array.isArray(props.quizcontent.answer)
+    ? [
+        ...props.quizcontent.answer.map(group =>
+          Array.isArray(group) ? group.join(', ') : group,
+        ),
+      ]
+    : [], // 배열이 아닐 경우 빈 배열로 설정
 });
+
+console.log('props.quizcontent.answer:', props.quizcontent.answer);
 
 console.log('!', localQuizContent.value.answer);
 
@@ -180,11 +188,10 @@ const submitQuiz = async () => {
   // 서버로 데이터 전송
   try {
     await quizPactchApi(props.quizzes.quizId, quizData);
+    alert('수정이 완료되었습니다 ^_^');
     // 수정된 데이터를 부모 컴포넌트에 전달
     emit('update:quizcontent', localQuizContent.value);
     emit('update:isEditing');
-
-    alert('수정이 완료되었습니다 ^_^');
   } catch (error) {
     if (error.response && error.response.status === 400) {
       alert('바뀐게 없습니다 .. ㅜㅠ');
