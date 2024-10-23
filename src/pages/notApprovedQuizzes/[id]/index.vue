@@ -27,12 +27,13 @@
         />
       </q-card-section>
 
-      <q-card-actions align="center" class="q-px-sm q-py-sm buttons-container">
+      <q-card-actions class="button-container">
         <q-btn
           flat
           color="red"
           class="my-btn small-btn"
           @click="isReject = true"
+          icon="cancel"
         >
           반려
         </q-btn>
@@ -41,6 +42,7 @@
           color="primary"
           class="my-btn small-btn"
           @click="isApprove = true"
+          icon="check"
         >
           승인
         </q-btn>
