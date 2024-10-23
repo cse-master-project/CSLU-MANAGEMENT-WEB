@@ -37,18 +37,22 @@
         />
       </q-card-section>
 
-      <q-card-section class="q-pa-md">
-        <!--신고된 이유 -->
-        <div class="text-h6 q-mb-xs text-red">신고된 이유</div>
+      <!--신고된 이유 -->
+      <q-card-section class="q-pa-md report-section">
+        <q-chip small outline class="text-caption text-red report-chip"
+          >신고 사유</q-chip
+        >
         <div
           v-for="report in reports"
           :key="report.quizReportId"
-          class="q-mt-sm"
+          class="q-mt-sm report-item"
         >
-          <q-item>
+          <q-item class="report-item-card">
             <q-item-section>
-              <q-item-label>{{ report.content }}</q-item-label>
-              <q-item-label caption>{{
+              <q-item-label class="report-content">{{
+                report.content
+              }}</q-item-label>
+              <q-item-label caption class="report-date">{{
                 formatDate(report.reportAt)
               }}</q-item-label>
             </q-item-section>
@@ -257,7 +261,7 @@ const isDelete = ref(false);
 
 .buttons-container {
   justify-content: center;
-  margin-top: 16px; /* 위로 띄우기 */
+  margin-top: 20px; /* 위로 띄우기 */
   margin-bottom: 16px; /* 아래로 띄우기 */
 }
 
@@ -268,5 +272,35 @@ const isDelete = ref(false);
   gap: 100px; /* 버튼 사이 간격 */
   padding: 0 32px; /* 양옆 마진을 카드와 동일하게 */
   margin-bottom: 20px;
+}
+
+/*신고 css */
+.report-section {
+  border-radius: 8px;
+  padding: 16px;
+}
+.report-chip {
+  border-color: #e53935; /* 신고 사유 칩 테두리 색상 */
+  color: #e53935; /* 텍스트 색상을 일치시킴 */
+  font-weight: bold; /* 텍스트를 강조 */
+}
+.report-item {
+  margin-top: 16px; /* 항목 간격을 크게 설정 */
+}
+.report-item-card {
+  padding: 12px;
+  border: 1px solid #ddd; /* 신고된 이유 카드 테두리 */
+  border-radius: 8px;
+  background-color: #fff; /* 카드 배경색 */
+  transition: box-shadow 0.3s ease; /* 호버 시 효과 */
+}
+.report-content {
+  font-size: 16px; /* 신고된 내용의 크기 */
+  font-weight: 500;
+  color: #424242; /* 다크 그레이 텍스트 색상 */
+}
+.report-date {
+  font-size: 12px; /* 신고된 날짜 크기 */
+  color: #9e9e9e; /* 날짜는 더 연한 회색 */
 }
 </style>
