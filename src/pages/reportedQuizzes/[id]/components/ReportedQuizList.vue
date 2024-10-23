@@ -3,13 +3,11 @@
     <!-- Filters card -->
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-4 q-my-md">
+        <div class="col-12 col-md-3 q-my-md bold-text">
           <q-toggle v-model="isRange" label="날짜 범위 선택" color="primary" />
         </div>
-      </div>
-      <div class="row q-col-gutter-md q-py-md">
         <!-- Start and End Date Inputs -->
-        <div class="col-12 col-md-4 q-my-md" v-if="isRange">
+        <div class="col-12 col-md-3 q-my-md bold-text" v-if="isRange">
           신고된 날짜 (시작일)
           <q-input
             v-model="startDate"
@@ -38,7 +36,7 @@
             />
           </q-popup-proxy>
         </div>
-        <div class="col-12 col-md-4 q-my-md" v-if="isRange">
+        <div class="col-12 col-md-3 q-my-md bold-text" v-if="isRange">
           신고된 날짜 (종료일)
           <q-input
             v-model="endDate"
@@ -69,7 +67,7 @@
         </div>
 
         <!-- Single Date Input -->
-        <div class="col-12 col-md-4 q-my-md" v-else>
+        <div class="col-12 col-md-3 q-my-md bold-text" v-else>
           신고된 날짜
           <q-input
             v-model="singleDate"
@@ -103,40 +101,60 @@
         <div class="col-12 col-md-6 q-my-md">
           <q-btn
             label="초기화"
-            class="full-width bg-grey-2 text-primary"
+            class="full-width bg-grey-2 text-primary bold-text"
             @click="resetFilters"
           />
         </div>
         <div class="col-12 col-md-6 q-my-md">
           <q-btn
             label="검색"
-            class="full-width bg-primary text-white"
+            class="full-width bg-primary text-white bold-text"
             @click="filterQuizzes"
           />
         </div>
       </div>
     </q-card>
+    <!-- 문제 개수 -->
+    <div style="font-size: 1rem">
+      퀴즈 개수 : <strong>{{ quizcount }}</strong>
+    </div>
+
+    <!--레이아웃 변경-->
+    <div class="layoutbtn q-gutter-md" align="right">
+      <q-btn @click="setLayout(1)" class="layout-btn no-padding">
+        <img src="/1layout.png" alt="1열" class="layoutimg"
+      /></q-btn>
+      <q-btn @click="setLayout(2)" class="layout-btn no-padding">
+        <img src="/2layout.png" alt="2열" class="layoutimg"
+      /></q-btn>
+      <q-btn @click="setLayout(3)" class="layout-btn no-padding">
+        <img src="/3layout.png" alt="3열" class="layoutimg"
+      /></q-btn>
+    </div>
 
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
         v-for="quiz in filteredQuizzes"
         :key="quiz.quizReportId"
-        class="col-12 col-md-6 q-my-md"
+        :class="getColumnClass()"
+        class="q-my-md"
       >
         <q-card
-          class="my-card"
+          class="my-card bg-white q-mb-md"
           clickablesss
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
-          style="cursor: pointer"
+          style="cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3)"
         >
           <q-card-section>
             <div class="text-h6">퀴즈 ID: {{ quiz.quizId }}</div>
-            <div class="text-caption text-reportAt">
+            <div class="text-subtitle1 bold-text text-primary">
               신고일: {{ formatDate(quiz.reportAt) }}
             </div>
-            <div class="text-subtitle2">신고 이유 : {{ quiz.content }}</div>
+            <div class="text-body2 text-dark">
+              신고 이유 : {{ quiz.content }}
+            </div>
           </q-card-section>
         </q-card>
       </div>
@@ -157,12 +175,15 @@ const endDate = ref(''); // End date for range filter
 const singleDate = ref(''); // Single date filter
 const isRange = ref(false); // Toggle for range selection
 
+const quizcount = ref(0); //퀴즈 개수ㄴㄴ
+
 // 서버에서 퀴즈 목록 가져오기
 const fetchQuizzes = async () => {
   try {
     quizzes.value = await fetchQuizzesFromApi();
     console.log('신고된 문제:', quizzes.value);
     filteredQuizzes.value = quizzes.value;
+    quizcount.value = filteredQuizzes.value.length;
   } catch (error) {
     console.error('퀴즈 데이터를 가져오는데 실패했습니다.', error);
   }
@@ -193,11 +214,28 @@ const filterQuizzes = () => {
       return singleDate.value === '' || quizDate === singleDate.value;
     });
   }
+  quizcount.value = filteredQuizzes.value.length;
 };
-
 // 날짜 형식 포맷팅
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
+
+const currentLayout = ref(1);
+const setLayout = layout => {
+  currentLayout.value = layout;
+};
+const getColumnClass = () => {
+  switch (currentLayout.value) {
+    case 1:
+      return 'col-12';
+    case 2:
+      return 'col-12 col-md-6';
+    case 3:
+      return 'col-12 col-md-3';
+    default:
+      return 'col-12';
+  }
 };
 
 const router = useRouter();
