@@ -50,7 +50,6 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { api } from 'src/boot/axios';
 import {
   useCategorie,
   useCategorieUpdate,

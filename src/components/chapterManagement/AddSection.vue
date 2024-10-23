@@ -38,7 +38,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { api } from 'src/boot/axios';
 import {
   useCategorie,
   useCategorieAdd,
