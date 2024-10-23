@@ -149,10 +149,10 @@
         >
           <q-card-section>
             <div class="text-h6">퀴즈 ID : {{ quiz.quizId }}</div>
-            <div class="text-subtitle1 bold-text text-primary">
+            <div class="text-body2 text-grey">
               신고일 : {{ formatDate(quiz.reportAt) }}
             </div>
-            <div class="text-body2 text-dark">
+            <div class="text-subtitle1 bold-text text-primary">
               신고 이유 : {{ truncateText(quiz.content, 100) }}
             </div>
           </q-card-section>
