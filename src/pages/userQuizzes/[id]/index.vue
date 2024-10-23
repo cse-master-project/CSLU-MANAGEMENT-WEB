@@ -47,7 +47,7 @@ import {
   fetchQuizImage,
   fetchQuizPermissionStatus,
   fetchQuizRejectReasons,
-} from 'src/services/quiz/userQuizDetail.js';
+} from 'src/services/quiz/user/userQuizDetail.js';
 
 const quiz = ref(null);
 

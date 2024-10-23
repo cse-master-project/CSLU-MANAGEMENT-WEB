@@ -143,8 +143,8 @@ import {
   submitQuiz,
   submitQuizImage,
   submitQuizImageTemp,
-} from 'src/services/quiz/userQuiz.js';
-import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
+} from 'src/services/quiz/user/userQuiz.js';
+import { useCategorieUser } from 'src/services/quiz/user/useCategorieUser.js';
 import {
   quizSuccessNotification,
   quizErrorNotification,

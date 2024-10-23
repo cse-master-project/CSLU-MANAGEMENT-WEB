@@ -152,11 +152,11 @@
 
 <script setup>
 import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
-import { fetchQuizzesFromApi } from 'src/services/quiz/userQuiz.js'; // 퀴즈 서비스 호출
+import { fetchQuizzesFromApi } from 'src/services/quiz/user/userQuiz.js'; // 퀴즈 서비스 호출
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
-import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js';
+import { useCategorieUser } from 'src/services/quiz/user/useCategorieUser.js';
 
 const quizzes = ref([]); // 퀴즈 전체 데이터
 const currentPage = ref(1);
