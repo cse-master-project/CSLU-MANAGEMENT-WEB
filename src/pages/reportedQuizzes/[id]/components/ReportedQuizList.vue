@@ -4,31 +4,33 @@
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
         <div class="col-12 col-md-4 q-my-md">
-          과목
-          <q-select
-            v-model="subject"
-            :options="subjectOptions.map(s => s.subject)"
+          신고된 날짜
+          <q-input
+            v-model="selectedDate"
             outlined
             dense
-          />
-        </div>
-        <div class="col-12 col-md-4 q-my-md">
-          챕터
-          <q-select
-            v-model="chapter"
-            :options="chapterOptions"
-            outlined
-            dense
-          />
-        </div>
-        <div class="col-12 col-md-4 q-my-md">
-          문제 유형
-          <q-select
-            v-model="quizType"
-            :options="quizTypeOptions"
-            outlined
-            dense
-          />
+            mask="####-##-##"
+            placeholder="YYYY-MM-DD"
+          >
+            <template v-slot:append>
+              <q-icon
+                name="event"
+                class="cursor-pointer"
+                @click="openDatePicker"
+              />
+            </template>
+          </q-input>
+          <q-popup-proxy
+            ref="datePopup"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <q-date
+              v-model="selectedDate"
+              mask="YYYY-MM-DD"
+              @input="filterQuizzes"
+            />
+          </q-popup-proxy>
         </div>
       </div>
       <div class="row q-col-gutter-md q-pt-md">
@@ -52,7 +54,7 @@
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
-        v-for="quiz in quizzes"
+        v-for="quiz in filteredQuizzes"
         :key="quiz.quizReportId"
         class="col-12 col-md-6 q-my-md"
       >
@@ -85,16 +87,7 @@ import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 const quizzes = ref([]);
 const filteredQuizzes = ref([]);
-const subject = ref('');
-const chapter = ref('');
-const quizType = ref('');
-const quizTypeOptions = [
-  { value: 1, label: '4지선다형' },
-  { value: 2, label: '단답형' },
-  { value: 3, label: '선긋기형' },
-  { value: 4, label: 'O/X형' },
-  { value: 5, label: '빈칸 채우기형' },
-];
+const selectedDate = ref(''); // Date filter
 
 //카테고리 조회 서비스 사용.
 const {
@@ -104,12 +97,6 @@ const {
   selectSubject,
   fetchChapters,
 } = useCategorie();
-watch(subject, newSubject => {
-  if (newSubject) {
-    selectSubject(newSubject);
-    chapter.value = ''; // 과목 변경 시 챕터 초기화
-  }
-});
 
 //서버에서 퀴즈 목록 들고 오기.
 const fetchQuizzes = async () => {
@@ -123,63 +110,33 @@ const fetchQuizzes = async () => {
 
 // 필터링 초기화 기능
 const resetFilters = () => {
-  subject.value = '';
-  chapter.value = '';
-  quizType.value = '';
+  selectedDate.value = '';
   filteredQuizzes.value = quizzes.value;
 };
 
-//필터링 기능
+// 필터링 기능
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
-    const subjectMatch = !subject.value || quiz.subject === subject.value;
-    const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
-    const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value;
-
-    return subjectMatch && chapterMatch && quizTypeMatch;
+    // 신고된 날짜가 선택된 날짜와 일치하는지 확인
+    const quizDate = formatDate(quiz.reportAt).slice(0, 10); // 'YYYY-MM-DD' 형식으로 자름
+    const selectedDateStr = selectedDate.value;
+    return selectedDateStr === '' || quizDate === selectedDateStr;
   });
 };
-// 문제 형식에 따라 유형 알려주기.
-const formatQuizType = quizType => {
-  switch (quizType) {
-    case 1:
-      return '4지선다형';
-    case 2:
-      return '단답형';
-    case 3:
-      return '선긋기형';
-    case 4:
-      return 'O/X형';
-    case 5:
-      return '빈칸 채우기형';
-    default:
-      return '알 수 없는 유형';
-  }
-};
-// JSON 콘텐츠 파싱 함수
-const parsedContent = jsonContent => {
-  try {
-    return JSON.parse(jsonContent);
-  } catch (e) {
-    console.error('JSON 파싱 오류:', e);
-    return null;
-  }
-};
-// 시간 알려주기.
+
+// 시간 형식 변환
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 };
 
 const router = useRouter();
-
 function goToQuizDetail(quizId) {
   router.push(`/ReportedQuizzes/${quizId}`);
 }
 
 onMounted(async () => {
-  await fetchSubjects();
   await fetchQuizzes();
+  filteredQuizzes.value = quizzes.value;
 });
 </script>
 
