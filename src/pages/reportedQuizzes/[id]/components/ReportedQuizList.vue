@@ -4,9 +4,15 @@
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
         <div class="col-12 col-md-4 q-my-md">
-          신고된 날짜
+          <q-toggle v-model="isRange" label="날짜 범위 선택" color="primary" />
+        </div>
+      </div>
+      <div class="row q-col-gutter-md q-py-md">
+        <!-- Start and End Date Inputs -->
+        <div class="col-12 col-md-4 q-my-md" v-if="isRange">
+          신고된 날짜 (시작일)
           <q-input
-            v-model="selectedDate"
+            v-model="startDate"
             outlined
             dense
             mask="####-##-##"
@@ -16,17 +22,77 @@
               <q-icon
                 name="event"
                 class="cursor-pointer"
-                @click="openDatePicker"
+                @click="openStartDatePicker"
               />
             </template>
           </q-input>
           <q-popup-proxy
-            ref="datePopup"
+            ref="startDatePopup"
             transition-show="scale"
             transition-hide="scale"
           >
             <q-date
-              v-model="selectedDate"
+              v-model="startDate"
+              mask="YYYY-MM-DD"
+              @input="filterQuizzes"
+            />
+          </q-popup-proxy>
+        </div>
+        <div class="col-12 col-md-4 q-my-md" v-if="isRange">
+          신고된 날짜 (종료일)
+          <q-input
+            v-model="endDate"
+            outlined
+            dense
+            mask="####-##-##"
+            placeholder="YYYY-MM-DD"
+          >
+            <template v-slot:append>
+              <q-icon
+                name="event"
+                class="cursor-pointer"
+                @click="openEndDatePicker"
+              />
+            </template>
+          </q-input>
+          <q-popup-proxy
+            ref="endDatePopup"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <q-date
+              v-model="endDate"
+              mask="YYYY-MM-DD"
+              @input="filterQuizzes"
+            />
+          </q-popup-proxy>
+        </div>
+
+        <!-- Single Date Input -->
+        <div class="col-12 col-md-4 q-my-md" v-else>
+          신고된 날짜
+          <q-input
+            v-model="singleDate"
+            outlined
+            dense
+            mask="####-##-##"
+            placeholder="YYYY-MM-DD"
+          >
+            <template v-slot:append>
+              <q-icon
+                name="event"
+                class="cursor-pointer"
+                @click="openSingleDatePicker"
+              />
+            </template>
+          </q-input>
+          <q-popup-proxy
+            ref="singleDatePopup"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <q-date
+              v-model="singleDate"
               mask="YYYY-MM-DD"
               @input="filterQuizzes"
             />
@@ -79,52 +145,57 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { fetchQuizzesFromApi } from 'src/services/quiz/admin/reportedQuiz.js';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
-import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 const quizzes = ref([]);
 const filteredQuizzes = ref([]);
-const selectedDate = ref(''); // Date filter
+const startDate = ref(''); // Start date for range filter
+const endDate = ref(''); // End date for range filter
+const singleDate = ref(''); // Single date filter
+const isRange = ref(false); // Toggle for range selection
 
-//카테고리 조회 서비스 사용.
-const {
-  subjectOptions,
-  chapterOptions,
-  fetchSubjects,
-  selectSubject,
-  fetchChapters,
-} = useCategorie();
-
-//서버에서 퀴즈 목록 들고 오기.
+// 서버에서 퀴즈 목록 가져오기
 const fetchQuizzes = async () => {
   try {
     quizzes.value = await fetchQuizzesFromApi();
-    console.log('신고된 문제 :', quizzes.value);
+    console.log('신고된 문제:', quizzes.value);
+    filteredQuizzes.value = quizzes.value;
   } catch (error) {
-    console.error('퀴즈 신고 데이터를 불러오는데 실패했습니다.', error);
+    console.error('퀴즈 데이터를 가져오는데 실패했습니다.', error);
   }
 };
 
-// 필터링 초기화 기능
+// 필터 초기화
 const resetFilters = () => {
-  selectedDate.value = '';
+  startDate.value = '';
+  endDate.value = '';
+  singleDate.value = '';
   filteredQuizzes.value = quizzes.value;
 };
 
-// 필터링 기능
+// 퀴즈 필터링 기능
 const filterQuizzes = () => {
-  filteredQuizzes.value = quizzes.value.filter(quiz => {
-    // 신고된 날짜가 선택된 날짜와 일치하는지 확인
-    const quizDate = formatDate(quiz.reportAt).slice(0, 10); // 'YYYY-MM-DD' 형식으로 자름
-    const selectedDateStr = selectedDate.value;
-    return selectedDateStr === '' || quizDate === selectedDateStr;
-  });
+  if (isRange.value) {
+    // 날짜 범위 필터링
+    filteredQuizzes.value = quizzes.value.filter(quiz => {
+      const quizDate = formatDate(quiz.reportAt).slice(0, 10); // 'YYYY-MM-DD' 형식으로 변환
+      const isAfterStartDate = !startDate.value || quizDate >= startDate.value;
+      const isBeforeEndDate = !endDate.value || quizDate <= endDate.value;
+      return isAfterStartDate && isBeforeEndDate;
+    });
+  } else {
+    // 단일 날짜 필터링
+    filteredQuizzes.value = quizzes.value.filter(quiz => {
+      const quizDate = formatDate(quiz.reportAt).slice(0, 10); // 'YYYY-MM-DD' 형식으로 변환
+      return singleDate.value === '' || quizDate === singleDate.value;
+    });
+  }
 };
 
-// 시간 형식 변환
+// 날짜 형식 포맷팅
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
 };
@@ -136,7 +207,6 @@ function goToQuizDetail(quizId) {
 
 onMounted(async () => {
   await fetchQuizzes();
-  filteredQuizzes.value = quizzes.value;
 });
 </script>
 
