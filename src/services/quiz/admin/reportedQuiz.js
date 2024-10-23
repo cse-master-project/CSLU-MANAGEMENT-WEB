@@ -17,6 +17,7 @@ export const fetchQuizzesFromApi = async () => {
   }
 };
 
+// [신고된 사유 조회 : 신고된 문제]
 export const fetchReoportsFromApi = async quizId => {
   try {
     const response = await api.get(`/api/v2/quiz/${quizId}/report`);
