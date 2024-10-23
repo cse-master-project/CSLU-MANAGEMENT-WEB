@@ -40,7 +40,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { api } from 'src/boot/axios';
+import { quizRejecthApi } from 'src/services/quiz/quizManagement.js';
 import { useRouter } from 'vue-router';
 
 const props = defineProps({
@@ -65,11 +65,7 @@ const reason = ref('');
 const quizReject = async () => {
   //console.log(reason.value);
   try {
-    await api.put(
-      `/api/v2/management/quiz/${props.currentQuiz.quizId}/reject`,
-      reason.value,
-    );
-    // 삭제 성공 시 로직(alert말고 딴거 해야함.)
+    await quizRejecthApi(props.currentQuiz.quizId, reason.value);
     alert('퀴즈가 반려되었습니다.');
     router.push('/admin/adminNotApproved'); // 성공 후 페이지 이동
     emit('update:isReject', false);

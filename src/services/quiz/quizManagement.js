@@ -22,5 +22,13 @@ export const quizPactchApi = async (quizId, quizData) => {
 };
 
 //반려
+export const quizRejecthApi = async (quizId, reason) => {
+  try {
+    await api.put(`/api/v2/management/quiz/${quizId}/reject`, reason);
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+    throw error;
+  }
+};
 
 //승인
