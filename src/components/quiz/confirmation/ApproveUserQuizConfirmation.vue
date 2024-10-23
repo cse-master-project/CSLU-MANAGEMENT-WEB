@@ -30,6 +30,7 @@
 import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
+import { quizApproveApi } from 'src/services/quiz/quizManagement.js';
 
 const props = defineProps({
   isApprove: Boolean,
@@ -51,10 +52,7 @@ const router = useRouter();
 const quizApprove = async () => {
   try {
     console.log('승인 요청 보냄');
-    const response = await api.put(
-      `/api/v2/management/quiz/${props.currentQuiz.quizId}/approve`,
-    );
-    console.log('서버 응답:', response.data);
+    quizApproveApi(props.currentQuiz.quizId);
     alert('퀴즈가 승인 되었습니다.');
     router.push('/admin/adminNotApproved'); // 성공 후 페이지 이동
     emit('update:isApprove', false);

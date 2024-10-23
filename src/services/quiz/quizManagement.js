@@ -32,3 +32,11 @@ export const quizRejecthApi = async (quizId, reason) => {
 };
 
 //승인
+export const quizApproveApi = async quizId => {
+  try {
+    await api.put(`/api/v2/management/quiz/${quizId}/approve`);
+  } catch (error) {
+    console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
+    throw error;
+  }
+};
