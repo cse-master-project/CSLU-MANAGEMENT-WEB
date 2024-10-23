@@ -14,7 +14,7 @@ export const quizDeleteApi = async quizId => {
 //수정
 export const quizPactchApi = async (quizId, quizData) => {
   try {
-    await api.delete(`/api/v2/management/quiz/${quizId}`, quizData);
+    await api.patch(`/api/v2/management/quiz/${quizId}`, quizData);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
     throw error;
