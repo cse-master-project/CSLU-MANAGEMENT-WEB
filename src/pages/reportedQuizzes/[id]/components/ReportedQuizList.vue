@@ -135,7 +135,7 @@
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
-        v-for="quiz in filteredQuizzes"
+        v-for="quiz in paginatedQuizzes"
         :key="quiz.quizReportId"
         :class="getColumnClass()"
         class="q-my-md"
@@ -148,55 +148,61 @@
           style="cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3)"
         >
           <q-card-section>
-            <div class="text-h6">퀴즈 ID: {{ quiz.quizId }}</div>
+            <div class="text-h6">퀴즈 ID : {{ quiz.quizId }}</div>
             <div class="text-subtitle1 bold-text text-primary">
-              신고일: {{ formatDate(quiz.reportAt) }}
+              신고일 : {{ formatDate(quiz.reportAt) }}
             </div>
             <div class="text-body2 text-dark">
-              신고 이유 : {{ quiz.content }}
+              신고 이유 : {{ truncateText(quiz.content, 100) }}
             </div>
           </q-card-section>
         </q-card>
       </div>
     </div>
+
+    <!-- Pagination -->
+    <div class="row q-gutter-md q-pt-md justify-center">
+      <q-pagination
+        v-model="currentPage"
+        :max="totalPages"
+        max-pages="10"
+        boundary-numbers
+        @update:model-value="changePage"
+        class="bg-grey-2"
+      />
+    </div>
   </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { fetchQuizzesFromApi } from 'src/services/quiz/admin/reportedQuiz.js';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 
 const quizzes = ref([]);
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalElements = ref(0);
+
 const filteredQuizzes = ref([]);
 const startDate = ref(''); // Start date for range filter
 const endDate = ref(''); // End date for range filter
 const singleDate = ref(''); // Single date filter
 const isRange = ref(false); // Toggle for range selection
-
 const quizcount = ref(0); //퀴즈 개수ㄴㄴ
 
 // 서버에서 퀴즈 목록 가져오기
 const fetchQuizzes = async () => {
   try {
     quizzes.value = await fetchQuizzesFromApi();
-    console.log('신고된 문제:', quizzes.value);
-    filteredQuizzes.value = quizzes.value;
+    filterQuizzes();
     quizcount.value = filteredQuizzes.value.length;
+    totalElements.value = quizzes.value.length;
   } catch (error) {
     console.error('퀴즈 데이터를 가져오는데 실패했습니다.', error);
   }
 };
-
-// 필터 초기화
-const resetFilters = () => {
-  startDate.value = '';
-  endDate.value = '';
-  singleDate.value = '';
-  filteredQuizzes.value = quizzes.value;
-};
-
 // 퀴즈 필터링 기능
 const filterQuizzes = () => {
   if (isRange.value) {
@@ -216,9 +222,41 @@ const filterQuizzes = () => {
   }
   quizcount.value = filteredQuizzes.value.length;
 };
+
+// 페이징 처리
+const paginatedQuizzes = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filteredQuizzes.value.slice(start, end);
+});
+const totalPages = computed(() =>
+  Math.ceil(filteredQuizzes.value.length / pageSize.value),
+);
+const changePage = page => {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page;
+    filterQuizzes();
+  }
+};
+
+// 필터 초기화
+const resetFilters = () => {
+  startDate.value = '';
+  endDate.value = '';
+  singleDate.value = '';
+  filterQuizzes();
+};
+
 // 날짜 형식 포맷팅
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+};
+//  내용 줄임표
+const truncateText = (text, length) => {
+  if (text && text.length > length) {
+    return text.substring(0, length) + '...';
+  }
+  return text;
 };
 
 const currentLayout = ref(1);
@@ -252,9 +290,8 @@ onMounted(async () => {
 .my-card {
   border-radius: 10px;
   overflow: hidden;
-  min-height: 300px; /* 최소 높이 설정 */
-  /* 또는 높이를 고정하고 싶다면 */
-  height: 300px;
+  min-height: 150px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* 살짝 더 부드러운 그림자 */
 }
 
 .q-card-section {
@@ -265,6 +302,7 @@ onMounted(async () => {
 
 .q-btn {
   border-radius: 5px;
+  font-size: 0.9rem; /* 버튼 폰트 사이즈 조정 */
 }
 
 .q-pagination {
@@ -299,12 +337,18 @@ onMounted(async () => {
   height: auto;
   display: flex;
 }
-.layout2 {
-  width: 50px;
+.quiz-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 @media (max-width: 1100px) {
   .layoutbtn {
     display: none;
   }
+}
+.bold-text {
+  font-weight: bold; /* 굵게 표시 */
 }
 </style>
