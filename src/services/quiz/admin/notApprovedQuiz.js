@@ -4,7 +4,7 @@ import { api } from 'src/boot/axios';
 // [문제 조회 : 미승인된 사용자용 문제]
 export const fetchQuizzesFromApi = async () => {
   try {
-    const response = await api.get('/api/v2/management/quiz/unapproved', {
+    const response = await api.get('/api/v2/quiz/unapproved', {
       params: {
         page: 0,
         size: 1000,
