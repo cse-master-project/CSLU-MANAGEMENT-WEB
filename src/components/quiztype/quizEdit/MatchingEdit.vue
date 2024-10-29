@@ -126,10 +126,12 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import { quizPactchApi } from 'src/services/quiz/quizManagement.js';
+import { statusReportsFromApi } from 'src/services/quiz/admin/reportedQuiz.js';
 
 const props = defineProps({
   quizcontent: Object,
   quizzes: Object,
+  quizReportId: Number,
 });
 
 const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
@@ -222,8 +224,20 @@ const submitQuiz = async () => {
   };
 
   try {
+    // 퀴즈 수정 API 호출
     await quizPactchApi(props.quizzes.quizId, quizData);
     alert('수정이 완료되었습니다 ^_^');
+
+    // 수정 완료 후 신고 상태 업데이트
+    try {
+      await statusReportsFromApi(props.quizReportId);
+      console.log('신고 상태가 성공적으로 업데이트되었습니다.');
+    } catch (statusError) {
+      console.error('신고 상태 업데이트 오류:', statusError);
+      alert('신고 상태 업데이트 중 오류가 발생했습니다.');
+    }
+
+    // 부모 컴포넌트로 수정된 데이터 전송
     emit('update:quizcontent', localQuizContent.value);
     emit('update:isEditing', false);
   } catch (error) {
@@ -235,6 +249,7 @@ const submitQuiz = async () => {
     }
   }
 };
+ㄴ;
 </script>
 
 <style scoped>
