@@ -160,8 +160,8 @@ import {
   submitQuiz,
   submitQuizImage,
   submitQuizImageTemp,
-} from 'src/services/quiz/userQuiz.js';
-import { useCategorieUser } from 'src/services/quiz/useCategorieUser.js'; //반응형 데이터
+} from 'src/services/quiz/user/userQuiz.js';
+import { useCategorieUser } from 'src/services/quiz/user/useCategorieUser.js'; //반응형 데이터
 import {
   quizSuccessNotification,
   quizErrorNotification,

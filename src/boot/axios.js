@@ -42,24 +42,25 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        console.log('리프레시 토큰으로 갱신 요청:', adminStore.refreshToken);
-        // 토큰 갱신 요청
         const response = await api.post('/api/v2/user/refresh', {
           refreshToken: adminStore.refreshToken,
         });
 
         // 새로운 토큰을 Pinia 스토어에 저장
         adminStore.setAuthData(response.data);
-
         // 원래 요청에 새로운 토큰을 포함시켜 재시도
-        originalRequest.headers.Authorization = `Bearer ${userStore.accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${adminStore.accessToken}`;
 
-        return userApi(originalRequest);
+        return api(originalRequest);
       } catch (e) {
         // 갱신 실패 시 로그아웃 처리
         adminStore.logout();
         // 추가적으로 로그인 페이지로 리다이렉트 등의 처리 필요
-        console.error('토큰 갱신 실패:', e);
+        router.push('/admin/adminLogin');
+        Notify.create({
+          message: '세션이 만료되었습니다. 다시 로그인해주세요.',
+          color: 'warning',
+        });
       }
     }
 

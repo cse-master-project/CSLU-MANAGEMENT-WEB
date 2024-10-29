@@ -8,7 +8,7 @@
 
     <q-card flat bordered>
       <!-- 문제 내용 -->
-      <q-card-section class="bg-primary text-white q-pa-md">
+      <q-card-section class="bg-primary text-white q-pa-md content-section">
         <div class="label-container">
           <label class="label-quiz">Q. </label>
           <q-input
@@ -51,33 +51,33 @@
           />
         </div>
       </q-card-section>
-
-      <q-card-section class="btn-container">
-        <q-btn
-          flat
-          color="negative"
-          class="my-btn small-btn"
-          @click="editCancle"
-        >
-          수정 취소
-        </q-btn>
-        <q-btn
-          flat
-          color="primary"
-          class="my-btn small-btn"
-          icon="edit"
-          @click="submitQuiz"
-        >
-          수정 완료
-        </q-btn>
-      </q-card-section>
     </q-card>
+    <div class="button-container">
+      <q-btn
+        flat
+        color="negative"
+        class="my-btn small-btn"
+        icon="close"
+        @click="editCancle"
+      >
+        수정 취소
+      </q-btn>
+      <q-btn
+        flat
+        color="primary"
+        class="my-btn small-btn"
+        icon="edit"
+        @click="submitQuiz"
+      >
+        수정 완료
+      </q-btn>
+    </div>
   </q-form>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { api } from 'src/boot/axios';
+import { quizPactchApi } from 'src/services/quiz/quizManagement.js';
 
 const options = [
   { label: 'O', value: 1 },
@@ -109,15 +109,14 @@ const submitQuiz = async () => {
     commentary: localQuizContent.value.commentary,
   };
 
-  console.log(quizData);
+  const confirmation = confirm('수정 하시겠습니까 ?');
+  if (!confirmation) {
+    return;
+  }
   try {
-    const response = await api.patch(
-      `/api/v2/management/quiz/${props.quizzes.quizId}`,
-      quizData,
-    );
-    console.log('응답:', response.data); // 서버 응답 확인
+    // API 호출을 기다린 후 다음 작업을 진행합니다.
+    await quizPactchApi(props.quizzes.quizId, quizData);
     alert('수정이 완료되었습니다 ^_^');
-
     emit('update:quizcontent', localQuizContent.value);
     emit('update:isEditing');
   } catch (error) {
@@ -168,15 +167,15 @@ const submitQuiz = async () => {
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
   padding: 14px 24px; /* 버튼 패딩을 키워서 버튼 크기를 늘림 */
   font-size: 1.1rem; /* 버튼 글자 크기를 키움 */
-  width: auto;
+  width: 200px;
 }
 
-.btn-container {
+.button-container {
   display: flex;
   flex-direction: row; /* 버튼을 수평으로 정렬 */
   justify-content: center; /* 버튼을 가운데 정렬 */
   gap: 100px; /* 버튼 사이 간격 */
   padding: 0 32px; /* 양옆 마진을 카드와 동일하게 */
-  margin-bottom: 20px;
+  margin-top: 30px;
 }
 </style>

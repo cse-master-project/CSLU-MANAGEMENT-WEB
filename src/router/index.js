@@ -48,18 +48,31 @@ export default route(function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     const adminAuthStore = useAdminAuthStore();
     const isAuthenticated = adminAuthStore.isAuthenticated;
+    const userRole = adminAuthStore.role;
 
-    if (
-      to.matched.some(record => record.meta.requiresAuth) &&
-      !isAuthenticated
-    ) {
-      if (to.path !== '/admin/adminLogin') {
-        next('/admin/adminLogin'); // 인증되지 않은 경우 로그인 페이지로 리디렉션
+    // 인증이 필요한 라우트인지 확인
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (!isAuthenticated) {
+        // 인증되지 않은 경우 로그인 페이지로 리디렉션
+        if (to.path === '/admin/adminLogin') {
+          next(); // 누구나 접근 가능
+        } else {
+          next('/admin/adminLogin'); // 로그인되지 않은 경우 리디렉션
+        }
       } else {
-        next(); // 이미 로그인 페이지로 이동 중이면 리디렉션하지 않음
+        // 로그인된 상태에서 관리자 페이지 접근 시 역할 확인
+        if (to.path.includes('admin/admin') && userRole !== 'admin') {
+          if (to.path === '/') {
+            next(false); // 이미 홈 페이지에 있으면 리디렉션 중단 (무한 리디렉션 방지)
+          } else {
+            next('/'); // 홈 페이지로 리디렉션
+          }
+        } else {
+          next(); // 인증되고 권한 있으면 접근 허용
+        }
       }
     } else {
-      next(); // 인증된 경우 라우트 진행
+      next(); // 인증이 필요 없는 페이지는 그대로 진행
     }
   });
 

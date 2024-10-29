@@ -126,7 +126,17 @@
     <!-- Quiz Cards -->
     <div class="row q-pt-md justify-between">
       <div
+<<<<<<< HEAD
         v-for="quiz in filteredQuizzes"
+=======
+        v-if="filteredQuizzes.length === 0"
+        class="col-12 text-center text-grey q-my-md"
+      >
+        퀴즈가 없습니다.
+      </div>
+      <div
+        v-for="quiz in paginatedQuizzes"
+>>>>>>> origin/hjy1021
         :key="quiz.quizId"
         class="col-12 col-md-6 q-my-md q-gutter-md"
       >
@@ -177,12 +187,20 @@
 
 <script setup>
 import QuizPermssionStatus from 'src/components/quiz/QuizPermissionStatus.vue';
+<<<<<<< HEAD
 import { fetchQuizzesFromApi } from 'src/services/quiz/userQuiz.js'; // 퀴즈 서비스 호출
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import userQuizlistCategories from 'src/services/userQuizlistCategoris';
 import userFilterStroe from 'src/stores/userfilter';
+=======
+import { fetchQuizzesFromApi } from 'src/services/quiz/user/userQuiz.js'; // 퀴즈 서비스 호출
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { date } from 'quasar';
+import { useCategorieUser } from 'src/services/quiz/user/useCategorieUser.js';
+>>>>>>> origin/hjy1021
 
 const userfilter = userFilterStroe();
 

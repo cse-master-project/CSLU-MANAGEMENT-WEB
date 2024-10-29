@@ -72,7 +72,7 @@
 <script setup>
 import { Notify } from 'quasar';
 import { ref, watch, onMounted } from 'vue';
-import { googleAuth } from 'src/services/userAuth.js'; // Google 로그인 서비스 가져오기
+import { googleAuth } from 'src/services/auth/userAuth.js'; // Google 로그인 서비스 가져오기
 
 // 부모 컴포넌트로부터 전달된 props 정의 (로그인 상태 여부)
 const props = defineProps({

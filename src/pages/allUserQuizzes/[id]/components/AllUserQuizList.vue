@@ -3,7 +3,7 @@
     <!-- Filters card -->
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-3 q-my-md bold-text">
           과목
           <q-select
             v-model="subject"
@@ -13,7 +13,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-3 q-my-md bold-text">
           챕터
           <q-select
             v-model="chapter"
@@ -23,7 +23,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md">
+        <div class="col-12 col-md-3 q-my-md bold-text">
           문제유형
           <q-select
             v-model="quizType"
@@ -37,19 +37,23 @@
         <div class="col-12 col-md-6 q-my-md">
           <q-btn
             label="초기화"
-            class="full-width bg-grey-2 text-primary"
+            class="full-width bg-grey-2 text-primary bold-text"
             @click="resetFilters"
           />
         </div>
         <div class="col-12 col-md-6 q-my-md">
           <q-btn
             label="검색"
-            class="full-width bg-primary text-white"
+            class="full-width bg-primary text-white bold-text"
             @click="filterQuizzes"
           />
         </div>
       </div>
     </q-card>
+    <!-- 문제 개수 -->
+    <div style="font-size: 1rem">
+      퀴즈 개수 : <strong>{{ quizcount }}</strong>
+    </div>
 
     <!--레이아웃 변경-->
     <div class="layoutbtn q-gutter-md" align="right">
@@ -67,6 +71,12 @@
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
+        v-if="filteredQuizzes.length === 0"
+        class="col-12 text-center text-grey q-my-md"
+      >
+        퀴즈가 없습니다.
+      </div>
+      <div
         v-for="quiz in paginatedQuizzes"
         :key="quiz.quizId"
         :class="getColumnClass()"
@@ -81,8 +91,10 @@
         >
           <q-card-section>
             <div>퀴즈ID : {{ quiz.quizId }}</div>
-            <div class="text-h6 text-primary">과목: {{ quiz.subject }}</div>
-            <div class="text-subtitle2 text-secondary">
+            <div class="text-subtitle1 bold-text text-primary">
+              과목: {{ quiz.subject }}
+            </div>
+            <div class="text-subtitle1 text-secondary">
               챕터: {{ quiz.chapter }}
             </div>
             <div class="text-body2 text-dark">
@@ -94,15 +106,20 @@
 
             <!-- 퀴즈 내용 파싱 및 표시 -->
             <div v-if="parsedContent(quiz.jsonContent)" class="q-mt-md">
-              <div class="text-h6">
-                문제: {{ parsedContent(quiz.jsonContent)?.quiz }}
+              <div class="text-body2 bold-text quiz-content">
+                문제:
+                {{ truncateText(parsedContent(quiz.jsonContent)?.quiz, 100) }}
               </div>
 
-              <div class="text-body2">
-                정답: {{ parsedContent(quiz.jsonContent)?.answer }}
+              <div class="text-body2 quiz-content">
+                정답:
+                {{ truncateText(parsedContent(quiz.jsonContent)?.answer, 50) }}
               </div>
-              <div class="text-body2">
-                해설: {{ parsedContent(quiz.jsonContent)?.commentary }}
+              <div class="text-body2 quiz-content">
+                해설:
+                {{
+                  truncateText(parsedContent(quiz.jsonContent)?.commentary, 100)
+                }}
               </div>
             </div>
           </q-card-section>
@@ -126,10 +143,10 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { fetchQuizzesFromApi } from 'src/services/quiz/allUserQuiz.js'; // 퀴즈 서비스 호출
+import { fetchQuizzesFromApi } from 'src/services/quiz/admin/allUserQuiz.js'; // 퀴즈 서비스 호출
 import { useRouter } from 'vue-router';
 import { date } from 'quasar';
-import { useCategorie } from 'src/services/quiz/useCategorie.js';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 const quizzes = ref([]);
 const currentPage = ref(1);
@@ -137,6 +154,8 @@ const pageSize = ref(20);
 const totalElements = ref(0);
 
 const filteredQuizzes = ref([]);
+const quizcount = ref(0); //퀴즈 개수
+
 const subject = ref('');
 const chapter = ref('');
 const quizType = ref('');
@@ -169,6 +188,7 @@ const fetchQuizzes = async () => {
     quizzes.value = await fetchQuizzesFromApi();
     quizzes.value.sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
     filterQuizzes();
+    quizcount.value = filteredQuizzes.value.length;
     totalElements.value = quizzes.value.length;
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
@@ -182,6 +202,7 @@ const filterQuizzes = () => {
     const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
     return subjectMatch && chaptertMatch && quizTypeMatch;
   });
+  quizcount.value = filteredQuizzes.value.length;
 };
 
 // 페이징 처리
@@ -234,6 +255,13 @@ const parsedContent = jsonContent => {
     return null;
   }
 };
+//  내용 줄임표
+const truncateText = (text, length) => {
+  if (text && text.length > length) {
+    return text.substring(0, length) + '...';
+  }
+  return text;
+};
 // 시간 알려주기.
 const formatDate = dateString => {
   return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
@@ -272,7 +300,7 @@ onMounted(async () => {
   border-radius: 10px;
   overflow: hidden;
   min-height: 300px;
-  height: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* 살짝 더 부드러운 그림자 */
 }
 
 .q-card-section {
@@ -283,6 +311,7 @@ onMounted(async () => {
 
 .q-btn {
   border-radius: 5px;
+  font-size: 0.9rem; /* 버튼 폰트 사이즈 조정 */
 }
 
 .q-pagination {
@@ -290,11 +319,11 @@ onMounted(async () => {
 }
 
 .bg-primary {
-  background-color: #1976d2; /* Primary color */
+  background-color: #1976d2;
 }
 
 .text-primary {
-  color: #1976d2; /* Primary color */
+  color: #1976d2;
 }
 
 .bg-grey-2 {
@@ -302,27 +331,36 @@ onMounted(async () => {
 }
 
 .text-secondary {
-  color: #757575;
+  color: #6c757d; /* 더 부드러운 회색 */
 }
 
 .text-dark {
-  color: #333;
+  color: #495057; /* 살짝 밝은 어두운 색상 */
 }
 
 .text-grey {
-  color: #9e9e9e;
+  color: #adb5bd; /* 부드러운 회색 */
 }
+
 .layoutimg {
   width: 40px;
   height: auto;
   display: flex;
 }
-.layout2 {
-  width: 50px;
+
+.quiz-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 @media (max-width: 1100px) {
   .layoutbtn {
     display: none;
   }
+}
+
+.bold-text {
+  font-weight: bold; /* 굵게 표시 */
 }
 </style>

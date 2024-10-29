@@ -78,7 +78,7 @@ import { useRoute } from 'vue-router';
 import {
   fetchQuiz,
   fetchQuizImage,
-} from 'src/services/quiz/adminQuizDetail.js';
+} from 'src/services/quiz/admin/adminQuizDetail.js';
 import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
 
 const quiz = '승인된 제출자 문제';

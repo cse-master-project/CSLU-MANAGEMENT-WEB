@@ -50,11 +50,10 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { api } from 'src/boot/axios';
 import {
   useCategorie,
   useCategorieUpdate,
-} from 'src/services/quiz/useCategorie.js';
+} from 'src/services/quiz/admin/useCategorie.js';
 
 // 서비스 불러오기
 const {

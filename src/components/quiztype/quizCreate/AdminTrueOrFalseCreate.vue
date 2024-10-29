@@ -103,14 +103,14 @@ import {
   submitQuizImage,
   submitQuizImageTemp,
   deleteQuiz,
-} from 'src/services/quiz/adminQuiz.js';
+} from 'src/services/quiz/admin/adminQuiz.js';
 import {
   quizSuccessNotification,
   quizErrorNotification,
   errorNotification,
 } from 'src/services/quiz/notifications.js';
 
-import { useCategorie } from 'src/services/quiz/useCategorie.js';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
 // 반응형 데이터
 const options = [
