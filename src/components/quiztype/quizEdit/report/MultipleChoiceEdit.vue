@@ -95,11 +95,14 @@
 <script setup>
 import { ref } from 'vue';
 import { quizPactchApi } from 'src/services/quiz/quizManagement.js';
+import { useRouter } from 'vue-router';
+import { statusReportsFromApi } from 'src/services/quiz/admin/reportedQuiz.js';
 
 // 데이터 받기.(다른컴포넌트->현재컴포넌트)
 const props = defineProps({
   quizcontent: Object,
   quizzes: Object,
+  quizReportId: Number,
 });
 
 //이벤트 보내기.(현재 컴포넌트 -> 다른 컴포넌트)
@@ -113,6 +116,8 @@ const editCancle = () => {
   emit('update:isEditing', 'false');
 };
 
+const router = useRouter();
+
 // 수정 완료 기능.
 const submitQuiz = async () => {
   const quizData = {
@@ -123,10 +128,23 @@ const submitQuiz = async () => {
   };
 
   try {
+    const confirmation = confirm('문제를 수정하시겠습니까?');
+    if (!confirmation) {
+      return;
+    }
+
     await quizPactchApi(props.quizzes.quizId, quizData);
     alert('수정이 완료되었습니다 ^_^');
-    emit('update:quizcontent', localQuizContent.value);
-    emit('update:isEditing', false);
+
+    // 수정 완료 후 신고 상태 업데이트
+    try {
+      await statusReportsFromApi(props.quizReportId);
+      console.log('신고 상태가 성공적으로 업데이트되었습니다.');
+      router.push('/admin/adminReported');
+    } catch (statusError) {
+      console.error('신고 상태 업데이트 오류:', statusError);
+      alert('신고 상태 업데이트 중 오류가 발생했습니다.');
+    }
   } catch (error) {
     if (error.response && error.response.status === 400) {
       alert('바뀐게 없습니다 .. ㅜㅠ');

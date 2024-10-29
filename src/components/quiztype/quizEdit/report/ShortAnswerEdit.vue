@@ -2,7 +2,7 @@
   <q-form class="q-pa-md">
     <div class="row justify-end q-mb-md">
       <q-chip small outline class="text-caption text-grey">
-        &lt;4지선다형&gt;
+        &lt;단답형&gt;
       </q-chip>
     </div>
 
@@ -16,40 +16,36 @@
             outlined
             autogrow
             dense
-            counter
             maxlength="300"
             class="text-subtitle1 input-field"
           />
         </div>
       </q-card-section>
-
       <q-separator />
 
-      <!-- 정답 표시 및 선택지 -->
+      <!-- 정답 표시 -->
       <q-card-section class="answer-container">
-        <div
-          v-for="(choice, index) in localQuizContent.option"
-          :key="`choice-${index}`"
-          class="label-container"
-        >
-          <q-radio
-            v-model="localQuizContent.answer"
-            :val="index + 1"
-            name="answer"
-            class="q-mr-sm"
-          />
-          <q-input
-            v-model="localQuizContent.option[index]"
-            outlined
-            dense
-            maxlength="300"
-            autogrow
-            class="input-field"
-            placeholder="지문을 입력하세요"
-          />
+        <div class="label-container">
+          <label class="label-answer">정답 : </label>
+          <div
+            v-for="(answer, index) in localQuizContent.answer"
+            :key="index"
+            class="q-mb-md input-answer"
+          >
+            <q-input
+              v-model="localQuizContent.answer[index]"
+              type="textarea"
+              autogrow
+              outlined
+              dense
+              placeholder="답안 입력해주세요. "
+              maxlength="300"
+              counter
+              class="input-field"
+            />
+          </div>
         </div>
       </q-card-section>
-
       <q-separator />
 
       <!-- 해설 표시 -->
@@ -63,7 +59,6 @@
             dense
             autogrow
             maxlength="300"
-            counter
             class="input-field"
           />
         </div>
@@ -96,35 +91,55 @@
 import { ref } from 'vue';
 import { quizPactchApi } from 'src/services/quiz/quizManagement.js';
 
-// 데이터 받기.(다른컴포넌트->현재컴포넌트)
+// 데이터 받기.(다른 컴포넌트 -> 현재 컴포넌트)
 const props = defineProps({
   quizcontent: Object,
   quizzes: Object,
 });
 
-//이벤트 보내기.(현재 컴포넌트 -> 다른 컴포넌트)
+// 이벤트 보내기.(현재 컴포넌트 -> 다른 컴포넌트)
 const emit = defineEmits(['update:quizcontent', 'update:isEditing']);
 
-// 서버에서 받아온 데이터를 그대로 사용
-const localQuizContent = ref({ ...props.quizcontent });
+// 서버에서 받아온 answer를 배열로 그대로 사용
+const localQuizContent = ref({
+  ...props.quizcontent,
+  answer: [...props.quizcontent.answer], // 배열을 복사하여 사용
+});
 
-// 수정 취소 기능.
+// 수정 취소 기능
 const editCancle = () => {
   emit('update:isEditing', 'false');
 };
 
-// 수정 완료 기능.
+// 답안 정리 함수
+const normalizeAnswers = answers => {
+  return answers
+    .map(
+      answer =>
+        answer
+          .split(',') // 콤마로 구분
+          .map(part => part.trim()) // 각 부분의 앞뒤 공백 제거
+          .filter(part => part) // 빈 값 제거
+          .join(', '), // 다시 콤마와 공백으로 구분된 문자열로 변환
+    )
+    .filter(answer => answer); // 빈 값 제거 후 최종 배열 반환
+};
+
+// 수정 완료 기능
 const submitQuiz = async () => {
+  // 답안 정리
+  const normalizedAnswers = normalizeAnswers(localQuizContent.value.answer);
+
   const quizData = {
     quiz: localQuizContent.value.quiz,
-    option: localQuizContent.value.option, // 수정된 옵션 전송
-    answer: localQuizContent.value.answer, // 선택된 정답 전송
+    answer: normalizedAnswers, // 정리된 배열 전송
     commentary: localQuizContent.value.commentary,
   };
 
   try {
     await quizPactchApi(props.quizzes.quizId, quizData);
     alert('수정이 완료되었습니다 ^_^');
+    // 수정된 데이터를 부모 컴포넌트에 전달
     emit('update:quizcontent', localQuizContent.value);
     emit('update:isEditing', false);
   } catch (error) {
@@ -139,19 +154,35 @@ const submitQuiz = async () => {
 </script>
 
 <style scoped>
-.label-container {
-  display: flex;
-  align-items: center;
-  gap: 16px; /* 라벨과 입력 필드 사이의 간격 */
+.option-text {
+  padding: 8px;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
 }
 
-.text-subtitle1 {
-  font-size: 18px;
-  font-weight: bold;
+.text-caption {
+  font-size: 12px;
+}
+
+.text-weight-medium {
+  font-weight: 500;
+}
+
+.text-positive {
+  color: #43a047;
+}
+
+/* 입력 필드와 라벨을 수평으로 배치 */
+.label-container {
+  display: flex;
+  align-items: center; /* 수직 가운데 정렬 */
+  gap: 8px; /* 라벨과 입력 필드 사이 간격 */
 }
 
 .input-field {
-  flex: 1;
+  flex: 1; /* 입력 필드가 가로로 꽉 차도록 확장 */
 }
 
 .my-btn {

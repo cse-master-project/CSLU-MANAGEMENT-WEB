@@ -32,6 +32,7 @@
           :quizcontent="quizContent"
           :quizzes="quizzes"
           :quiz-reportId="quizReportId"
+          :quiz="quiz"
           @update:quizcontent="updateQuizContent"
           @update:isEditing="isEditing = false"
           v-if="isEditing"
