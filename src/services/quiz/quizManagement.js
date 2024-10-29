@@ -4,7 +4,6 @@ import { api } from 'src/boot/axios';
 export const quizDeleteApi = async quizId => {
   try {
     await api.delete(`/api/v2/quiz/${quizId}`);
-    return response.data;
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
     throw error;
