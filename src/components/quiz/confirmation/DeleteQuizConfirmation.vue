@@ -35,7 +35,7 @@ const props = defineProps({
   isDelete: Boolean,
   currentQuiz: Object,
   quiz: String,
-  quizReportId: Number,
+  quizReportIds: Array,
 });
 
 const emit = defineEmits(['update:isDelete']);
@@ -58,11 +58,13 @@ const quizDelete = async () => {
     if (props.quiz === '승인된 제출자 문제')
       router.push('/admin/adminUsermanagement'); // 성공 후 페이지 이동
     if (props.quiz === '관리자 문제') router.push('/admin/adminManagement'); // 성공 후 페이지 이동
+    // 각 quizReportId의 상태를 업데이트
     if (props.quiz === '신고된 문제') {
       console.log('퀴즈아이디', props.currentQuiz.quizId);
-      statusReportsFromApi(props.quizReportId).then(() => {
-        router.push('/admin/adminReported'); // 성공 후 페이지 이동
-      });
+      await Promise.all(
+        props.quizReportIds.map(id => statusReportsFromApi(id)),
+      );
+      router.push('/admin/adminReported');
     }
     emit('update:isDelete', false);
   } catch (error) {

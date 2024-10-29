@@ -31,13 +31,35 @@
           :is="quizTypeEditForm(quizzes.quizType)"
           :quizcontent="quizContent"
           :quizzes="quizzes"
-          :quiz-reportId="quizReportId"
-          :quiz="quiz"
           @update:quizcontent="updateQuizContent"
           @update:isEditing="isEditing = false"
           v-if="isEditing"
         />
       </q-card-section>
+
+      <!-- 버튼들을 수평으로 정렬 -->
+      <q-card-actions class="button-container">
+        <q-btn
+          flat
+          color="negative"
+          class="my-btn small-btn"
+          icon="delete"
+          @click="isDelete = true"
+          v-if="!isEditing"
+        >
+          폐기
+        </q-btn>
+        <q-btn
+          flat
+          color="primary"
+          class="my-btn small-btn"
+          icon="edit"
+          @click="isEditing = true"
+          v-if="!isEditing"
+        >
+          수정
+        </q-btn>
+      </q-card-actions>
 
       <!--신고된 이유 -->
       <q-card-section class="q-pa-md report-section">
@@ -65,37 +87,13 @@
           </q-item>
         </div>
       </q-card-section>
-
-      <!-- 버튼들을 수평으로 정렬 -->
-      <q-card-actions class="button-container">
-        <q-btn
-          flat
-          color="negative"
-          class="my-btn small-btn"
-          icon="delete"
-          @click="isDelete = true"
-          v-if="!isEditing"
-        >
-          폐기
-        </q-btn>
-        <q-btn
-          flat
-          color="primary"
-          class="my-btn small-btn"
-          icon="edit"
-          @click="isEditing = true"
-          v-if="!isEditing"
-        >
-          수정
-        </q-btn>
-      </q-card-actions>
     </q-card>
     <DeleteQuizConfirmation
       v-if="isDelete"
       :quiz="quiz"
       :is-delete="isDelete"
       :current-quiz="quizzes"
-      :quiz-reportId="quizReportId"
+      :quiz-reportIds="quizReportIds"
       @update:isDelete="isDelete = $event"
     />
   </q-page>
@@ -120,7 +118,7 @@ const quiz = '신고된 문제';
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
-const quizReportId = ref();
+const quizReportIds = ref([]);
 
 // 이미지 URL 상태
 const imageUrl = ref(null);
@@ -156,7 +154,8 @@ const fetchReoports = async () => {
   try {
     reports.value = await fetchReoportsFromApi(quizId);
     console.log('신고문제 이유 :', reports.value);
-    //console.log('신고번호 이유 :', reports.value[0].quizReportId);
+    quizReportIds.value = reports.value.map(report => report.quizReportId);
+    console.log('신고ID', quizReportIds.value);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
