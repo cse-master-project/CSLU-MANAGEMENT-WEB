@@ -80,7 +80,11 @@
                 formatDate(report.reportAt)
               }}</q-item-label>
               <!-- 신고마다 다른 quizReportId를 전달하여 처리 -->
-              <q-btn @click="handleReportResolution(report.quizReportId)">
+              <q-btn
+                class="report-btn"
+                dense
+                @click="handleReportResolution(report.quizReportId)"
+              >
                 해결
               </q-btn>
             </q-item-section>
@@ -315,6 +319,7 @@ const isDelete = ref(false);
 .report-item {
   margin-top: 16px; /* 항목 간격을 크게 설정 */
 }
+
 .report-item-card {
   padding: 12px;
   border: 1px solid #ddd; /* 신고된 이유 카드 테두리 */
@@ -322,6 +327,14 @@ const isDelete = ref(false);
   background-color: #fff; /* 카드 배경색 */
   transition: box-shadow 0.3s ease; /* 호버 시 효과 */
 }
+
+.report-section {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .report-content {
   font-size: 16px; /* 신고된 내용의 크기 */
   font-weight: 500;
@@ -330,5 +343,10 @@ const isDelete = ref(false);
 .report-date {
   font-size: 12px; /* 신고된 날짜 크기 */
   color: #9e9e9e; /* 날짜는 더 연한 회색 */
+}
+
+.report-btn {
+  background-color: #bfe5ff;
+  margin-top: 15px;
 }
 </style>
