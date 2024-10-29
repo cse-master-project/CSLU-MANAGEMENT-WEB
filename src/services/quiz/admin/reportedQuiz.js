@@ -36,7 +36,7 @@ export const statusReportsFromApi = async quizReportId => {
       null, // 요청 본문이 없을 경우 null 설정
       { params: { status: 1 } }, // params는 세 번째 인수로 전달
     );
-    return response.data;
+    console.log('상태 업데이트 응답:', response.data);
   } catch (error) {
     console.error('퀴즈 신고 처리에 실패했습니다.', error);
   }

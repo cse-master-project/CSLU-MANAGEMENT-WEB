@@ -57,6 +57,10 @@
               <q-item-label caption class="report-date">{{
                 formatDate(report.reportAt)
               }}</q-item-label>
+              <!-- 신고마다 다른 quizReportId를 전달하여 처리 -->
+              <q-btn @click="handleReportResolution(report.quizReportId)">
+                해결
+              </q-btn>
             </q-item-section>
           </q-item>
         </div>
@@ -104,7 +108,10 @@ import {
   fetchQuiz,
   fetchQuizImage,
 } from 'src/services/quiz/admin/adminQuizDetail.js';
-import { fetchReoportsFromApi } from 'src/services/quiz/admin/reportedQuiz.js';
+import {
+  fetchReoportsFromApi,
+  statusReportsFromApi,
+} from 'src/services/quiz/admin/reportedQuiz.js';
 import DeleteQuizConfirmation from 'src/components/quiz/confirmation/DeleteQuizConfirmation.vue';
 import { date } from 'quasar';
 
@@ -149,8 +156,7 @@ const fetchReoports = async () => {
   try {
     reports.value = await fetchReoportsFromApi(quizId);
     console.log('신고문제 이유 :', reports.value);
-    console.log('신고번호 이유 :', reports.value[0].quizReportId);
-    quizReportId.value = reports.value[0].quizReportId;
+    //console.log('신고번호 이유 :', reports.value[0].quizReportId);
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
@@ -231,6 +237,20 @@ const quizTypeEditForm = quizType => {
       );
     default:
       return null;
+  }
+};
+// 신고 이유 해결 함수
+const handleReportResolution = async quizReportId => {
+  const confirmation = confirm('신고문제를 해결하시겠습니까?');
+  if (!confirmation) {
+    return;
+  }
+  try {
+    await statusReportsFromApi(quizReportId);
+    alert('신고문제 해결이 완료 되었습니다.');
+    fetchReoports(); // 신고 목록 새로고침
+  } catch (error) {
+    console.error('신고 상태 업데이트 오류:', error);
   }
 };
 
