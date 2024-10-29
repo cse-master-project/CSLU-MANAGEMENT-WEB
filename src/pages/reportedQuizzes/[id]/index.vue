@@ -109,6 +109,7 @@
 <script setup>
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import {
   fetchQuiz,
   fetchQuizImage,
@@ -155,8 +156,7 @@ const fetchImage = async () => {
   }
 };
 
-const router = useRoute();
-
+const router = useRouter();
 // 신고문제된 이유들 가져오기.
 const reports = ref([]);
 const fetchReoports = async () => {
