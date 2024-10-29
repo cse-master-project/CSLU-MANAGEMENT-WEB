@@ -222,6 +222,10 @@ const submitQuiz = async () => {
     answer: localQuizContent.value.answer,
     commentary: localQuizContent.value.commentary,
   };
+  const confirmation = confirm('수정 하시겠습니까 ?');
+  if (!confirmation) {
+    return;
+  }
 
   try {
     // 퀴즈 수정 API 호출

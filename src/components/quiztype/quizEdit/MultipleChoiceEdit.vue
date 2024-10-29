@@ -122,6 +122,10 @@ const submitQuiz = async () => {
     commentary: localQuizContent.value.commentary,
   };
 
+  const confirmation = confirm('수정 하시겠습니까 ?');
+  if (!confirmation) {
+    return;
+  }
   try {
     await quizPactchApi(props.quizzes.quizId, quizData);
     alert('수정이 완료되었습니다 ^_^');

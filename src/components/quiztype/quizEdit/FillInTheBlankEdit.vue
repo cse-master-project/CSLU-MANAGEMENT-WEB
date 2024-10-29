@@ -184,6 +184,10 @@ const submitQuiz = async () => {
     answer: normalizedAnswers,
     commentary: localQuizContent.value.commentary,
   };
+  const confirmation = confirm('수정 하시겠습니까 ?');
+  if (!confirmation) {
+    return;
+  }
   // 서버로 데이터 전송
   try {
     await quizPactchApi(props.quizzes.quizId, quizData);

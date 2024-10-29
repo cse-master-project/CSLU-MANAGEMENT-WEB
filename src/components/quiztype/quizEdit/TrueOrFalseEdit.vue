@@ -109,7 +109,10 @@ const submitQuiz = async () => {
     commentary: localQuizContent.value.commentary,
   };
 
-  console.log(quizData);
+  const confirmation = confirm('수정 하시겠습니까 ?');
+  if (!confirmation) {
+    return;
+  }
   try {
     // API 호출을 기다린 후 다음 작업을 진행합니다.
     await quizPactchApi(props.quizzes.quizId, quizData);
