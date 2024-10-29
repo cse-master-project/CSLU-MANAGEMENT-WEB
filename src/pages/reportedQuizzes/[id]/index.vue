@@ -63,23 +63,26 @@
 
       <!--신고된 이유 -->
       <q-card-section class="q-pa-md report-section">
-        <q-chip small outline class="text-caption text-red report-chip"
-          >신고 사유</q-chip
-        >
-        <div
-          v-for="report in reports"
-          :key="report.quizReportId"
-          class="q-mt-sm report-item"
-        >
-          <q-item class="report-item-card">
-            <q-item-section>
+        <!-- 신고 사유 칩을 상단에 고정 -->
+        <div class="chip-container">
+          <q-chip small outline class="text-caption text-red report-chip">
+            신고 사유
+          </q-chip>
+        </div>
+        <!-- 신고 목록 2열 배치 -->
+        <div class="report-grid">
+          <div
+            v-for="report in reports"
+            :key="report.quizReportId"
+            class="report-item-card"
+          >
+            <q-item-section class="report-section-content">
               <q-item-label class="report-content">{{
                 report.content
               }}</q-item-label>
               <q-item-label caption class="report-date">{{
                 formatDate(report.reportAt)
               }}</q-item-label>
-              <!-- 신고마다 다른 quizReportId를 전달하여 처리 -->
               <q-btn
                 class="report-btn"
                 dense
@@ -88,7 +91,7 @@
                 해결
               </q-btn>
             </q-item-section>
-          </q-item>
+          </div>
         </div>
       </q-card-section>
     </q-card>
@@ -310,43 +313,57 @@ const isDelete = ref(false);
 .report-section {
   border-radius: 8px;
   padding: 16px;
-}
-.report-chip {
-  border-color: #e53935; /* 신고 사유 칩 테두리 색상 */
-  color: #e53935; /* 텍스트 색상을 일치시킴 */
-  font-weight: bold; /* 텍스트를 강조 */
-}
-.report-item {
-  margin-top: 16px; /* 항목 간격을 크게 설정 */
+  display: flex;
+  flex-direction: column;
 }
 
+.chip-container {
+  margin-bottom: 8px;
+}
+
+.report-chip {
+  border-color: #e53935;
+  color: #e53935;
+  font-weight: bold;
+}
+
+/* 2열 그리드 레이아웃 */
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2열로 배치 */
+  gap: 10px; /* 카드 사이 간격 */
+}
 .report-item-card {
   padding: 12px;
-  border: 1px solid #ddd; /* 신고된 이유 카드 테두리 */
+  border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #fff; /* 카드 배경색 */
-  transition: box-shadow 0.3s ease; /* 호버 시 효과 */
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
-
-.report-section {
-  flex-grow: 1;
+.report-section-content {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
+  justify-content: space-between;
 }
-
 .report-content {
-  font-size: 16px; /* 신고된 내용의 크기 */
+  font-size: 16px;
   font-weight: 500;
-  color: #424242; /* 다크 그레이 텍스트 색상 */
+  color: #424242;
+  flex-grow: 1;
 }
 .report-date {
-  font-size: 12px; /* 신고된 날짜 크기 */
-  color: #9e9e9e; /* 날짜는 더 연한 회색 */
+  font-size: 12px;
+  color: #9e9e9e;
 }
 
 .report-btn {
-  background-color: #bfe5ff;
-  margin-top: 15px;
+  width: 50%;
+  background-color: #79c7fb;
+  margin-left: auto;
 }
 </style>
