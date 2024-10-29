@@ -70,6 +70,13 @@
 
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
+      <!-- 퀴즈가 없을 때 안내 문구 표시 -->
+      <div
+        v-if="filteredQuizzes.length === 0"
+        class="col-12 text-center text-grey q-my-md"
+      >
+        퀴즈가 없습니다.
+      </div>
       <div
         v-for="quiz in paginatedQuizzes"
         :key="quiz.quizId"

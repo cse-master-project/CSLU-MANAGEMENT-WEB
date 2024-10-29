@@ -82,6 +82,12 @@
     <!-- Quiz Cards -->
     <div class="row q-col-gutter-md q-pt-md">
       <div
+        v-if="filteredQuizzes.length === 0"
+        class="col-12 text-center text-grey q-my-md"
+      >
+        퀴즈가 없습니다.
+      </div>
+      <div
         v-for="quiz in paginatedQuizzes"
         :key="quiz.quizId"
         :class="getColumnClass()"

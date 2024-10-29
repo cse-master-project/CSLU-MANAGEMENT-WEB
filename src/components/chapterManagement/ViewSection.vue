@@ -23,7 +23,10 @@
           <q-item-label class="list-title">챕터</q-item-label>
           <q-list bordered class="custom-list">
             <!-- 챕터가 없을 때 -->
-            <q-item v-if="chapterOptions.length === 0">
+            <q-item
+              v-if="chapterOptions.length === 0"
+              class="text-center q-mt-md text-grey"
+            >
               <q-item-section>챕터가 없습니다.</q-item-section>
             </q-item>
             <!-- 챕터가 있을 때 -->

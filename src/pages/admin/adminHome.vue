@@ -7,6 +7,13 @@
           <div class="text-h6 text-center">미승인 문제</div>
         </q-card-section>
         <q-separator />
+        <!-- 미승인 문제가 없을 때 안내 문구 표시 -->
+        <div
+          v-if="notApprovedQuizzes.length === 0"
+          class="text-center q-mt-md text-grey"
+        >
+          미승인 문제가 없습니다.
+        </div>
         <q-card-section>
           <div
             v-for="quiz in notApprovedQuizzes"
@@ -43,6 +50,13 @@
           <div class="text-h6 text-center">신고 문제</div>
         </q-card-section>
         <q-separator />
+        <!-- 신고 문제가 없을 때 안내 문구 표시 -->
+        <div
+          v-if="reportedQuizzes.length === 0"
+          class="text-center q-mt-md text-grey"
+        >
+          신고된 문제가 없습니다.
+        </div>
         <q-card-section>
           <div
             v-for="quiz in reportedQuizzes"
