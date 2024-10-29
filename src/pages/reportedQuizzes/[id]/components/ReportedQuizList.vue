@@ -198,6 +198,7 @@ const fetchQuizzes = async () => {
   try {
     quizzes.value = await fetchQuizzesFromApi();
     filterQuizzes();
+    console.log(quizzes.value);
     quizcount.value = filteredQuizzes.value.length;
     totalElements.value = quizzes.value.length;
   } catch (error) {

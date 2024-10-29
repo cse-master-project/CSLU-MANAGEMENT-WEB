@@ -29,11 +29,13 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { quizDeleteApi } from 'src/services/quiz/quizManagement.js';
+import { statusReportsFromApi } from 'src/services/quiz/admin/reportedQuiz.js';
 
 const props = defineProps({
   isDelete: Boolean,
   currentQuiz: Object,
   quiz: String,
+  quizReportId: Number,
 });
 
 const emit = defineEmits(['update:isDelete']);
@@ -56,7 +58,12 @@ const quizDelete = async () => {
     if (props.quiz === '승인된 제출자 문제')
       router.push('/admin/adminUsermanagement'); // 성공 후 페이지 이동
     if (props.quiz === '관리자 문제') router.push('/admin/adminManagement'); // 성공 후 페이지 이동
-    if (props.quiz === '신고된 문제') router.push('/admin/adminReported'); // 성공 후 페이지 이동
+    if (props.quiz === '신고된 문제') {
+      console.log('퀴즈아이디', props.currentQuiz.quizId);
+      statusReportsFromApi(props.quizReportId).then(() => {
+        router.push('/admin/adminReported'); // 성공 후 페이지 이동
+      });
+    }
     emit('update:isDelete', false);
   } catch (error) {
     console.error('퀴즈 삭제에 실패했습니다.', error);

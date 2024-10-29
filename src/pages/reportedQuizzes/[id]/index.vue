@@ -31,6 +31,7 @@
           :is="quizTypeEditForm(quizzes.quizType)"
           :quizcontent="quizContent"
           :quizzes="quizzes"
+          :quiz-reportId="quizReportId"
           @update:quizcontent="updateQuizContent"
           @update:isEditing="isEditing = false"
           v-if="isEditing"
@@ -89,6 +90,7 @@
       :quiz="quiz"
       :is-delete="isDelete"
       :current-quiz="quizzes"
+      :quiz-reportId="quizReportId"
       @update:isDelete="isDelete = $event"
     />
   </q-page>
@@ -110,6 +112,7 @@ const quiz = '신고된 문제';
 const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
+const quizReportId = ref();
 
 // 이미지 URL 상태
 const imageUrl = ref(null);
@@ -145,6 +148,8 @@ const fetchReoports = async () => {
   try {
     reports.value = await fetchReoportsFromApi(quizId);
     console.log('신고문제 이유 :', reports.value);
+    console.log('신고번호 이유 :', reports.value[0].quizReportId);
+    quizReportId.value = reports.value[0].quizReportId;
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
