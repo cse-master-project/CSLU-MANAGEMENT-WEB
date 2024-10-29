@@ -48,7 +48,6 @@ const deleteCancle = () => {
 };
 
 const router = useRouter();
-
 //퀴즈 삭제 기능.
 const quizDelete = async () => {
   try {

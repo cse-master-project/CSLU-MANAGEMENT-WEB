@@ -155,6 +155,8 @@ const fetchImage = async () => {
   }
 };
 
+const router = useRoute();
+
 // 신고문제된 이유들 가져오기.
 const reports = ref([]);
 const fetchReoports = async () => {
@@ -162,7 +164,11 @@ const fetchReoports = async () => {
     reports.value = await fetchReoportsFromApi(quizId);
     console.log('신고문제 이유 :', reports.value);
     quizReportIds.value = reports.value.map(report => report.quizReportId);
-    console.log('신고ID', quizReportIds.value);
+    // 신고 이유가 없는 경우 페이지 이동
+    if (reports.value.length === 0) {
+      alert('신고 이유가 없습니다.');
+      router.push('/admin/adminReported');
+    }
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
@@ -363,7 +369,7 @@ const isDelete = ref(false);
 
 .report-btn {
   width: 50%;
-  background-color: #79c7fb;
+  background-color: #97ccefcc;
   margin-left: auto;
 }
 </style>
