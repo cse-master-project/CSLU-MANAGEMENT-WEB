@@ -198,12 +198,15 @@ const drawerLeft = ref(false);
 </script>
 
 <style lang="scss" scoped>
+// 헤더
 .q-header {
   height: 8%; /* 헤더 높이 조정 */
   display: flex;
-  align-items: center; /* 헤더 내부 요소 중앙 정렬 */
-  justify-content: center; /* 헤더 내부 요소 중앙 정렬 */
+  align-items: center; /* 헤더 내부 요소 수직으로 중앙 정렬 */
+  justify-content: center; /* 헤더 내부 요소 수평으로 중앙 정렬 */
 }
+
+// 푸터
 .q-footer {
   height: 100px;
   border-top: 1px solid #dddddd;
@@ -216,9 +219,10 @@ const drawerLeft = ref(false);
   position: absolute;
   bottom: 0;
   width: 100%;
-  z-index: 1; /* 푸터의 z-index 설정 */
+  z-index: 1;
 }
 
+// 툴바
 .toolbar {
   font-family: 'Nanum';
   width: 100%; /* 툴바 너비 조정 */
@@ -226,7 +230,6 @@ const drawerLeft = ref(false);
   justify-content: space-around; /* 아이템 사이 공간을 균등하게 분배 */
   align-items: center; /* 툴바 내부 요소 중앙 정렬 */
 }
-
 .toolbar-item {
   margin: 0 8px; /* 버튼 사이 간격 조정 */
   font-size: 1rem; /* 글씨 크기 조정 */
@@ -234,7 +237,7 @@ const drawerLeft = ref(false);
 }
 .toolbar-items {
   margin: 0 8px; /* 버튼 사이 간격 조정 */
-  font-size: 1.1rem; /* 글씨 크기 조정 */
+  font-size: 1rem; /* 글씨 크기 조정 */
   position: relative;
 }
 
@@ -286,6 +289,7 @@ const drawerLeft = ref(false);
   }
 }
 
+// 큰화면 설정
 @media (min-width: 1101px) {
   .menu {
     display: none;
@@ -296,7 +300,7 @@ const drawerLeft = ref(false);
     font-size: 1.8rem;
   }
   .toolbar-items {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
   }
   .logout {
     font-size: 1.5rem;
