@@ -402,12 +402,13 @@ const drawerLeft = ref(false);
   }
 }
 @media (min-width: 1200px) {
+  .toolbar {
+    font-family: 'Toss Product Sans';
+  }
   .side-menu {
     display: none;
   }
 }
-
-/* Dynamic styles based on login status */
 .toolbar-item.loggedIn {
   margin: 0 10px; /* Margin when logged in */
 }

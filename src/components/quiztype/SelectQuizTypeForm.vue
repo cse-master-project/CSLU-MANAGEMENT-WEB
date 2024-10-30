@@ -92,7 +92,7 @@ const emitQuizType = () => {
   align-items: center;
   flex-direction: column;
   height: 100%;
-  width: 90%;
+  width: 100%;
 }
 
 .title {
@@ -166,9 +166,25 @@ const emitQuizType = () => {
   padding: 0;
   border-top: 1px solid #ccc;
 }
-@media (max-width: 430px) {
+
+@media (max-width: 500px) {
   .page {
     height: 140vh;
+    justify-content: center;
+  }
+  .quiztype-container {
+    flex-direction: column;
+  }
+}
+@media (max-width: 900px) {
+  .page {
+    height: 120vh;
+    margin: 0 5%;
+  }
+}
+@media (max-width: 1300px) {
+  .page {
+    margin: 0 5%;
   }
 }
 </style>

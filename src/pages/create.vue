@@ -43,3 +43,10 @@ const quizTypeCreateForm = {
   ),
 };
 </script>
+<style>
+@media (max-width: 500px) {
+  .q-page {
+    height: 140vh;
+  }
+}
+</style>
