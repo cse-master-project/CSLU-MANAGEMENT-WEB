@@ -33,7 +33,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useAdminAuthStore } from 'src/stores/adminAuth';
-import { adminAuth } from 'src/services/adminAuth';
+import { adminAuth } from 'src/services/auth/adminAuth';
 import { useRouter } from 'vue-router';
 
 const props = defineProps({

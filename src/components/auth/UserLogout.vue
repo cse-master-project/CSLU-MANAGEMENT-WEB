@@ -26,7 +26,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { userAuth } from 'src/services/userAuth'; // 로그아웃 서비스 가져오기
+import { userAuth } from 'src/services/auth/userAuth'; // 로그아웃 서비스 가져오기
 
 const props = defineProps({
   isLogout: Boolean,
@@ -44,9 +44,7 @@ const logout = async () => {
 
     // 로그아웃 성공 후 홈 페이지로 리디렉션
     router.push('/home');
-  } catch (error) {
-    alert('로그아웃 실패.');
-  }
+  } catch (error) {}
 };
 
 // 다이얼로그 닫기

@@ -9,7 +9,7 @@
 
     <q-card flat bordered>
       <!-- 문제 내용 -->
-      <q-card-section class="bg-primary text-white q-pa-md">
+      <q-card-section class="bg-primary text-white q-pa-md content-section">
         <div class="text-subtitle1">Q. {{ quizcontent.quiz }}</div>
       </q-card-section>
 
@@ -17,7 +17,7 @@
 
       <div class="q-pa-md row">
         <!-- 왼쪽 옵션 -->
-        <q-card-section class="col">
+        <q-card-section class="col content-section">
           <q-list bordered padding>
             <q-item
               v-for="(option, index) in quizcontent.left_option"
@@ -36,7 +36,7 @@
         </q-card-section>
 
         <!-- 오른쪽 옵션 -->
-        <q-card-section class="col">
+        <q-card-section class="col content-section">
           <q-list bordered padding>
             <q-item
               v-for="(option, index) in quizcontent.right_option"
@@ -59,7 +59,7 @@
 
       <!-- 정답 표시 -->
       <q-card-section>
-        <div class="text-weight-medium">
+        <div class="text-weight-medium content-section">
           정답 :
           <span class="text-positive">{{ quizcontent.answer.join(', ') }}</span>
         </div>
@@ -68,7 +68,7 @@
       <q-separator />
 
       <!-- 해설 표시 -->
-      <q-card-section>
+      <q-card-section class="content-section">
         <div class="text-weight-medium">
           해설 : {{ quizcontent.commentary }}
         </div>
@@ -138,5 +138,10 @@ const getColorForIndex = index => {
 
 .text-weight-medium {
   font-weight: 500;
+}
+
+.content-section {
+  word-break: break-word; /* 긴 단어를 적절히 줄바꿈 */
+  white-space: pre-wrap; /* 공백과 줄바꿈을 그대로 유지 */
 }
 </style>

@@ -1,26 +1,25 @@
 <template>
   <q-dialog v-model="visible" persistent>
-    <q-card class="delete-success-dialog">
-      <q-card-section>
-        <div class="text-h6">퀴즈 폐기하시겠습니까 ?</div>
+    <q-card class="dialog">
+      <q-card-section class="dialog-header">
+        <div class="text-h6">퀴즈를 폐기하시겠습니까?</div>
       </q-card-section>
 
-      <q-card-actions align="right">
+      <q-card-actions class="dialog-actions">
         <q-btn
           flat
-          color="primary"
-          label="취소"
+          color="grey-8"
           @click="deleteCancle"
-          class="deleteCancle-button"
-        />
-
+          class="dialog-button cancle-btn"
+          >취소</q-btn
+        >
         <q-btn
           flat
-          color="red"
-          label="폐기"
+          color="whithe"
           @click="quizDelete"
-          class="deleteCancle-button"
-        />
+          class="dialog-button go-btn"
+          >폐기</q-btn
+        >
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -28,13 +27,15 @@
 
 <script setup>
 import { ref } from 'vue';
-import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
+import { quizDeleteApi } from 'src/services/quiz/quizManagement.js';
+import { statusReportsFromApi } from 'src/services/quiz/admin/reportedQuiz.js';
 
 const props = defineProps({
   isDelete: Boolean,
   currentQuiz: Object,
   quiz: String,
+  quizReportIds: Array,
 });
 
 const emit = defineEmits(['update:isDelete']);
@@ -47,16 +48,23 @@ const deleteCancle = () => {
 };
 
 const router = useRouter();
-
 //퀴즈 삭제 기능.
 const quizDelete = async () => {
   try {
-    await api.delete(`/api/management/quiz/${props.currentQuiz.quizId}`);
+    quizDeleteApi(props.currentQuiz.quizId);
     // 삭제 성공 시 로직(alert말고 딴거 해야함.)
     alert('퀴즈가 삭제 되었습니다.');
     if (props.quiz === '승인된 제출자 문제')
       router.push('/admin/adminUsermanagement'); // 성공 후 페이지 이동
     if (props.quiz === '관리자 문제') router.push('/admin/adminManagement'); // 성공 후 페이지 이동
+    // 각 quizReportId의 상태를 업데이트
+    if (props.quiz === '신고된 문제') {
+      console.log('퀴즈아이디', props.currentQuiz.quizId);
+      await Promise.all(
+        props.quizReportIds.map(id => statusReportsFromApi(id)),
+      );
+      router.push('/admin/adminReported');
+    }
     emit('update:isDelete', false);
   } catch (error) {
     console.error('퀴즈 삭제에 실패했습니다.', error);
@@ -66,14 +74,55 @@ const quizDelete = async () => {
 </script>
 
 <style scoped>
-.delete-success-dialog {
-  max-width: 300px;
+.dialog {
+  width: 300px;
+  height: 150px;
+  background-color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dialog-header {
+  text-align: center;
+  padding: 20px 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 20px; /* 버튼을 하단으로 밀기 위한 패딩 */
+  position: absolute;
+  bottom: 0;
   width: 100%;
 }
 
-.deleteCancle-button {
-  border-radius: 5px;
+.dialog-button {
+  min-width: 90px;
+  margin: 0 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
   padding: 8px 16px;
-  font-size: 14px;
+}
+
+.cancle-btn {
+  color: #757575;
+  background-color: #f5f5f5;
+}
+
+.cancle-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.go-btn {
+  color: white;
+  background-color: #f44336;
+  border-radius: 6px;
+}
+
+.go-btn:hover {
+  background-color: #d32f2f;
 }
 </style>

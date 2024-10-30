@@ -1,16 +1,21 @@
 <template>
   <q-page class="q-pa-md flex flex-center">
-    <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 600px">
-      <!-- 과목, 챕터, 생성일 -->
+    <q-card class="my-card" v-if="quizzes" style="width: 90%; max-width: 800px">
+      <!-- 과목, 챕터 -->
       <q-card-section class="q-pa-md">
+        <div>퀴즈 ID : {{ quizzes.quizId }}</div>
         <div class="text-h6 q-mb-xs text-orange">
           과목 : {{ quizzes.subject }}
         </div>
-        <div class="text-subtitle2 q-mt-sm">
-          챕터 : {{ quizzes.detailSubject }}
-        </div>
-        <div class="text-caption text-createAt">
-          생성일 : {{ formatDate(quizzes.createAt) }}
+        <div class="text-subtitle2 q-mt-sm">챕터 : {{ quizzes.chapter }}</div>
+
+        <!-- 이미지 표시 -->
+        <div v-if="imageUrl" class="q-mt-md">
+          <img
+            :src="imageUrl"
+            alt="문제 이미지"
+            style="max-width: 100%; height: auto; border-radius: 8px"
+          />
         </div>
       </q-card-section>
 
@@ -22,12 +27,13 @@
         />
       </q-card-section>
 
-      <q-card-actions align="center" class="q-px-sm q-py-sm buttons-container">
+      <q-card-actions class="button-container">
         <q-btn
           flat
           color="red"
           class="my-btn small-btn"
           @click="isReject = true"
+          icon="cancel"
         >
           반려
         </q-btn>
@@ -36,6 +42,7 @@
           color="primary"
           class="my-btn small-btn"
           @click="isApprove = true"
+          icon="check"
         >
           승인
         </q-btn>
@@ -59,8 +66,10 @@
 <script setup>
 import { ref, computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { api } from 'src/boot/axios';
-import { date } from 'quasar';
+import {
+  fetchQuiz,
+  fetchQuizImage,
+} from 'src/services/quiz/admin/adminQuizDetail.js';
 import RejectUserQuizConfirmation from 'src/components/quiz/confirmation/RejectUserQuizConfirmation.vue';
 import ApproveUserQuizConfirmation from 'src/components/quiz/confirmation/ApproveUserQuizConfirmation.vue';
 
@@ -68,23 +77,35 @@ const quizzes = ref([]);
 const route = useRoute(); // 현재 라우터 파라미터 가져오기
 const quizId = route.params.id; // 현재 퀴즈 찾기
 
-//서버에서 퀴즈 데이터 가져오기. /api/quiz/{quizId}
+// 이미지 URL 상태
+const imageUrl = ref(null);
+
+// 서버에서 퀴즈 데이터 가져오기.
 const fetchQuizzes = async () => {
   try {
-    const response = await api.get(`/api/quiz/${quizId}`);
-    quizzes.value = response.data;
-    console.log('퀴즈value:', quizzes.value);
+    const data = await fetchQuiz(quizId);
+    quizzes.value = data;
+    console.log('서버에서 가져온 quiz value : ', quizzes.value);
+    // hasImage가 true이면 이미지를 가져옴
+    if (quizzes.value.hasImage) {
+      await fetchImage(); // 이미지 로드 함수 호출
+    }
   } catch (error) {
     console.error('퀴즈 데이터를 불러오는데 실패했습니다.', error);
   }
 };
-// 생성일 포맷팅.
-const formatDate = dateString => {
-  return date.formatDate(dateString, 'YYYY-MM-DD HH:mm:ss');
+// 서버에서 이미지 가져오기
+const fetchImage = async () => {
+  try {
+    const base64String = await fetchQuizImage(quizId);
+    imageUrl.value = `data:image/png;base64,${base64String}`;
+  } catch (error) {
+    console.error('이미지 데이터를 불러오는 데 실패했습니다.', error);
+  }
 };
 
-onMounted(() => {
-  fetchQuizzes();
+onMounted(async () => {
+  await fetchQuizzes();
 });
 
 //JSON 파싱.
@@ -137,9 +158,10 @@ const isApprove = ref(false);
 
 <style scoped>
 .my-card {
-  max-width: 400px;
+  max-width: 600px;
   margin: auto;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 더 강화 */
+  border-radius: 12px; /* 카드 테두리 둥글게 */
 }
 
 .text-orange {
@@ -147,22 +169,24 @@ const isApprove = ref(false);
 }
 
 .text-createAt {
-  font-size: 0.75rem; /* 작은 글씨 */
+  font-size: 0.8rem; /* 약간 큰 작은 글씨 */
   color: #888888; /* 회색 */
 }
 
 .my-btn {
-  border-radius: 10px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-  padding: 8px 16px;
-  width: 90%;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 14px 24px; /* 버튼 패딩을 키워서 버튼 크기를 늘림 */
+  font-size: 1.1rem; /* 버튼 글자 크기를 키움 */
+  width: auto;
 }
 
-.buttons-container {
-  justify-content: center;
-}
-
-.buttons-container .q-btn {
-  margin: 01% 0; /* 버튼 사이 간격 조정 */
+.button-container {
+  display: flex;
+  flex-direction: row; /* 버튼을 수평으로 정렬 */
+  justify-content: center; /* 버튼을 가운데 정렬 */
+  gap: 100px; /* 버튼 사이 간격 */
+  padding: 0 32px; /* 양옆 마진을 카드와 동일하게 */
+  margin-bottom: 20px;
 }
 </style>

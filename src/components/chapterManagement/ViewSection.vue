@@ -2,33 +2,41 @@
   <q-card class="custom-card">
     <q-card-section class="q-pa-none">
       <div class="flex-container">
-        <!-- 대분류 선택 리스트 -->
+        <!-- 과목 선택 리스트 -->
         <div class="list-container">
           <q-item-label class="list-title">과목</q-item-label>
           <q-list bordered class="custom-list">
             <q-item
-              v-for="option in subjectOptions"
-              :key="option.value"
+              v-for="subject in subjectOptions"
+              :key="subject.subject"
               clickable
-              :class="{ 'active-item': subject === option }"
-              @click="selectSubject(option)"
+              :class="{ 'active-item': selectedSubject === subject.subject }"
+              @click="selectSubject(subject.subject)"
             >
-              <q-item-section>{{ option }}</q-item-section>
+              <q-item-section>{{ subject.subject }}</q-item-section>
             </q-item>
           </q-list>
         </div>
 
-        <!-- 소분류 선택 리스트 -->
+        <!-- 챕터 선택 리스트 -->
         <div class="list-container">
           <q-item-label class="list-title">챕터</q-item-label>
           <q-list bordered class="custom-list">
+            <!-- 챕터가 없을 때 -->
             <q-item
-              v-for="option in filteredDetailSubjectOptions.slice().reverse()"
-              :key="option.value"
-              clickable
-              @click="selectDetailSubject(option)"
+              v-if="chapterOptions.length === 0"
+              class="text-center q-mt-md text-grey"
             >
-              <q-item-section>{{ option }}</q-item-section>
+              <q-item-section>챕터가 없습니다.</q-item-section>
+            </q-item>
+            <!-- 챕터가 있을 때 -->
+            <q-item
+              v-for="chapter in chapterOptions"
+              :key="chapter"
+              clickable
+              v-else
+            >
+              <q-item-section>{{ chapter }}</q-item-section>
             </q-item>
           </q-list>
         </div>
@@ -38,89 +46,66 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { api } from 'src/boot/axios';
-import useCategories from 'src/services/useCategories.js';
+import { onMounted } from 'vue';
+import { useCategorie } from 'src/services/quiz/admin/useCategorie.js';
 
-// 카테고리 조회 기능
-const subject = ref('');
-const detailSubject = ref('');
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
-const filteredDetailSubjectOptions = ref([]);
+// 서비스 불러오기
+const {
+  subjectOptions,
+  selectedSubject,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+} = useCategorie();
 
-const updateDetailSubjectOptions = () => {
-  const detailSubjects = getDetailSubjectsBySubject(subject.value);
-  if (detailSubjects.length === 0) {
-
-    filteredDetailSubjectOptions.value = ['챕터가 없습니다.'];
-
-  } else {
-    filteredDetailSubjectOptions.value = detailSubjects;
-  }
-};
-
-const selectSubject = value => {
-  subject.value = value;
-  detailSubject.value = ''; // 선택 시 소분류 초기화
-  updateDetailSubjectOptions(); // 소분류 옵션 업데이트
-};
-
-const selectDetailSubject = value => {
-  detailSubject.value = value;
-};
-
-watch(subject, () => {
-  detailSubject.value = '';
-  updateDetailSubjectOptions();
+// 컴포넌트 마운트 시 전체 과목 목록 조회
+onMounted(() => {
+  fetchSubjects();
 });
-
-onMounted(fetchCategories);
 </script>
 
 <style scoped>
 .custom-card {
-  max-width: 800px; /* 카드의 최대 너비를 설정 */
-  margin: auto; /* 카드의 좌우 여백을 자동으로 설정하여 중앙 정렬 */
-  border-radius: 8px; /* 카드 모서리의 둥글기를 설정 */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 카드에 그림자 효과 추가 */
-  background: #f9f9f9; /* 카드 배경 색상 설정 (연한 회색) */
+  max-width: 800px;
+  margin: auto;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  background: #f9f9f9;
 }
 
 .flex-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px; /* 리스트 간의 간격을 설정 */
+  gap: 20px;
 }
 
 .list-container {
   flex: 1;
-  padding: 10px; /* 리스트 컨테이너의 내부 여백 설정 */
-  border-radius: 8px; /* 컨테이너 모서리의 둥글기를 설정 */
-  background: #ffffff; /* 컨테이너 배경 색상 설정 (흰색) */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 컨테이너에 그림자 효과 추가 */
+  padding: 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .list-title {
   font-weight: bold;
-  margin-bottom: 8px; /* 리스트 제목과 항목 간의 간격 설정 */
+  margin-bottom: 8px;
 }
 
 .custom-list {
-  border: none; /* 리스트의 테두리 제거 */
+  border: none;
 }
 
 .list-item {
-  transition: background-color 0.3s ease; /* 배경색 변화 애니메이션 추가 */
+  transition: background-color 0.3s ease;
 }
 
 .list-item:hover {
-  background-color: #e0e0e0; /* 마우스를 올렸을 때 배경색 변경 */
+  background-color: #e0e0e0;
 }
 
-/* 추가된 active-item 클래스 스타일 */
 .active-item {
-  background-color: #c6daee; /* 선택된 항목의 배경색 변경 */
-  font-weight: bold; /* 선택된 항목의 글자 두께를 굵게 설정 */
+  background-color: #c6daee;
+  font-weight: bold;
 }
 </style>

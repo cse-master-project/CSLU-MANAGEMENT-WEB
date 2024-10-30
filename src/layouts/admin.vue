@@ -163,7 +163,7 @@
 
     <!-- Footer -->
     <q-footer class="footer">
-      <footerbar>CSLU © 2024 . All Rights Reserved.</footerbar>
+      <div>CSLU © 2024 . All Rights Reserved.</div>
     </q-footer>
 
     <!-- AdminLogout 모달 표시 -->
@@ -254,7 +254,7 @@ const drawerLeft = ref(false);
 }
 
 .page-container {
-  max-width: 1080px;
+  width: 80%;
   margin: 20px auto;
   padding: 20px;
   flex: 1;
@@ -289,6 +289,18 @@ const drawerLeft = ref(false);
 @media (min-width: 1101px) {
   .menu {
     display: none;
+  }
+}
+@media (min-width: 1980px) {
+  .title {
+    font-size: 1.8rem;
+  }
+  .toolbar-items {
+    font-size: 1.7rem;
+  }
+  .logout {
+    font-size: 1.5rem;
+    padding: 10px 20px;
   }
 }
 </style>

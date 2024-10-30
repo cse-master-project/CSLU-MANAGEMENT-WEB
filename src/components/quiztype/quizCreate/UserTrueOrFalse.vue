@@ -1,29 +1,51 @@
 <template>
   <q-form class="form-container">
     <div class="title-container">
-      <q-title class="title">o/x형</q-title>
+      <q-toolbar-title class="title"
+        >o/x형
+        <div class="guidecontainer">
+          <img src="/guide.png" alt="guide" style="width: 40px; height: auto" />
+          <q-tooltip
+            style="
+              font-size: 1rem;
+              width: 500px;
+              background: #ebf0f1;
+              color: black;
+            "
+            >문제 작성 가이드:<br />
+            1. <span class="span">*챕터</span>와
+            <span class="span">*과목</span>을 선택하세요.<br />
+            2. <span class="span">*문제</span>를 입력하세요.<br />
+            3. O 또는 X 중에서 <span class="span">*정답</span>을 선택하세요.<br />
+
+            4.<span class="span">*해설</span>을 입력한 후, "문제 등록" 버튼을
+            클릭하세요.<br />
+            5. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
+            첨부 가능합니다.</q-tooltip
+          >
+        </div></q-toolbar-title
+      >
     </div>
     <div>
       <q-card>
         <!-- 과목과 챕터 선택 -->
         <q-card-section class="select-container">
           <div class="select-subject">
-            <q-label class="label-subject">과목선택</q-label>
+            <q-label class="label-subject">과목 선택</q-label>
             <q-select
               class="select-box"
               v-model="subject"
-              :options="subjectOptions"
+              :options="subjectOptions.map(s => s.subject)"
               outlined
               dense
-              @update:model-value="updateDetailSubjectOptions"
             />
           </div>
           <div class="select-chapter">
-            <q-label class="label-chapter">챕터선택</q-label>
+            <q-label class="label-chapter">챕터 선택</q-label>
             <q-select
               class="select-box"
               v-model="chapter"
-              :options="filteredDetailSubjectOptions.slice().reverse()"
+              :options="chapterOptions"
               outlined
               dense
             />
@@ -35,20 +57,22 @@
           <div>
             <label for="file">
               <div class="upload-button">
-                <img src="/add-image.png" alt="Upload Image" />
+                <img src="/addimg.png" alt="Upload Image" />
               </div>
             </label>
             <input type="file" id="file" @change="fileInputHandler" />
           </div>
           <div v-if="filePreview" class="previewImage-container">
             <img :src="filePreview" alt="File Preview" class="preview-image" />
-            <div class="cancel-button" @click="cancelFile">X</div>
+            <div class="cancel-button" @click="cancelFile">
+              <q-icon name="close" />
+            </div>
           </div>
         </q-card-section>
 
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <q-label class="label-quiz">질문</q-label>
+          <label class="label-quiz">문제</label>
           <q-input
             v-model="quiz"
             type="textarea"
@@ -56,7 +80,7 @@
             outlined
             dense
             placeholder="문제를 입력하세요"
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-quiz"
           />
@@ -73,7 +97,7 @@
 
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
-          <q-label class="label-quiz">해설 </q-label>
+          <label class="label-quiz">해설 </label>
           <q-input
             v-model="commentary"
             type="textarea"
@@ -81,7 +105,7 @@
             outlined
             placeholder="해설을 입력하세요"
             dense
-            maxlength="300"
+            maxlength="400"
             counter
             class="input-commentary"
         /></q-card-section>
@@ -92,31 +116,31 @@
       </q-card>
     </div>
   </q-form>
-  <!-- 문제 생성 성공 컴포넌트 -->
-  <UserSubmitQuizSuccess
-    v-if="submitQuizSuccess"
-    :submit-quiz-success="submitQuizSuccess"
-    :quiz-id="quizId"
-  />
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   submitQuiz,
   submitQuizImage,
-  deleteQuiz,
-} from 'src/services/quiz/userQuiz.js';
-import UserSubmitQuizSuccess from 'src/components/quiz/UserSubmitQuizSuccess.vue';
-import userUseCategories from 'src/services/userUseCategories.js';
+  submitQuizImageTemp,
+} from 'src/services/quiz/user/userQuiz.js';
+import { useCategorieUser } from 'src/services/quiz/user/useCategorieUser.js';
+import {
+  quizSuccessNotification,
+  quizErrorNotification,
+  errorNotification,
+} from 'src/services/quiz/notifications.js';
+
 // 반응형 데이터
+const subject = ref('과목을 선택 해주세요.');
+const chapter = ref('챕터를 선택 해주세요.');
+const quiz = ref('');
 const options = [
   { label: 'O', value: 1 },
   { label: 'X', value: 0 },
 ];
-const subject = ref('과목을 선택 해주세요.');
-const chapter = ref('챕터를 선택 해주세요.');
-const quiz = ref('');
 const selectedAnswer = ref(null);
 const commentary = ref('');
 
@@ -129,20 +153,23 @@ const goBack = () => {
 //이미지 업로드 로직
 const fileName = ref('');
 const filePreview = ref(null); // 이미지 미리보기 URL
+//이미지 업로드 로직
 const fileInputHandler = event => {
   const files = event.target && event.target.files;
   if (files && files[0]) {
     fileName.value = files[0].name;
-    // 파일 타입이 이미지인지 확인
-    if (files[0].type.startsWith('image/')) {
+    const fileType = files[0].type;
+    // 파일 타입이 JPG 또는 JPEG 인지 확인
+    if (fileType === 'image/jpeg') {
       const reader = new FileReader();
       reader.onload = e => {
         filePreview.value = e.target.result;
       };
       reader.readAsDataURL(files[0]);
     } else {
-      alert('이미지 파일만 선택할 수 있습니다.');
+      alert('JPG 파일만 선택할 수 있습니다.');
       filePreview.value = null; // 파일 미리보기 초기화
+      document.getElementById('file').value = ''; // 파일 입력 초기화
     }
   }
 };
@@ -154,39 +181,31 @@ const cancelFile = () => {
 };
 
 // 과목, 챕터 불러오기 로직
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  userUseCategories();
-
-onMounted(fetchCategories);
-
-// 과목 선택에 따라 챕터 옵션을 업데이트하는 함수
-const filteredDetailSubjectOptions = ref([]);
-const updateDetailSubjectOptions = () => {
-  const detailSubjects = getDetailSubjectsBySubject(subject.value);
-  if (detailSubjects.length === 0) {
-    filteredDetailSubjectOptions.value = ['공백'];
-  } else {
-    filteredDetailSubjectOptions.value = detailSubjects;
+const {
+  subjectOptions,
+  chapterOptions,
+  fetchSubjects,
+  selectSubject,
+  fetchChapters,
+} = useCategorieUser();
+onMounted(fetchSubjects);
+watch(subject, newSubject => {
+  if (newSubject) {
+    selectSubject(newSubject);
+    chapter.value = '챕터를 선택 해주세요.';
   }
-};
-watch(subject, () => {
-  // 과목이 변경될 때마다 챕터 선택 초기화
-  chapter.value = '챕터를 선택 해주세요.';
-  updateDetailSubjectOptions();
 });
-
-// 서버 전송 여부
-const submitQuizSuccess = ref(false);
 
 // 서버에서 받아온 퀴즈 아이디
 const quizId = ref('');
+
+const router = useRouter();
 
 // 서버에 문제 제출
 const submitQuizForm = async () => {
   //입력값 검증
   let hasError = false;
   let errorMessage = '';
-
   if (subject.value === '과목을 선택 해주세요.') {
     errorMessage = '과목을 선택해 주세요.';
     hasError = true;
@@ -203,40 +222,63 @@ const submitQuizForm = async () => {
     errorMessage = '해설을 입력해 주세요.';
     hasError = true;
   }
-
   if (hasError) {
     alert(errorMessage);
     return; // 오류가 있을 경우 제출을 중단합니다.
   }
-
-  //서버에 보낼 퀴즈 데이터
-  const quizData = {
-    subject: subject.value,
-    chapter: chapter.value,
-    quizType: '4',
-    jsonContent: JSON.stringify({
-      quiz: quiz.value,
-      answer: selectedAnswer.value,
-      commentary: commentary.value,
-    }),
-    hasImage: !!filePreview.value,
-  };
-  // console.log('서버에 제출될 데이터:', quizData);
+  const confirmation = confirm('문제를 등록하시겠습니까? ');
+  if (!confirmation) {
+    return;
+  }
   try {
-    // 문제 데이터 서버에 제출후 반환된 퀴즈 ID 저장.
-    quizId.value = await submitQuiz(quizData);
+    //서버에 보낼 퀴즈 데이터
+    const quizData = {
+      subject: subject.value,
+      chapter: chapter.value,
+      quizType: '4',
+      jsonContent: JSON.stringify({
+        quiz: quiz.value,
+        answer: selectedAnswer.value,
+        commentary: commentary.value,
+      }),
+      hasImage: !!filePreview.value,
+    };
+    // console.log('서버에 제출될 데이터:', quizData);
+    try {
+      // 이미지가 있는 경우
+      if (filePreview.value) {
+        // 이미지 임시로 제출
+        const uuid = await submitQuizImageTemp(filePreview.value);
+        // 이미지 오류 처리
+        if (!uuid) {
+          throw new Error('이미지 업로드에 실패했습니다.');
+        }
 
-    // 이미지가 있다면 이미지 서버에 제출
-    if (filePreview.value) {
-      await submitQuizImage(quizId.value, filePreview.value);
+        quizId.value = await submitQuiz(quizData);
+        // console.log(quizId.value);
+
+        // 이미지 진짜 제출
+        await submitQuizImage(quizId.value, uuid);
+
+        // 성공
+        quizSuccessNotification();
+        router.push(`/userQuizzes/${quizId.value}`);
+      } else {
+        // 이미지 없을 시 바로 제출
+        quizId.value = await submitQuiz(quizData);
+        // 성공
+        quizSuccessNotification();
+        router.push(`/userQuizzes/${quizId.value}`);
+      }
+    } catch (error) {
+      if (error.response?.status === 400) {
+        quizErrorNotification();
+      } else {
+        errorNotification();
+      }
     }
-
-    submitQuizSuccess.value = true; // 퀴즈 제출 성공
   } catch (error) {
-    if (error.response?.status === 400) {
-      alert('오류가 발생했습니다. 다시 시도해주세요.');
-      await deleteQuiz(quizId.value); // 퀴즈 삭제 처리
-    }
+    errorNotification();
   }
 };
 </script>
@@ -263,6 +305,23 @@ const submitQuizForm = async () => {
 .title {
   font-size: 2rem;
   color: #0080ff;
+} //가이드 스타일
+.guidecontainer {
+  display: flex;
+  justify-content: space-evenly; /* 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 60px;
+  height: 60px;
+  background-color: #ebf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: 0 1%;
+}
+.span {
+  color: red;
 }
 
 // 과목 챕터 선택 스타일
@@ -277,13 +336,11 @@ const submitQuizForm = async () => {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-right: 10px;
 }
 .select-chapter {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-left: 10px;
 }
 .label-subject,
 .label-chapter {
@@ -293,7 +350,7 @@ const submitQuizForm = async () => {
   font-weight: bold;
 }
 .select-box {
-  max-width: 400px;
+  width: 220px;
 }
 
 //이미지 업로드 스타일
@@ -354,8 +411,12 @@ input[type='file'] {
   color: white;
   font-size: 1.5rem;
   text-align: center;
-  cursor: pointer;
+  line-height: 50px;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 // 문제 입력 스타일
@@ -421,5 +482,15 @@ input[type='file'] {
   height: 40px;
   font-family: 'Toss Product Sans';
   box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
+}
+@media (max-width: 430px) {
+  .select-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .title-container {
+    margin-left: 5%;
+  }
 }
 </style>

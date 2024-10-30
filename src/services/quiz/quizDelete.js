@@ -5,7 +5,7 @@ const deleteQuizSuccess = ref(false);
 
 const quizDelete = async currentQuiz => {
   try {
-    await api.delete(`/api/management/quiz/${currentQuiz.quizId}`);
+    await api.delete(`/api/v2/quiz/${currentQuiz.quizId}`);
     deleteQuizSuccess.value = true; // 폐기 성공 시 표시할 다이얼로그
   } catch (error) {
     alert('문제 폐기 중 예상치 못한 오류가 발생했습니다.');

@@ -1,9 +1,9 @@
 <template>
   <q-card class="custom-card">
     <q-card-section class="card-section">
-      <q-p class="section-title">과목 추가</q-p>
+      <p class="section-title">과목 추가</p>
       <q-input
-        v-model="addSubject"
+        v-model="subject"
         type="textarea"
         autogrow
         outlined
@@ -14,81 +14,67 @@
       <q-btn @click="submitSubject" class="submit-btn">과목 추가</q-btn>
     </q-card-section>
     <q-card-section class="card-section">
-      <q-p class="section-title">챕터 추가</q-p>
+      <p class="section-title">챕터 추가</p>
       <q-select
         v-model="atSubject"
-        :options="subjectOptions"
+        :options="subjectOptions.map(s => s.subject)"
         label="과목"
         outlined
         class="q-mb-md select-box"
       />
       <q-input
-        v-model="addDetailSubject"
+        v-model="chapter"
         type="textarea"
         autogrow
         outlined
         placeholder="챕터를 입력해주세요."
         class="textbox"
-        @keypress.enter.prevent="submitDetailSubject"
+        @keypress.enter.prevent="submitChapter"
       />
-      <q-btn @click="submitDetailSubject" class="submit-btn">챕터 추가</q-btn>
+      <q-btn @click="submitChapter" class="submit-btn">챕터 추가</q-btn>
     </q-card-section>
   </q-card>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { api } from 'src/boot/axios';
-import useCategories from 'src/services/useCategories.js';
+import {
+  useCategorie,
+  useCategorieAdd,
+} from 'src/services/quiz/admin/useCategorie.js';
 
-// 카테고리 조회 기능
-const { subjectOptions, fetchCategories, getDetailSubjectsBySubject } =
-  useCategories();
 const atSubject = ref('');
-const addSubject = ref('');
-const addDetailSubject = ref('');
+const subject = ref('');
+const chapter = ref('');
 
-// 대분류 선택에 따라 소분류 옵션을 업데이트하는 함수
-const updateDetailSubjectOptions = () => {
-  filteredDetailSubjectOptions.value = getDetailSubjectsBySubject(
-    atSubject.value,
-  );
-};
+// 서비스 불러오기
+const { subjectOptions, fetchSubjects } = useCategorie();
+const { addSubject, addChapter } = useCategorieAdd();
 
 // 과목 추가 기능
 const submitSubject = async () => {
-  const subjectData = {
-    subject: addSubject.value,
-  };
-  try {
-    await api.post('api/quiz/subject', subjectData);
-    // 삭제 성공 시 로직
-    addSubject.value = ''; // 입력 필드 초기화
+  const response = await addSubject(subject.value);
+  if (response.success) {
     alert('과목이 추가되었습니다.');
-  } catch (error) {
-    console.error('에러 :', error);
-    alert('과목 추가 중 예상치 못한 오류가 발생했습니다.');
+    subject.value = ''; // 입력 필드 초기화
+    fetchSubjects(); // 과목 목록 갱신
+  } else {
+    alert('과목 추가 중 오류가 발생했습니다.');
   }
 };
 
 // 챕터 추가 기능
-const submitDetailSubject = async () => {
-  const detailSubjectData = {
-    subject: atSubject.value,
-    detailSubject: addDetailSubject.value,
-    sortIndex: 0,
-  };
-  try {
-    await api.post('api/quiz/subject/detail', detailSubjectData);
-    addDetailSubject.value = ''; // 입력 필드 초기화
+const submitChapter = async () => {
+  const response = await addChapter(atSubject.value, chapter.value);
+  if (response.success) {
+    chapter.value = ''; // 입력 필드 초기화
     alert('챕터가 추가되었습니다.');
-  } catch (error) {
-    console.error('에러 :', error);
-    alert('챕터 추가 중 예상치 못한 오류가 발생했습니다.');
+  } else {
+    alert('챕터 추가 중 오류가 발생했습니다.');
   }
 };
 
-onMounted(fetchCategories);
+onMounted(fetchSubjects);
 </script>
 
 <style scoped>

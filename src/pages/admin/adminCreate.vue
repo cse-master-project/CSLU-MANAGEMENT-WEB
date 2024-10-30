@@ -49,4 +49,9 @@ const quizTypeCreateForm = {
     height: 130vh;
   }
 }
+@media (max-width: 376px) {
+  .q-page {
+    height: 170vh;
+  }
+}
 </style>

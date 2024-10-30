@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="visible">
+  <q-dialog v-model="visible" @hide="handleHide">
     <q-card>
       <q-card-section>
         <div class="text-h6">성공</div>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const props = defineProps({
@@ -32,6 +32,18 @@ const confirm = () => {
   emit('update:submitQuizSuccess', false);
   router.push(`/userQuizzes/${props.quizId}`); // 성공 후 퀴즈 상세 페이지로 이동
 };
+
+// 다이얼로그가 닫힐 때 호출되는 함수
+const handleHide = () => {
+  router.push(`/userQuizzes/${props.quizId}`); // 다이얼로그가 닫힐 때 페이지 이동
+};
+
+// 다이얼로그의 가시성 변화를 감시
+watch(visible, newVisible => {
+  if (!newVisible) {
+    handleHide();
+  }
+});
 </script>
 
 <style scoped></style>

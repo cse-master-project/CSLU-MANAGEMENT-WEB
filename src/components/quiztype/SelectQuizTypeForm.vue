@@ -1,7 +1,7 @@
 <template>
   <q-page class="page">
     <div class="center-container">
-      <q-title class="title">문제 유형 선택</q-title>
+      <div class="title">문제 유형 선택</div>
       <q-card class="text-center" flat>
         <!--사진 + 텍스트 조합-->
         <div class="quiztype-container">
@@ -168,7 +168,7 @@ const emitQuizType = () => {
 }
 @media (max-width: 430px) {
   .page {
-    height: 130vh;
+    height: 140vh;
   }
 }
 </style>
