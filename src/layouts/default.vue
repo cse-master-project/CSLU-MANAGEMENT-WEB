@@ -396,8 +396,7 @@ const drawerLeft = ref(false);
     display: block;
   }
 
-  .toolbar-items,
-  .loginbtn {
+  .toolbar-items {
     display: none;
   }
 }
