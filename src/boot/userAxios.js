@@ -57,7 +57,11 @@ userApi.interceptors.response.use(
       } catch (e) {
         // 갱신 실패 시 로그아웃 처리
         userStore.logout();
-        // 추가적으로 로그인 페이지로 리다이렉트 등의 처리 필요
+        router.push('/home');
+        Notify.create({
+          message: '세션이 만료되었습니다. 다시 로그인해주세요.',
+          color: 'warning',
+        });
         console.error('토큰 갱신 실패:', e);
       }
     }
