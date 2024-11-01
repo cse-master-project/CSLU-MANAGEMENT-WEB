@@ -39,7 +39,6 @@
               :options="subjectOptions.map(s => s.subject)"
               outlined
               dense
-              style="width: 200px"
             />
           </div>
           <div class="select-chapter">

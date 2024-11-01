@@ -20,7 +20,7 @@
           <q-card-section class="q-pt-none">
             <div v-if="section.image" class="content-wrapper">
               <!--첫번째 섹션-->
-              <div v-if="sectionIndex === 0">
+              <div v-if="sectionIndex === 0" class="first-section">
                 <q-carousel
                   v-model="currentImageIndex"
                   animated
@@ -208,7 +208,6 @@ const nextImage = () => {
   flex-direction: row;
   align-items: center;
   width: 850px;
-
   justify-content: space-between;
 }
 .screenimage {
@@ -287,5 +286,25 @@ const nextImage = () => {
 
 .image {
   width: 100%;
+}
+@media (max-width: 500px) {
+  .slides {
+    width: 100%;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  .section-content {
+    font-size: 1.5rem;
+  }
+  .first-section {
+    width: 100%;
+  }
+  .screenimage {
+    width: 100%;
+    height: auto;
+  }
+  .image-text {
+    font-size: 2rem;
+  }
 }
 </style>

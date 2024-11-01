@@ -8,23 +8,20 @@
     "
   >
     <div ref="backgroundSlider" class="background-slider">
-      <div
-        class="row justify-center q-col-gutter-md"
-        style="width: 1280px; height: 100vh; display: flex; align-items: center"
-      >
+      <div class="row justify-center q-col-gutter-md slide">
         <div class="col-12 col-md-8">
           <q-card flat class="q-pa-md text-left transparent-card">
             <q-card-section>
-              <div class="text-h4" style="font-weight: bold">
+              <div class="home-title" style="font-weight: bold">
                 경상국립대 컴공 신입생의 첫걸음
                 <p style="color: blue">Computer Science Level Up</p>
               </div>
-              <div class="text-subtitle1" style="margin: 3% 0">
+              <div class="home-subtitle">
                 CSLU는 경상국립대 컴공 신입생을 위한 애플리케이션입니다.
               </div>
             </q-card-section>
             <q-separator />
-            <q-card-section class="q-pt-none" style="margin: 3% 0">
+            <q-card-section class="home-text">
               <p style="line-height: 1.7">
                 CSLU는 컴퓨터 공학 신입생을 위한 문제 제작 및 풀이 서비스를
                 제공합니다. <br />우리의 기술과 도구로 학습의 모든 가능성을
@@ -33,13 +30,15 @@
                 지원합니다.
               </p>
             </q-card-section>
-            <q-btn class="gp">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
-                alt="Google Play Logo"
-              />
-              Google Play
-            </q-btn>
+            <q-card-section>
+              <q-btn class="gp">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
+                  alt="Google Play Logo"
+                />
+                Google Play
+              </q-btn>
+            </q-card-section>
           </q-card>
         </div>
       </div>
@@ -68,7 +67,7 @@ const changeBackgroundImage = () => {
 
 onMounted(() => {
   changeBackgroundImage();
-  setInterval(changeBackgroundImage, 5000); // 5초마다 이미지 변경
+  setInterval(changeBackgroundImage, 5000);
 });
 </script>
 
@@ -83,34 +82,38 @@ onMounted(() => {
   background-position: center;
   transition: background-image 1s ease-in-out;
 }
-
+.slide {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
 .transparent-card {
   background: transparent;
   color: white;
 }
 
-.text-h4 {
+.home-title {
   color: white;
+  font-size: 1.8rem;
 }
 
-.text-subtitle1 {
-  font-size: 20px;
+.home-subtitle {
+  font-size: 1.6rem;
   color: white;
+  margin: 3% 0;
 }
 
-.q-pt-none {
+.home-text {
   font-size: 16px;
   padding: 16px 16px;
   color: white;
+  margin: 3% 0;
 }
 
 .full-width {
   width: 100%;
   height: auto;
-}
-
-.down {
-  display: flex;
 }
 
 .img-wrapper {
@@ -150,6 +153,24 @@ img {
 @media (max-width: 768px) {
   .q-card {
     margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 500px) {
+  .home-title {
+    font-size: 1.45rem;
+    line-height: 1.4;
+  }
+
+  .home-subtitle {
+    font-size: 1.4rem;
+    margin: 2% 0;
+  }
+
+  .home-text {
+    font-size: 1rem;
+    padding: 16px 16px;
+    margin: 2% 0;
   }
 }
 </style>

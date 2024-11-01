@@ -231,4 +231,9 @@ const deactivate = async () => {
 .q-card-section {
   margin-bottom: 15px;
 }
+@media (max-width: 500px) {
+  .profile-card {
+    margin: 3% 3%;
+  }
+}
 </style>

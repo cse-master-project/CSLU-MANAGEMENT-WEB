@@ -21,7 +21,7 @@
             선택하세요.<br />
             5.<span class="span">*해설</span>을 입력한 후, "문제 등록" 버튼을
             클릭하세요.<br />
-            5. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
+            6. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
             첨부 가능합니다.</q-tooltip
           >
         </div></q-toolbar-title
