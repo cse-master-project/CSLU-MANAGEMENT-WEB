@@ -41,7 +41,9 @@
           </div>
           <div v-if="filePreview" class="previewImage-container">
             <img :src="filePreview" alt="File Preview" class="preview-image" />
-            <div class="cancel-button" @click="cancelFile">X</div>
+            <div class="cancel-button" @click="cancelFile">
+              <q-icon name="close" />
+            </div>
           </div>
         </q-card-section>
 
@@ -536,6 +538,10 @@ input[type='file'] {
   text-align: center;
   line-height: 50px;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 // 문제 입력 스타일

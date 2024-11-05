@@ -2,10 +2,10 @@ import { defineStore } from 'pinia';
 
 export const userFilterStore = defineStore('filters', {
   state: () => ({
-    subject: '선택해주세요.',
-    detailSubject: '선택해주세요.',
-    quizType: '선택해주세요.',
-    PermissionStatus: '선택해주세요',
+    subject: '',
+    detailSubject: '',
+    quizType: '',
+    PermissionStatus: '',
   }),
   actions: {
     setSubject(subject) {

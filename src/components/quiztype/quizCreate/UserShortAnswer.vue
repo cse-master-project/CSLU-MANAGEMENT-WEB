@@ -39,7 +39,6 @@
               :options="subjectOptions.map(s => s.subject)"
               outlined
               dense
-              style="width: 200px"
             />
           </div>
           <div class="select-chapter">
@@ -50,7 +49,6 @@
               :options="chapterOptions"
               outlined
               dense
-              style="width: 200px"
             />
           </div>
         </q-card-section>
@@ -66,7 +64,9 @@
           </div>
           <div v-if="filePreview" class="previewImage-container">
             <img :src="filePreview" alt="File Preview" class="preview-image" />
-            <div class="cancel-button" @click="cancelFile">X</div>
+            <div class="cancel-button" @click="cancelFile">
+              <q-icon name="close" />
+            </div>
           </div>
         </q-card-section>
         <!-- 문제 입력 -->
@@ -367,13 +367,11 @@ const submitQuizForm = async () => {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-right: 10px;
 }
 .select-chapter {
   display: flex;
   justify-content: center; /* 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  margin-left: 10px;
 }
 .label-subject,
 .label-chapter {
@@ -383,7 +381,7 @@ const submitQuizForm = async () => {
   font-weight: bold;
 }
 .select-box {
-  max-width: 400px;
+  width: 220px;
 }
 
 //이미지 업로드 스타일
@@ -443,8 +441,12 @@ input[type='file'] {
   color: white;
   font-size: 1.5rem;
   text-align: center;
-  cursor: pointer;
+  line-height: 50px;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 // 문제 입력 스타일
@@ -525,5 +527,20 @@ input[type='file'] {
   height: 40px;
   font-family: 'Toss Product Sans';
   box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
+}
+@media (max-width: 700px) {
+  .select-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .form-container {
+    padding: 10px 10px;
+  }
+}
+@media (max-width: 1100px) {
+  .form-container {
+    margin: 0 3%;
+  }
 }
 </style>

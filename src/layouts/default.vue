@@ -165,10 +165,11 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container :style="pageContainerStyles">
+    <q-page-container :style="pageContainerStyles" class="page-container">
       <router-view v-if="!selectedQuizType" />
       <component v-else :is="getQuizComponent(selectedQuizType)" />
     </q-page-container>
+
     <!-- 바닥 -->
     <q-footer class="q-footer footer-bar">
       <div class="footer-content">
@@ -178,6 +179,7 @@
         </q-btn>
       </div>
     </q-footer>
+
     <UserLoginGoogle
       v-if="isLogin"
       :is-login="isLogin"
@@ -211,6 +213,7 @@ const router = useRouter();
 const pageContainerStyles = computed(() => ({
   maxWidth: route.meta?.width || '1280px',
   margin: '0 auto',
+  minHeight: 'calc(100vh - 100px)', // 헤더와 푸터를 제외한 높이 설정
 }));
 
 // 로그인 다이얼로그 상태
@@ -286,6 +289,11 @@ const drawerLeft = ref(false);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: absolute;
+  bottom: 0;
+}
+.page-container {
+  flex: 1;
 }
 .toolbar {
   font-family: 'Toss Product Sans';
@@ -319,8 +327,8 @@ const drawerLeft = ref(false);
   margin: 0 auto; /* 항목 간 간격 추가 */
   transition: color 0.3s ease;
 }
-.toolbar-item.active::after,
-.toolbar-item:hover::after {
+.toolbar-items.active::after,
+.toolbar-items:hover::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -331,7 +339,7 @@ const drawerLeft = ref(false);
   transform: scaleX(1);
   transition: transform 0.3s ease;
 }
-.toolbar-item::after {
+.toolbar-items::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -386,8 +394,8 @@ const drawerLeft = ref(false);
   .toolbar {
     font-family: 'Toss Product Sans';
     width: 100%;
-    justify-content: space-between;
   }
+
   .side-menu {
     display: block;
   }
@@ -398,52 +406,17 @@ const drawerLeft = ref(false);
   }
 }
 @media (min-width: 1200px) {
+  .toolbar {
+    font-family: 'Toss Product Sans';
+  }
   .side-menu {
     display: none;
   }
 }
-
-/* Dynamic styles based on login status */
 .toolbar-item.loggedIn {
   margin: 0 10px; /* Margin when logged in */
 }
 .toolbar-items.loggedIn {
   margin: 0 10px; /* Margin when logged in */
-}
-
-/* 바닥 */
-.footer-bar {
-  background-color: #ffffff; /* 어두운 배경색 */
-  color: #000000; /* 밝은 텍스트 색상 */
-  padding: 16px; /* 상하좌우 여백 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px; /* 푸터의 최대 너비 설정 */
-  padding: 0 16px;
-}
-
-footerbar {
-  font-size: 14px; /* 텍스트 크기 */
-}
-
-.footer-btn {
-  color: #2c3e50; /* 버튼 텍스트 색상 */
-  border: 1px solid #ffffff; /* 버튼 테두리 */
-  border-radius: 8px; /* 버튼 모서리 둥글게 */
-  padding: 4px 12px; /* 버튼 내부 여백 */
-  transition: background-color 0.3s ease; /* 배경색 변화 애니메이션 */
-}
-
-.footer-btn:hover {
-  background-color: #3498db; /* 버튼 호버 시 배경색 */
-  color: #000000;
 }
 </style>

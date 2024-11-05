@@ -44,9 +44,11 @@ const quizTypeCreateForm = {
 };
 </script>
 <style>
-@media (max-width: 500px) {
+@media (max-width: 700px) {
   .q-page {
-    height: 130vh;
+    height: 140vh;
+    width: 100%;
+    margin: 0 auto;
   }
 }
 </style>

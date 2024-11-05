@@ -3,7 +3,7 @@
     <!-- Filters card -->
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-3 q-my-md bold-text">
+        <div class="col-12 col-md-4 q-my-md bold-text">
           과목
           <q-select
             v-model="subject"
@@ -13,7 +13,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md bold-text">
+        <div class="col-12 col-md-4 q-my-md bold-text">
           챕터
           <q-select
             v-model="chapter"
@@ -23,7 +23,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md bold-text">
+        <div class="col-12 col-md-4 q-my-md bold-text">
           문제유형
           <q-select
             v-model="quizType"
@@ -83,7 +83,7 @@
         class="q-my-md"
       >
         <q-card
-          class="my-card bg-white q-mb-md"
+          class="my-card"
           clickable
           v-ripple
           @click="goToQuizDetail(quiz.quizId)"
@@ -198,11 +198,9 @@ const fetchQuizzes = async () => {
 const filterQuizzes = () => {
   filteredQuizzes.value = quizzes.value.filter(quiz => {
     const subjectMatch = !subject.value || quiz.subject === subject.value;
-    const chapterMatch = !chapter.value || quiz.chapter === chapter.value;
-    const quizTypeMatch =
-      !quizType.value || quiz.quizType === quizType.value.value;
-
-    return subjectMatch && chapterMatch && quizTypeMatch;
+    const chaptertMatch = !chapter.value || quiz.chapter === chapter.value;
+    const quizTypeMatch = !quizType.value || quiz.quizType === quizType.value;
+    return subjectMatch && chaptertMatch && quizTypeMatch;
   });
   quizcount.value = filteredQuizzes.value.length;
 };

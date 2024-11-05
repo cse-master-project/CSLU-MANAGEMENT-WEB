@@ -67,7 +67,9 @@
           </div>
           <div v-if="filePreview" class="previewImage-container">
             <img :src="filePreview" alt="File Preview" class="preview-image" />
-            <div class="cancel-button" @click="cancelFile">X</div>
+            <div class="cancel-button" @click="cancelFile">
+              <q-icon name="close" />
+            </div>
           </div>
         </q-card-section>
 
@@ -554,6 +556,10 @@ input[type='file'] {
   text-align: center;
   line-height: 50px;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 // 문제 입력 스타일
@@ -620,6 +626,7 @@ input[type='file'] {
 .option-right {
   display: flex;
   flex-direction: column;
+  margin-top: 30px;
 }
 .input-left {
   width: 200px;
@@ -628,7 +635,7 @@ input[type='file'] {
 .input-right {
   width: 200px;
   display: flex;
-  margin-top: 80px;
+  margin-top: 57px;
 }
 
 //답안 입력 스타일
@@ -674,11 +681,19 @@ input[type='file'] {
   font-family: 'Toss Product Sans';
   box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
 }
-@media (max-width: 430px) {
+@media (max-width: 700px) {
   .select-container {
     flex-direction: column;
     align-items: center;
     gap: 5px;
+  }
+  .form-container {
+    padding: 10px 10px;
+  }
+}
+@media (max-width: 1100px) {
+  .form-container {
+    margin: 0 3%;
   }
 }
 </style>
