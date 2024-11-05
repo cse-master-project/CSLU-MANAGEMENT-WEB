@@ -173,10 +173,16 @@
     <!-- 바닥 -->
     <q-footer class="q-footer footer-bar">
       <div class="footer-content">
-        <div>CSLU © 2024 . All Rights Reserved.</div>
-        <q-btn flat dense class="footer-btn" to="/privacyPolicy">
-          개인정보처리 방침
-        </q-btn>
+        <div>
+          <q-btn flat dense class="footer-btn1" to="/home">
+            CSLU © 2024 . All Rights Reserved.
+          </q-btn>
+        </div>
+        <div>
+          <q-btn flat dense class="footer-btn" to="/privacyPolicy">
+            개인정보처리 방침
+          </q-btn>
+        </div>
       </div>
     </q-footer>
 
@@ -281,17 +287,33 @@ const drawerLeft = ref(false);
   justify-content: center;
 }
 .q-footer {
-  height: 100px;
+  height: 70px;
   border-top: 1px solid #dddddd;
   background-color: white;
   color: black;
-  font-size: 1rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
   bottom: 0;
 }
+.footer-btn1 {
+  font-size: 1.1rem;
+}
+.footer-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px; /* div들 간의 간격 */
+}
+
 .page-container {
   flex: 1;
 }
@@ -402,6 +424,29 @@ const drawerLeft = ref(false);
 
   .toolbar-items {
     display: none;
+  }
+  .footer-bar {
+    height: 50px; /* 높이 줄임 */
+    border-top: 1px solid #dddddd;
+    background-color: white;
+    color: black;
+    font-size: 0.8rem; /* 폰트 크기 줄임 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* 패딩 줄임 */
+    bottom: 0;
+  }
+
+  .footer-btn1 {
+    font-size: 1rem; /* 버튼 폰트 크기 줄임 */
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* div 간 간격을 약간 줄임 */
   }
 }
 @media (min-width: 1200px) {
