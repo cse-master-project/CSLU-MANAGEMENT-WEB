@@ -626,6 +626,7 @@ input[type='file'] {
 .option-right {
   display: flex;
   flex-direction: column;
+  margin-top: 30px;
 }
 .input-left {
   width: 200px;
@@ -634,7 +635,7 @@ input[type='file'] {
 .input-right {
   width: 200px;
   display: flex;
-  margin-top: 80px;
+  margin-top: 57px;
 }
 
 //답안 입력 스타일

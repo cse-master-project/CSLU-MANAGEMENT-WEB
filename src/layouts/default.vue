@@ -165,7 +165,7 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container :style="pageContainerStyles">
+    <q-page-container :style="pageContainerStyles" class="page-container">
       <router-view v-if="!selectedQuizType" />
       <component v-else :is="getQuizComponent(selectedQuizType)" />
     </q-page-container>
@@ -289,7 +289,11 @@ const drawerLeft = ref(false);
   display: flex;
   align-items: center;
   justify-content: center;
-  /* 푸터를 고정하지 않음 */
+  position: absolute;
+  bottom: 0;
+}
+.page-container {
+  flex: 1;
 }
 .toolbar {
   font-family: 'Toss Product Sans';
