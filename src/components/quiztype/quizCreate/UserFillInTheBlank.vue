@@ -75,7 +75,7 @@
 
         <!-- 문제 입력 -->
         <q-card-section class="quiz-container">
-          <label class="label-quiz">문제</label>
+          <q-label class="label-quiz">문제</q-label>
           <q-input
             v-model="quiz"
             type="textarea"
@@ -98,7 +98,7 @@
 
         <!-- 빈칸 입력 동적 생성 -->
         <q-card-section class="answer-container">
-          <label class="label-answer">빈칸 답안</label>
+          <q-label class="label-answer">빈칸 답안</q-label>
           <div
             v-for="(blank, index) in blankInputs"
             :key="index"
@@ -130,7 +130,7 @@
 
         <!-- 해설 입력 -->
         <q-card-section class="comment-container">
-          <label class="label-quiz">해설 </label>
+          <q-label class="label-quiz">해설 </q-label>
           <q-input
             v-model="commentary"
             type="textarea"
@@ -586,14 +586,19 @@ input[type='file'] {
   background-color: #000000;
   font-size: 1.3rem;
 }
-@media (max-width: 430px) {
+@media (max-width: 700px) {
   .select-container {
     flex-direction: column;
     align-items: center;
     gap: 5px;
   }
-  .title-container {
-    margin-left: 5%;
+  .form-container {
+    padding: 10px 10px;
+  }
+}
+@media (max-width: 1100px) {
+  .form-container {
+    margin: 0 3%;
   }
 }
 </style>

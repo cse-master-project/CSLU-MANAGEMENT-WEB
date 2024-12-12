@@ -3,7 +3,7 @@
     <!-- Filters card -->
     <q-card class="q-mb-md q-pa-md">
       <div class="row q-col-gutter-md q-py-md">
-        <div class="col-12 col-md-3 q-my-md bold-text">
+        <div class="col-12 col-md-4 q-my-md bold-text">
           과목
           <q-select
             v-model="subject"
@@ -13,7 +13,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md bold-text">
+        <div class="col-12 col-md-4 q-my-md bold-text">
           챕터
           <q-select
             v-model="chapter"
@@ -23,7 +23,7 @@
             dense
           />
         </div>
-        <div class="col-12 col-md-3 q-my-md bold-text">
+        <div class="col-12 col-md-4 q-my-md bold-text">
           문제유형
           <q-select
             v-model="quizType"

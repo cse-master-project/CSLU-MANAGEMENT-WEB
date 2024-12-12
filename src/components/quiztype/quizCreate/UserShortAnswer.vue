@@ -39,7 +39,6 @@
               :options="subjectOptions.map(s => s.subject)"
               outlined
               dense
-              style="width: 200px"
             />
           </div>
           <div class="select-chapter">
@@ -529,14 +528,19 @@ input[type='file'] {
   font-family: 'Toss Product Sans';
   box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
 }
-@media (max-width: 430px) {
+@media (max-width: 700px) {
   .select-container {
     flex-direction: column;
     align-items: center;
     gap: 5px;
   }
-  .title-container {
-    margin-left: 5%;
+  .form-container {
+    padding: 10px 10px;
+  }
+}
+@media (max-width: 1100px) {
+  .form-container {
+    margin: 0 3%;
   }
 }
 </style>

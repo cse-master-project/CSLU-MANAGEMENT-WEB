@@ -21,7 +21,7 @@
             선택하세요.<br />
             5.<span class="span">*해설</span>을 입력한 후, "문제 등록" 버튼을
             클릭하세요.<br />
-            5. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
+            6. 이미지가 있을 경우, <span class="span">JPG/JPEG</span> 파일만
             첨부 가능합니다.</q-tooltip
           >
         </div></q-toolbar-title
@@ -508,14 +508,19 @@ input[type='file'] {
   font-family: 'Toss Product Sans';
   box-shadow: rgba(0, 154, 233, 0.24) 0px 8px 16px 0px;
 }
-@media (max-width: 430px) {
+@media (max-width: 700px) {
   .select-container {
     flex-direction: column;
     align-items: center;
     gap: 5px;
   }
-  .title-container {
-    margin-left: 5%;
+  .form-container {
+    padding: 10px 10px;
+  }
+}
+@media (max-width: 1100px) {
+  .form-container {
+    margin: 0 3%;
   }
 }
 </style>

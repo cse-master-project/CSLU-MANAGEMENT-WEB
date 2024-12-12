@@ -197,15 +197,16 @@ const isActive = path => route.path === path;
 const drawerLeft = ref(false);
 </script>
 
-<style lang="scss" scoped>
+<style>
 .q-header {
-  height: 8%; /* 헤더 높이 조정 */
+  height: 8%;
   display: flex;
-  align-items: center; /* 헤더 내부 요소 중앙 정렬 */
-  justify-content: center; /* 헤더 내부 요소 중앙 정렬 */
+  align-items: center;
+  justify-content: center;
 }
 .q-footer {
-  height: 100px;
+  height: 80px;
+  margin-top: 20px;
   border-top: 1px solid #dddddd;
   background-color: white;
   color: black;
@@ -216,7 +217,6 @@ const drawerLeft = ref(false);
   position: absolute;
   bottom: 0;
   width: 100%;
-  z-index: 1; /* 푸터의 z-index 설정 */
 }
 
 .toolbar {
@@ -234,7 +234,7 @@ const drawerLeft = ref(false);
 }
 .toolbar-items {
   margin: 0 8px; /* 버튼 사이 간격 조정 */
-  font-size: 1.1rem; /* 글씨 크기 조정 */
+  font-size: 1rem; /* 글씨 크기 조정 */
   position: relative;
 }
 
@@ -273,10 +273,19 @@ const drawerLeft = ref(false);
 .drawer .q-btn.active {
   color: var(--q-primary);
 }
-
-@media (max-width: 1100px) {
+@media (max-width: 500px) {
+  .page-container {
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px 20px;
+    flex: 1;
+    position: relative;
+    z-index: 0;
+  }
+}
+@media (max-width: 1200px) {
   .toolbar {
-    justify-content: space-between; /* 아이템 사이 공간을 균등하게 분배 */
+    justify-content: space-between;
   }
   .toolbar-items {
     display: none;
@@ -284,9 +293,19 @@ const drawerLeft = ref(false);
   .logout {
     display: none;
   }
+  .title {
+    font-size: 1.7rem;
+  }
+  .toolbar-items {
+    font-size: 0.7rem;
+  }
+  .logout {
+    font-size: 0.9rem;
+    padding: 7px 10px;
+  }
 }
 
-@media (min-width: 1101px) {
+@media (min-width: 1200px) {
   .menu {
     display: none;
   }
@@ -296,7 +315,7 @@ const drawerLeft = ref(false);
     font-size: 1.8rem;
   }
   .toolbar-items {
-    font-size: 1.7rem;
+    font-size: 1.3rem;
   }
   .logout {
     font-size: 1.5rem;
